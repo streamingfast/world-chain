@@ -374,9 +374,13 @@ impl FullStackWorldDevnet {
             .wrap_err("failed to start OP-contract-backed L1 dev chain")?;
         let l1_public_rpc = l1.rpc_url().to_string();
         let l1_internal_rpc = host_internal_url(l1.rpc_url())?;
-        let actual_l1_hash = block_hash(&l1_public_rpc, 0)
-            .await
-            .wrap_err("failed to read Anvil L1 genesis hash")?;
+        // The docker port forward for a freshly started container can refuse connections for
+        // a few hundred milliseconds after anvil logs "Listening on", so retry briefly.
+        let actual_l1_hash = retry_until(Duration::from_secs(15), Duration::from_millis(250), || {
+            block_hash(&l1_public_rpc, 0)
+        })
+        .await
+        .wrap_err("failed to read Anvil L1 genesis hash")?;
         patch_rollup_l1_hash(&artifacts.rollup_path, &actual_l1_hash)?;
 
         info!(

@@ -147,7 +147,8 @@ fn bench_build_flashblock_case<F>(
         let builder = build_live_payload_builder(
             node.node.inner.pool.clone(),
             provider,
-            node.node.inner.evm_config.clone(),
+            // The node's EVM config is the Firehose wrapper; payload building uses the inner one.
+            node.node.inner.evm_config.clone().inner,
             bal_enabled,
         );
 

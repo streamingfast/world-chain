@@ -93,8 +93,26 @@
 - [x] tests: world-chain-{cli,evm,node,pool}: 28+8+4+14 passed, 0 failed. world-chain-{builder,validator,rpc,payload,p2p}: 101 passed, 0 failed (many profiling/bench-ish tests ignored by design).
 - [x] debug binary builds + `--version` runs (init_tracer exercised at startup): "World Chain Version: 2.4.0, Commit 6714d64".
 - [x] committed 7a1f06a5 "Add Firehose instrumentation (v2.4.0-fh)" on release/v2.x-fh.
-- [ ] Dockerfile.sf + .github/workflows/sf-release.yml added (modeled on streamingfast/base; final image = ghcr.io/streamingfast/firehose-ethereum + world-chain binary; VERGEN_GIT_SHA must be passed since .dockerignore excludes .git; PROFILE arg default release). Local `docker build -f Dockerfile.sf` verification running.
-- [ ] push release/v2.x-fh to origin when docker build verified
+- [x] Dockerfile.sf + .github/workflows/sf-release.yml added (modeled on streamingfast/base; final image = ghcr.io/streamingfast/firehose-ethereum + world-chain binary; VERGEN_GIT_SHA must be passed since .dockerignore excludes .git; PROFILE arg default release). Local docker build VERIFIED: image runs, world-chain 2.4.0 + fireeth v2.18.0.
+- [x] pushed release/v2.x-fh to origin (commits 7a1f06a5, 50b63f9c). Note: push.followTags also pushed old upstream tag v1.11.3-rc.1 (harmless).
+- CI: sf-release workflow triggered, amd64+arm64 builds in progress. Pre-existing "Foundry project" CI job fails (`vm.createFork: invalid rpc url` — fork-test RPC secrets absent on the streamingfast fork), unrelated to firehose.
+
+## Battlefield-ethereum world-chain target (branch feature/world-chain)
+- Design: world-chain native devnet (`just devnet up -d`) as sequencer network; extra follower kona-node container (same image v1.6.1, mounts the `world-devnet-op-*` tempdir at /work) drives the firehose world-chain EL on authrpc :28551; fireeth wraps that EL via `run_fireeth 1` (first block 1, reth-style); tests hit sequencer RPC (dynamic port, written to scripts/world_chain/.devnet/rpc-url, read by hardhat config; env override WORLD_CHAIN_RPC_URL).
+- Files: scripts/world_chain/run_world_chain_devnet.sh (orchestrator: devnet up, wait, fund battlefield account from anvil key0, discover kona p2p via opp2p_self, start follower), scripts/run_firehose_world_chain_devnet.sh (init + run_fireeth), lib.sh (world_chain binary + check), hardhat.config.ts network `world-chain-devnet`, package.json target test:fh3.0:world-chain-devnet, op-stack test skips extended to world-chain-devnet (block/cancun/genesis/pure_transfers/storages/assertions).
+- rustup override 1.95.0 set on /Users/stepd/repos/world-chain (Justfile uses bare cargo).
+- [x] live validation COMPLETE (2026-07-10): suite `pnpm test:fh3.0:world-chain-devnet` = **79 passing / 6 pending / 0 failing** on fresh devnet; `fireeth tools compare-blocks-rpc localhost:8089 http://localhost:28545 700 830` → all identical. Branch `feature/world-chain` pushed (commit c5e61bb).
+- Issues found & fixed along the way:
+  1. world-chain devnet L1 startup race (Anvil port-forward refuses ~300ms after ready log; no retry) → retry added in crates/devnet/full_stack.rs (commit 88cc0917).
+  2. `--sequencers 1` unusable: op-conductor marks the single sequencer unhealthy (min peer count) and stops sequencing — use default 3.
+  3. pkg/contracts submodules required for the devnet's forge proof-system deploy (`git submodule update --init --recursive`), checked by the launcher now.
+  4. kona-node exits fatally if the EL engine API is down at startup → follower runs with `--restart unless-stopped`.
+  5. kona bootnodes are enode:// URLs (NOT libp2p multiaddrs) — built from op-node-0-p2p-priv.txt + `cast wallet public-key`.
+  6. follower EL needs `--trusted-peers` (sequencer EL enodes via admin_nodeInfo) to backfill bodies; kona only feeds unsafe tips.
+  7. **LIB stuck at 0**: OpFirehoseEngineValidator started the tracer with finalized=None — user's own unmerged fix `firehose/fix-lib-finalized` (dba6fc7e) cherry-picked onto firehose/world-chain-2.x (20d83d75); without it fireeth never opens its gRPC endpoints.
+  8. Jovian EIP-7825 (tx gas cap 2^24) + devnet 60M block gas limit breaks bare eth_estimateGas ("intrinsic gas too high") — battlefield global setup clamps estimation on this network. NOTE: may affect any tooling on Jovian world-chain networks whose block gas limit exceeds 2^24 — possibly worth an upstream report.
+  9. Rerunning the suite without a devnet restart fails `prague/setcode_set_delegations` (EIP-7702 delegation persists, ordinals shift by 1) — restart devnet between runs.
+- Suite runbook: T1 `./scripts/world_chain/run_world_chain_devnet.sh`, T2 `./scripts/run_firehose_world_chain_devnet.sh` (WORLD_CHAIN_BINARY env to point at the fh binary), T3 `pnpm test:fh3.0:world-chain-devnet`.
 - Caveats/known gaps: locally-built no_tx_pool block tracing (op-reth payload-builder feature) NOT wired into world-chain's custom payload builder — sequencer-only concern, follower fh node unaffected; flashblocks pre-canonical firehose streaming (base feature) out of scope; if flashblocks fast-path ever skips newPayload re-execution, tracing coverage must be revisited.
 - [ ] world-chain: tests (firehose-relevant; reth-firehose tests live in reth fork)
 - [ ] CHANGELOG.sf.md + tag plan v2.4.0-fh

@@ -16,7 +16,7 @@ use reth_provider::{
 use reth_transaction_pool::{PoolTransaction, TransactionPool};
 use std::sync::Arc;
 use world_chain_chainspec::WorldChainSpec;
-use world_chain_evm::WorldChainEvmConfig;
+use world_chain_evm::{WorldChainEvmConfig, WorldChainFirehoseEvmConfig};
 #[derive(Debug, Clone)]
 pub struct FlashblocksPayloadBuilderBuilder<CtxBuilder> {
     pub ctx_builder: CtxBuilder,
@@ -41,7 +41,7 @@ impl<CtxBuilder> FlashblocksPayloadBuilderBuilder<CtxBuilder> {
     }
 }
 
-impl<Node, Pool, CtxBuilder> PayloadBuilderBuilder<Node, Pool, WorldChainEvmConfig>
+impl<Node, Pool, CtxBuilder> PayloadBuilderBuilder<Node, Pool, WorldChainFirehoseEvmConfig>
     for FlashblocksPayloadBuilderBuilder<CtxBuilder>
 where
     Node: FullNodeTypes,
@@ -73,8 +73,11 @@ where
         self,
         ctx: &BuilderContext<Node>,
         pool: Pool,
-        evm_config: WorldChainEvmConfig,
+        evm_config: WorldChainFirehoseEvmConfig,
     ) -> eyre::Result<Self::PayloadBuilder> {
+        // Payload building (and flashblock validation) must not emit Firehose traces — only
+        // canonical engine-API execution is traced — so unwrap the inner EVM config here.
+        let evm_config: WorldChainEvmConfig = evm_config.inner;
         if let Some(flashblocks_state) = self.flashblocks_state {
             flashblocks_state.launch(ctx, evm_config.clone());
         }

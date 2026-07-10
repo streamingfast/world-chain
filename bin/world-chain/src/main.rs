@@ -1,5 +1,6 @@
 use clap::Parser;
 use eyre::config::HookBuilder;
+use reth_chainspec::EthChainSpec;
 use reth_node_builder::NodeHandle;
 use reth_optimism_consensus::OpBeaconConsensus;
 use reth_tracing::tracing::info;
@@ -8,6 +9,7 @@ use world_chain_chainspec::WorldChainSpec;
 use world_chain_cli::{
     Cli, WorldChainArgs, WorldChainNodeConfig, WorldChainRpcModuleValidator, WorldChainSpecParser,
 };
+use reth_optimism_firehose::OpFirehoseEvmConfig;
 use world_chain_evm::WorldChainEvmConfig;
 use world_chain_node::{context::WorldChainDefaultContext, node::WorldChainNode};
 
@@ -34,11 +36,24 @@ fn main() {
 
     world_chain_node::init_version_metadata();
 
+    // Initialize the process-wide Firehose tracer. This is firehose-instrumented world-chain, so
+    // the tracer is always on (no CLI flag) — mirrors the SF op-reth fork's `bin/src/main.rs`.
+    // Until this runs, `reth_firehose::is_tracer_initialized()` returns false and every tracing
+    // hook (engine-API live path, pipeline executor) is a no-op.
+    reth_firehose::init_tracer(firehose_tracer::config::Config {
+        chain_client: firehose_tracer::config::ChainClient::Reth,
+        ..Default::default()
+    });
+
     let result = Cli::<WorldChainSpecParser, WorldChainArgs, WorldChainRpcModuleValidator>::parse()
         .run::<WorldChainNode<WorldChainDefaultContext>, _, _, _>(
             |mut builder, args| async move {
                 info!(target: "reth::cli", "Launching node");
                 let config: WorldChainNodeConfig = args.into_config(builder.config_mut())?;
+
+                // Record the chain config on the Firehose tracer (emits `FIRE INIT`) before the
+                // node launches, so it happens ahead of the first engine-API payload.
+                reth_optimism_firehose::init_blockchain(builder.config().chain.chain_id());
 
                 info!(target: "reth::cli", "Starting in Flashblocks mode");
                 let node = WorldChainNode::<WorldChainDefaultContext>::new(config.clone());
@@ -52,7 +67,9 @@ fn main() {
             },
             |chain_spec: Arc<WorldChainSpec>| {
                 (
-                    WorldChainEvmConfig::optimism(chain_spec.clone()),
+                    // Wrap in the Firehose EVM config so offline commands (stage, re-execute,
+                    // import) also trace when the tracer is initialized.
+                    OpFirehoseEvmConfig::new(WorldChainEvmConfig::optimism(chain_spec.clone())),
                     Arc::new(OpBeaconConsensus::new(chain_spec)),
                 )
             },

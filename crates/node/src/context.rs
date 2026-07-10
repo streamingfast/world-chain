@@ -20,8 +20,9 @@ use reth_node_api::{FullNodeTypes, NodeTypes, TxTy};
 use reth_node_builder::{
     NodeAdapter, NodeComponentsBuilder,
     components::{ComponentsBuilder, PayloadServiceBuilder},
-    rpc::{BasicEngineValidatorBuilder, RpcAddOns},
+    rpc::RpcAddOns,
 };
+use reth_optimism_firehose::OpFirehoseEngineValidatorBuilder;
 use reth_node_core::primitives::Hardforks;
 use reth_optimism_node::{
     OpConsensusBuilder, OpEngineTypes, OpEngineValidatorBuilder, OpNetworkBuilder, args::RollupArgs,
@@ -42,8 +43,8 @@ use world_chain_rpc::eth::FlashblocksEthApiBuilder;
 
 use tracing::info;
 use world_chain_builder::WorldChainPayloadBuilderCtxBuilder;
-use world_chain_evm::{WorldChainEvmConfig, WorldChainExecutorBuilder};
-use world_chain_pool::BasicWorldChainPool;
+use world_chain_evm::{WorldChainExecutorBuilder, WorldChainFirehoseEvmConfig};
+use world_chain_pool::{BasicWorldChainPool, tx::WorldChainPooledTransaction};
 use world_chain_validator::coordinator::FlashblocksExecutionCoordinator;
 
 use crate::tx_propagation::WorldChainTransactionPropagationPolicy;
@@ -188,11 +189,18 @@ impl<N: FullNodeTypes<Types = WorldChainNode<WorldChainDefaultContext>>> WorldCh
 where
     FlashblocksPayloadServiceBuilder<
         FlashblocksPayloadBuilderBuilder<WorldChainPayloadBuilderCtxBuilder>,
-    >: PayloadServiceBuilder<N, BasicWorldChainPool<N>, WorldChainEvmConfig>,
+    >: PayloadServiceBuilder<
+        N,
+        BasicWorldChainPool<N, WorldChainPooledTransaction, WorldChainFirehoseEvmConfig>,
+        WorldChainFirehoseEvmConfig,
+    >,
 {
-    type Pool = BasicWorldChainPool<N>;
+    // The pool validator is parameterized by the executor's EVM config, which is now the
+    // Firehose wrapper (pool validation itself stays untraced — it never uses the block
+    // executor, the only surface the wrapper overrides).
+    type Pool = BasicWorldChainPool<N, WorldChainPooledTransaction, WorldChainFirehoseEvmConfig>;
     type Net = WorldChainNetworkBuilder;
-    type Evm = WorldChainEvmConfig;
+    type Evm = WorldChainFirehoseEvmConfig;
     type PayloadServiceBuilder = FlashblocksPayloadServiceBuilder<
         FlashblocksPayloadBuilderBuilder<WorldChainPayloadBuilderCtxBuilder>,
     >;
@@ -204,7 +212,7 @@ where
         FlashblocksEthApiBuilder,
         OpEngineValidatorBuilder,
         FlashblocksEngineApiBuilder<OpEngineValidatorBuilder>,
-        BasicEngineValidatorBuilder<OpEngineValidatorBuilder>,
+        OpFirehoseEngineValidatorBuilder<OpEngineValidatorBuilder>,
     >;
 
     type ExtContext = Option<FlashblocksComponentsContext>;
@@ -351,8 +359,11 @@ where
         let flashblocks_eth_api_builder =
             FlashblocksEthApiBuilder::new(op_eth_api_builder, maybe_pending_block);
 
+        // Firehose: route live engine-API block execution through the tracing validator (a
+        // drop-in replacement for `BasicEngineValidatorBuilder` that traces canonical blocks
+        // when the process-wide Firehose tracer is initialized).
         let engine_validator_builder =
-            BasicEngineValidatorBuilder::<OpEngineValidatorBuilder>::default();
+            OpFirehoseEngineValidatorBuilder::<OpEngineValidatorBuilder>::default();
 
         let rpc_add_ons = RpcAddOns::new(
             flashblocks_eth_api_builder,

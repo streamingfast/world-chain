@@ -27,6 +27,7 @@ reth-evm.workspace = true
 reth-node-api.workspace = true
 reth-node-builder.workspace = true
 reth-optimism-evm.workspace = true
+reth-optimism-firehose.workspace = true
 reth-optimism-payload-builder.workspace = true
 reth-optimism-primitives.workspace = true
 reth-payload-primitives.workspace = true

@@ -12,6 +12,7 @@ pub use reth_optimism_evm::{
     OpEvmConfig, OpEvmFactory, OpNextBlockEnvAttributes, OpRethReceiptBuilder, OpTx, revm_spec,
     revm_spec_by_timestamp_after_bedrock,
 };
+pub use reth_optimism_firehose::OpFirehoseEvmConfig;
 use reth_optimism_primitives::OpPrimitives;
 use reth_provider::StateProvider;
 use revm_database::BundleState;
@@ -40,7 +41,15 @@ pub type WorldChainEvmConfig<
     EvmFactory = OpEvmFactory<OpTx>,
 > = OpEvmConfig<WorldChainSpec, N, R, EvmFactory>;
 
-/// Executor builder that constructs [`WorldChainEvmConfig`].
+/// Firehose-instrumented World Chain EVM configuration.
+///
+/// Wraps [`WorldChainEvmConfig`] in [`OpFirehoseEvmConfig`] so the pipeline / staged-sync
+/// executor routes through the StreamingFast Firehose block executor with OP Stack chain
+/// hooks installed. All other surfaces delegate transparently to the inner config; tracing
+/// is a no-op unless the process-wide Firehose tracer was initialized at startup.
+pub type WorldChainFirehoseEvmConfig = OpFirehoseEvmConfig<WorldChainEvmConfig>;
+
+/// Executor builder that constructs [`WorldChainFirehoseEvmConfig`].
 #[derive(Debug, Copy, Clone, Default)]
 pub struct WorldChainExecutorBuilder;
 
@@ -50,13 +59,13 @@ where
             Types: reth_node_api::NodeTypes<ChainSpec = WorldChainSpec, Primitives = OpPrimitives>,
         >,
 {
-    type EVM = WorldChainEvmConfig;
+    type EVM = WorldChainFirehoseEvmConfig;
 
     async fn build_evm(self, ctx: &BuilderContext<Node>) -> eyre::Result<Self::EVM> {
-        Ok(WorldChainEvmConfig::new(
+        Ok(OpFirehoseEvmConfig::new(WorldChainEvmConfig::new(
             ctx.chain_spec(),
             OpRethReceiptBuilder::default(),
-        ))
+        )))
     }
 }
 

@@ -11,9 +11,14 @@ repository.workspace = true
 workspace = true
 
 [dependencies]
+# Firehose (StreamingFast) — process-wide tracer init
+reth-firehose.workspace = true
+reth-optimism-firehose.workspace = true
+firehose-tracer.workspace = true
 # world-chain
 world-chain-cli.workspace = true
 world-chain-chainspec.workspace = true
+reth-chainspec.workspace = true
 world-chain-evm.workspace = true
 world-chain-node.workspace = true
 world-chain-rpc.workspace = true

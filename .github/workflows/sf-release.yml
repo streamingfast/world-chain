@@ -6,7 +6,7 @@ on:
       - "v*-fh*"
     branches:
       - "firehose/*"
-      - "release/*-fh*"
+      - "release/*"
   workflow_dispatch:
     inputs:
       firehose_ethereum:
@@ -69,7 +69,7 @@ jobs:
             type=ref,event=tag,prefix=
             type=sha,prefix=
             type=sha,prefix=,suffix=-${{ steps.extract-version.outputs.VERSION }}-${{ matrix.platform_suffix }}
-            type=edge,branch=release/v2.x-fh,priority=1
+            type=edge,branch=release/2.x,priority=1
             type=edge,branch=firehose/*,priority=1
           flavor: |
             latest=${{ startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc') }}
@@ -116,7 +116,7 @@ jobs:
           tags: |
             type=ref,event=tag,prefix=
             type=sha,prefix=
-            type=edge,branch=release/v2.x-fh,priority=1
+            type=edge,branch=release/2.x,priority=1
             type=edge,branch=firehose/*,priority=1
           flavor: |
             latest=${{ startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc') }}

@@ -117,5 +117,13 @@
 - [ ] world-chain: tests (firehose-relevant; reth-firehose tests live in reth fork)
 - [ ] CHANGELOG.sf.md + tag plan v2.4.0-fh
 
+## CI / auto-release verification (2026-07-20)
+- Confirmed no reth/optimism dep bump needed: upstream v2.4.0 (6714d64f) pins reth `paradigmxyz/reth@v2.3.0` + optimism `rev=423d93e6`; sf forks `v2.3.0-fh-6` / `firehose/world-chain-2.x` already match exactly.
+- SF fork branch was renamed `release/v2.x-fh` → `release/2.x` on the sf remote (old branch gone). `sf-release.yml` still pointed at the old name, so **branch-push CI (edge builds) never fired** on the real branch. Auto-release-on-tag was unaffected (tag filter `v*-fh*` + tag-gated release job).
+- Fix: branch trigger `release/*-fh*` → `release/*`; both `type=edge,branch=release/v2.x-fh` → `release/2.x`.
+- Verified Dockerfile.sf matches workflow: ARGs `FIREHOSE_ETHEREUM`/`VERGEN_GIT_SHA` consumed, binary at `/usr/local/bin/world-chain` = release job `docker cp` path, `PROFILE` default `release`.
+- Auto-release-on-tag path is otherwise correct: push `v2.4.0-fh` → build (amd64+arm64) → manifest push → GH release with binaries + `## v2.4.0-fh` section from CHANGELOG.sf.md via sfreleaser.
+- Note: upstream `foundry.yml` CI fails on the fork (fork-test RPC secrets absent) — pre-existing, unrelated to SF release.
+
 ## Log
 - 2026-07-09: started. Branch confirmed at v2.4.0.

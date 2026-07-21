@@ -3,7 +3,7 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
-## v2.4.0-fh
+## v2.4.0-fh3.1
 
 First Firehose-instrumented release, based on upstream `v2.4.0` (tag `v2.4.0`,
 commit `6714d64f`).
@@ -26,14 +26,14 @@ commit `6714d64f`).
 - New dependencies:
   - `reth-firehose` from `streamingfast/reth` tag `v2.3.0-fh-6` (Firehose fork of upstream
     reth `v2.3.0`, the exact tag world-chain v2.4.0 pins).
-  - `reth-optimism-firehose` from `streamingfast/optimism` branch `firehose/world-chain-2.x`
+  - `reth-optimism-firehose` from `streamingfast/optimism` branch `release/world-chain-2.x`
     (based on upstream rev `423d93e6` = `op-reth/v2.3.2 + 2` — the exact rev world-chain
     v2.4.0 pins — plus the Firehose commits from `firehose/2.x`).
   - `firehose-tracer` (crates.io, `"5"`).
 - `[patch]` sections in the workspace `Cargo.toml`:
   - every `paradigmxyz/reth` crate → `streamingfast/reth` tag `v2.3.0-fh-6`;
   - every `ethereum-optimism/optimism` crate → `streamingfast/optimism` branch
-    `firehose/world-chain-2.x`;
+    `release/world-chain-2.x`;
   - `alloy-evm` (crates.io) → `streamingfast/evm` tag `v0.36.0-sf`, which routes
     block-level system calls (EIP-4788, EIP-2935, …) through the revm Inspector so the
     tracer observes them (upstream PR alloy-rs/evm#323).

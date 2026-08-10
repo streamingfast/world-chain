@@ -3,6 +3,18 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## Unreleased
+
+### Fixed
+
+- Bumped the `streamingfast/reth` pin from `v2.3.0-fh-6` to `v2.3.0-fh-7`, which includes the
+  SELFDESTRUCT refund when resolving an account's post-transaction balance. revm credits the
+  beneficiary in place and records the move only inside its `AccountDestroyed` journal entry on the
+  truly-destroyed path (EIP-6780), so a coinbase, sender or fee vault that received a suicide refund
+  reported a `RewardTransactionFee` / `GasRefund` `old_balance` contradicting the `SuicideRefund`
+  event emitted moments earlier. The same resolver backs the OP fee-vault credits in
+  `OpPostTxExtras`. No reth/revm/alloy version moves.
+
 ## v2.4.0-fh3.1
 
 First Firehose-instrumented release, based on upstream `v2.4.0` (tag `v2.4.0`,

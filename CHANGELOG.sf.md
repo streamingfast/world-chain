@@ -3,7 +3,7 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
-## Unreleased
+## v2.4.0-fh3.1-1
 
 ### Fixed
 

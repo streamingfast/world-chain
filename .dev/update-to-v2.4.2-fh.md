@@ -39,7 +39,16 @@ that key at `streamingfast/reth` is fine.
 
 ### Agreed ref names
 - `streamingfast/evm`: branch `sf/v0.37.0`, tag **`v0.37.0-sf`**
-- `streamingfast/reth`: branch **`firehose/op-reth-2.4.x-fh`**, tag **`op-rs-aef8d3e-fh`**
+- `streamingfast/reth`: **two** deliverables —
+  - branch `firehose/2.x` advanced to paradigmxyz reth `v2.4.1`, tag **`v2.4.1-fh`** (so consumers
+    tracking real reth releases — base, plain reth — get a Firehose tag on a release, not on an
+    OP Labs rev). Not needed by world-chain, produced along the way.
+  - branch **`firehose/op-reth-2.4.x-fh`** on op-rs rev `aef8d3ef`, tag **`op-rs-aef8d3e-fh`**
+    — this is the one world-chain consumes.
+
+  These are two lineages, not one: op-rs's base `f2eecc65` is 9 ahead / 3 behind `v2.4.1` and is
+  **not** a descendant of the tag, so the second is a replay onto a sibling base, not a
+  fast-forward.
 - `streamingfast/optimism`: branch TBD (existing line is `release/world-chain-2.x`)
 
 ## Order of work
@@ -64,12 +73,19 @@ Branch `sf/v0.37.0`, tag **`v0.37.0-sf`** → commit `feee281e0488e5b1459adf06f2
   No behavior change from the port.
 - `cargo check --all-features` exit 0; `cargo test --workspace` exit 0 (52 unit + 1 doc test).
 
-### 2. streamingfast/reth — NOT STARTED
-New branch `firehose/op-reth-2.4.x-fh` from `op-rs/reth` `aef8d3ef`; port the Firehose commits
-currently on `firehose/2.x` (HEAD `b069ebb3`, reth v2.3.0 base). Expect real drift: reth
-v2.3.0 → v2.4.1 plus revm 40 → 41. Crates involved: `reth-firehose`, `reth-firehose-tests`.
-`[patch.crates-io] alloy-evm` → `v0.37.0-sf`. Tag `op-rs-aef8d3e-fh`.
-Gate: `cargo test -p reth-firehose -p reth-firehose-tests` must pass.
+### 2. streamingfast/reth — IN PROGRESS
+Port the Firehose commits currently on `firehose/2.x` (HEAD `b069ebb3`, reth v2.3.0 base) up to
+the v2.4.x era. Expect real drift, not just textual conflicts: reth v2.3.0 → v2.4.1 plus
+revm 40 → 41, alloy 2.0.5 → =2.1.1, revm-inspectors 0.40 → 0.41, reth-codecs /
+reth-primitives-traits 0.4.1 → 0.5.0. Crates involved: `reth-firehose`, `reth-firehose-tests`.
+`[patch.crates-io] alloy-evm` → `v0.37.0-sf` (available). Keep
+`[profile.dev.package.reth-chain-state] debug-assertions = false`.
+
+Order: onto paradigmxyz `v2.4.1` first (tag `v2.4.1-fh`, the canonical release and the cleaner
+base to fight the drift against), then replay that commit set onto op-rs `aef8d3ef` (tag
+`op-rs-aef8d3e-fh`). Verify paradigmxyz/reth#26431 survives into the op-rs variant.
+
+Gate for **both** tags: `cargo test -p reth-firehose -p reth-firehose-tests` must pass.
 
 ### 3. streamingfast/optimism — NOT STARTED
 Rebase `release/world-chain-2.x` Firehose commits onto tag `op-reth/v2.4.2`. Repoint all

@@ -1,7 +1,10 @@
 use crossbeam_channel::Sender;
 use reth_evm::{
     Evm,
-    block::{BlockExecutionError, BlockExecutionResult, BlockExecutor, ExecutableTx},
+    block::{
+        BlockExecutionError, BlockExecutionResult, BlockExecutor, CommitChanges, ExecutableTx,
+        GasOutput,
+    },
 };
 use reth_revm::{State, witness::ExecutionWitnessRecord};
 use revm::context::Block;
@@ -59,7 +62,26 @@ where
         self.inner.execute_transaction_without_commit(tx)
     }
 
-    fn commit_transaction(&mut self, output: Self::Result) -> reth_evm::block::GasOutput {
+    // Forwarded even though `BlockExecutor` supplies a default, because `OpBlockExecutor` overrides
+    // it: in Produce mode it snapshots refund-policy state and restores it when a candidate is
+    // declined or errors. That state is updated during EVM execution, before the commit decision,
+    // and is not journaled with EVM state. Taking the trait default here would reinstate the
+    // unsnapshotted composition and let a declined candidate bleed into a later committed
+    // transaction, diverging the producer's payload from commit-only derivation paths.
+    //
+    // Only `execute_transaction_with_commit_condition` needs this treatment. The other
+    // `execute_transaction*` defaults funnel through it, and the `apply_post_execution_changes` /
+    // `execute_block` defaults deliberately dispatch back through this wrapper's own overrides —
+    // forwarding those to `inner` would bypass the witness capture in `finish`.
+    fn execute_transaction_with_commit_condition(
+        &mut self,
+        tx: impl ExecutableTx<Self>,
+        f: impl FnOnce(&Self::Result) -> CommitChanges,
+    ) -> Result<Option<GasOutput>, BlockExecutionError> {
+        self.inner.execute_transaction_with_commit_condition(tx, f)
+    }
+
+    fn commit_transaction(&mut self, output: Self::Result) -> GasOutput {
         self.inner.commit_transaction(output)
     }
 

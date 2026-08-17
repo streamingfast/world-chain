@@ -12,6 +12,28 @@ dependency base in this release, so all three StreamingFast forks were rebased a
 `compare-blocks-rpc` reports 347/350 blocks identical, with all three differences explained and
 none of them defects — see "Validation" below.
 
+### Known issues
+
+- **EIP-7928 Block Access Lists are not traced.** Three independent gaps, all on the traced path:
+  1. `FirehoseWrappedExecutor::take_bal()` (streamingfast/reth `crates/firehose/src/executor.rs`)
+     returns `None` unconditionally, so the BAL the inner `OpBlockExecutor` builds is discarded
+     whenever the Firehose wrapper is in play.
+  2. `firehose-tracer` 5.4.1 defines no `BlockAccessList` / EIP-7928 types, so there is nowhere in
+     the Firehose block model to emit a BAL even if it were captured.
+  3. `reth-optimism-firehose`'s `engine_validator.rs` hardcodes `parallel_bal_execution = false`
+     with a comment asserting "OP payloads never carry a decoded EIP-7928 BAL — OP Stack has not
+     activated EIP-7928". `decoded_bal` is in fact decoded and gas-validated a few lines earlier and
+     passed into `ExecutionEnv`, so that premise stops holding the moment Amsterdam activates. The
+     hardcoded `false` is the safe direction for tracing (sequential execution keeps full inspector
+     coverage instead of interleaving traces across rayon workers), but it is now an undocumented
+     assumption rather than a deliberate choice.
+
+  Not currently reachable on this chain: the world-chain chainspec maps forks only up to
+  `Osaka → karst_time` and sets no Amsterdam timestamp. World-chain code is nonetheless already
+  Amsterdam-aware (`is_amsterdam_active_at_timestamp`, `EMPTY_BLOCK_ACCESS_LIST_HASH` in
+  `crates/primitives/src/flashblocks.rs`). **Resolve before Amsterdam activates**, or BAL data is
+  silently absent from emitted blocks.
+
 ### Validation
 
 - Battlefield `world-chain-devnet` suite: **79 passing / 6 pending / 0 failing** — matches the

@@ -301,10 +301,19 @@ Note the optimism branch was built against reth `969c68d6` while world-chain now
 `34c8983f`. Our lock governs and the workspace checks clean, but optimism's own lock is stale —
 refresh it there when convenient.
 
+- [x] Unit tests on the Firehose-path crates (`world-chain-evm`, `-node`, `-pool`, `-builder`,
+      `-validator`, `-rpc`, `--lib`): **71 passed, 0 failed**, exit 0.
+- [x] `Dockerfile.sf`: verified `rust-toolchain.toml` is **not** excluded by `.dockerignore`, so the
+      image build picks up `nightly-2026-07-01` via rustup. Added a comment noting that the
+      `RUST_VERSION` arg now selects only the base image, not the compiler.
+
 **Still TODO in this repo:**
-- [ ] Unit tests on the Firehose-path crates.
-- [ ] Battlefield validation (runbook below).
-- [ ] Decide the release tag name and cut it.
+- [ ] CI image build (pushing branch `firehose/v2.4.2` triggers `sf-release.yml`, which matches
+      `firehose/*`).
+- [ ] Battlefield validation (runbook below). Baseline to beat: 79 passing / 6 pending / 0 failing.
+- [ ] Cut the release tag. Convention is `v<upstream>-fh<major.minor>[-N]`
+      (`v2.4.0-fh3.1`, then `v2.4.0-fh3.1-1` for a respin) → next is **`v2.4.2-fh3.1`**.
+      The `v*-fh*` tag push is what triggers the release job.
 
 ## Battlefield runbook (world-chain harness)
 

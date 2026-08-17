@@ -52,10 +52,17 @@ Dependency order — both reth and optimism patch alloy-evm, and optimism pins r
 
 ## Status
 
-### 1. streamingfast/evm — NOT STARTED
-Rebase the "Enable system call to be traced by inspector" patch (upstream PR alloy-rs/evm#323,
-still **OPEN** as of this merge, so the fork is still required) from `sf/v0.36.0` onto alloy-evm
-`v0.37.0`. Tag `v0.37.0-sf`.
+### 1. streamingfast/evm — ✅ DONE
+Branch `sf/v0.37.0`, tag **`v0.37.0-sf`** → commit `feee281e0488e5b1459adf06f2dd9035e0c13888`
+(tag object `efe3f80015d0fdac37193bc2cccbc96d1aa2d237`). Verified present on the remote.
+
+- Upstream PR alloy-rs/evm#323 is **still OPEN**, so the fork is still required. Confirmed both
+  via the PR and by reading `crates/evm/src/eth/mod.rs` at `v0.37.0` — still a plain
+  `transact_system_call` with no inspector routing.
+- Exactly one commit carried: "sf: route system calls through inspector". Cherry-picked onto
+  `v0.37.0` with **zero conflicts** — `eth/mod.rs` was untouched between v0.36.0 and v0.37.0.
+  No behavior change from the port.
+- `cargo check --all-features` exit 0; `cargo test --workspace` exit 0 (52 unit + 1 doc test).
 
 ### 2. streamingfast/reth — NOT STARTED
 New branch `firehose/op-reth-2.4.x-fh` from `op-rs/reth` `aef8d3ef`; port the Firehose commits
@@ -109,6 +116,28 @@ Delta against the v2.4.0 fork table turned out to be almost nothing:
 - [ ] `cargo check` / `cargo build`, then tests.
 - [ ] `CHANGELOG.sf.md` entry.
 - [ ] Battlefield validation (see v2.4.0 notes for the world-chain devnet harness caveats).
+
+## Post-merge wiring audit (done, source-level; build still pending)
+- `crates/node/src/context.rs` is the only production site that picks an engine validator, and it
+  picks `OpFirehoseEngineValidatorBuilder`. ✓
+- `crates/node/src/add_ons.rs:92` still has `EVB = BasicEngineValidatorBuilder<PVB>` — that is only
+  a *default* type parameter, which `context.rs` overrides explicitly. Leave it (upstream file). ✓
+- `crates/test-utils/src/e2e_harness/context.rs` (NEW upstream in v2.4.2) wires stock
+  `BasicEngineValidatorBuilder`. **Deliberately left stock**: keeps the upstream test harness
+  merge-clean, at the cost that e2e tests do not exercise the Firehose engine-API path. Battlefield
+  is what actually covers that path. Revisit only if we want tracing assertions in e2e.
+- Everything in `crates/builder`, `crates/validator`, `crates/pool`, `crates/rpc` still names the
+  bare `WorldChainEvmConfig`, not the Firehose wrapper — correct and intended: only the node
+  component boundary (`type Evm` / `type Pool`) and the engine validator are wrapped, and
+  `crates/node/src/payload.rs` unwraps `.inner` so payload building stays untraced.
+- Watch on first build: `crates/pool/src/lib.rs` defaults `Evm = WorldChainEvmConfig` while we
+  instantiate `BasicWorldChainPool<N, WorldChainPooledTransaction, WorldChainFirehoseEvmConfig>`.
+  That needs `WorldChainTransactionValidator` to stay generic over any `ConfigureEvm`; upstream
+  rewrote 121 lines of `crates/pool/src/validator.rs` in this range, so confirm it still is.
+- rust-analyzer currently reports E0308 on the `Debug` impl at `crates/evm/src/lib.rs:141-142`.
+  That code is byte-identical to upstream v2.4.2 — it is an artifact of the dependency graph not
+  resolving while the patch tables point at refs that do not exist yet. Re-check after the lock
+  regenerates; do not "fix" it.
 
 ## Gotchas carried forward
 - Build with `cargo +1.95.0` (workspace `rust-version = 1.95.0`).

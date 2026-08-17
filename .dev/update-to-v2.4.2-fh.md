@@ -155,6 +155,50 @@ Delta against the v2.4.0 fork table turned out to be almost nothing:
   resolving while the patch tables point at refs that do not exist yet. Re-check after the lock
   regenerates; do not "fix" it.
 
+## STANDING REQUIREMENT: no untraced gaps
+
+Everything merged here must be **fully supported with Firehose tracing**. Nothing may ship as
+"not implemented", and nothing new may land in a block untraced. This applies to all four forks.
+
+Forbidden on any reachable path in ported code:
+- `todo!()`, `unimplemented!()`, `panic!("not supported")`, `unreachable!()` on a reachable arm
+- returning `Default::default()` / `None` / an empty collection where real data exists upstream
+- a hook that compiles but is never invoked, or is invoked and does nothing
+- `#[allow(dead_code)]` / `#[allow(unused)]` used to silence drift on a tracing hook
+- **catch-all `_ => {}` arms on upstream enums that gained variants.** Highest-risk pattern by far:
+  a new tx type, balance-change reason, call outcome, or hardfork gate vanishes into `_` and the
+  emitted block is quietly wrong. Where an enum feeds Firehose output, match exhaustively so
+  future upstream additions are a **build error**, not silent data loss.
+
+The failure mode that matters is the *silent* one — no compile error, no test failure, just missing
+or wrong data in the block. A port that compiles and passes tests while dropping a new field is
+worse than one that stops and says so.
+
+If something genuinely cannot be traced: stop, do not tag, escalate with specifics.
+
+### Known tracing-relevant surface to verify in this bump
+- **revm 40 → 41**: any new direct-state mutation that bypasses the `Inspector` the way
+  `balance_incr` does. That bypass class is the entire reason `OpPostTxExtras` re-emits fee-vault
+  balance changes by hand; a new instance means new missing balance changes.
+- **New OP fee vault or fee component** between optimism `423d93e6` and `op-reth/v2.4.2` — would
+  need the same manual re-emission as BASE_FEE_VAULT / L1_FEE_VAULT / OPERATOR_FEE_VAULT.
+- **`engine_validator.rs`** in `reth-optimism-firehose` is a *clone* of reth's payload validator.
+  Hook call sites that upstream **added** do not appear as compile errors there — they just go
+  missing. Must be re-diffed against the new reth validator, not merely made to compile.
+- **EIP-7928 / Block Access Lists.** The v2.4.0 notes record that the traced path runs
+  `execute_and_trace_block` with an inspector-built EVM and **BAL disabled**, while upstream v2.4.2
+  leans further into BAL (`alloy-eip7928` 0.4.3 → 0.4.5, `bal_enabled` in the builder benches).
+  Verify the traced and untraced paths cannot diverge, and that nothing BAL-derived is expected in
+  the block trace.
+- **New execution paths that could bypass the traced one**: `reth-optimism-post-exec-replay`,
+  `reth-optimism-exex`, `reth-optimism-trie`, and world-chain's own new `proofs-history` ExEx and
+  witness-collection wrapper.
+- **`OpTxEnvelope`** gaining a variant (breaks `SignatureFields`, and anything matching on tx type).
+
+A dedicated read-only audit of the four upstream deltas (world-chain v2.4.0..v2.4.2, reth
+v2.3.0..v2.4.1, revm 40→41, optimism 423d93e6..op-reth/v2.4.2) is running to produce the
+definitive list; fold its findings in here when it lands.
+
 ## Gotchas carried forward
 - Build with `cargo +1.95.0` (workspace `rust-version = 1.95.0`).
 - When verifying a piped command, check `PIPESTATUS` — a `| tail` masks the real exit code.

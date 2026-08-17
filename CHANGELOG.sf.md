@@ -35,17 +35,27 @@ none of them defects — see "Validation" below.
 
 ### Note for operators
 
-When `fireeth` starts against a **fresh** data dir with `--common-first-streamable-block=1`, its
-firehose/substreams gRPC endpoints stay closed for several minutes while it logs
-`waiting to read the first_streamable_block`. On the ~2s-block world-chain devnet this was about
-five minutes; the endpoint opened one second after the merger wrote the first merged-blocks bundle
-(`0000000000.dbin.zst`), so the two are clearly correlated.
+On the world-chain devnet, `fireeth`'s firehose/substreams gRPC endpoints can stay closed for
+several minutes after `Hub is ready`, logging `waiting to read the first_streamable_block`. This is
+specific to this target — `reth-dev` opens its endpoint immediately despite using the same
+`--common-first-streamable-block=1`.
 
-This is **not** caused by anything in this release, and not by a fireeth upgrade either:
+Measured across three runs, the variable is whether block 1 is still inside the forkable hub's
+window when the info server asks:
+
+| Run | first_streamable_block | hub's first block | endpoint opens |
+| --- | --- | --- | --- |
+| reth-dev | 1 | 1 (fireeth starts the node at genesis; blocks produced live from 1) | immediately |
+| world-chain, mid-chain restart | 589 | ~586 (live) | 1 ms after `Hub is ready` |
+| world-chain, fresh from genesis | 1 | ~60 (follower EL must catch up to a devnet already running) | ~5 min |
+
+The world-chain devnet takes ~2 minutes to come up before the follower EL starts, so the chain is
+already tens of blocks ahead and the hub cannot serve block 1; resolution falls through to the
+block stores and completes only once block 1 lands in a merged bundle.
+
+Not caused by anything in this release, and not a fireeth upgrade either:
 `firehose/info/endpoint_info.go` is byte-identical between the firehose-core in use during the
-v2.4.0 validation (`v1.15.1-0.20260709…`) and the current `v1.17.0`. The v2.4.0 run simply never
-noticed it, because that validation was a manual three-terminal procedure where minutes elapse
-between starting fireeth and launching the suite. Automating the sequence surfaces it.
+v2.4.0 validation (`v1.15.1-0.20260709…`) and the current `v1.17.0`.
 
 Practical note for anyone running Battlefield: **wait for `:8089` to accept connections before
 starting the suite**, rather than assuming fireeth is ready when it logs `Hub is ready`. Starting

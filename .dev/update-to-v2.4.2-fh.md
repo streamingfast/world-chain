@@ -156,7 +156,65 @@ base to fight the drift against), then replay that commit set onto op-rs `aef8d3
 
 Gate for **both** tags: `cargo test -p reth-firehose -p reth-firehose-tests` must pass.
 
-### 3. streamingfast/optimism — NOT STARTED
+### 3. streamingfast/optimism — ✅ DONE
+Branch **`release/world-chain-2.4.x`** → `4628c8a8c590cbc23fc855456324b98a138b1569`, rebased onto
+upstream tag `op-reth/v2.4.2`. `release/world-chain-2.x` left untouched for the shipped
+`v2.4.0-fh3.1-1` build. 16 Firehose commits merged (`8a380732c5`) + one API-adaptation fixup
+(`4628c8a8c5`). `cargo check -p reth-optimism-firehose` and `-p op-reth` both exit 0;
+`reth-optimism-node` e2e suite 13/13 pass. Lockfile verified: one `alloy-evm`, one `op-revm`,
+zero `op-rs/reth` refs.
+
+`engine_validator.rs` reconciled by a real 3-way merge (`git merge-file`) of old reth base / new
+reth payload validator / our clone — not a fix-until-it-compiles pass.
+
+**⚠️ Performance regression, not a correctness one.** reth made `StateRootJobContext::new`,
+`PayloadStateRootJobContext::new` and `PayloadProcessor::execution_cache()` `pub(crate)`, and
+removed `ParallelStateRoot` (folded into the now-private sparse-trie job). Our clone lives outside
+`reth_engine_tree`, so it cannot reach them. Consequences:
+- State root computation falls back to **synchronous only**
+  (`state_provider.state_root_with_updates`) — no sparse-trie background job, no parallel fast
+  path. Correct and complete, just slower than stock. Documented inline in the fork.
+- `payload_state_root_handle_for` always returns `None` — an explicitly supported "decline" per the
+  trait contract, not a stub; the payload builder computes its own root.
+- `wait_for_caches` reports `Duration::ZERO` for the execution-cache wait. Affects only the opt-in
+  `RethNewPayload` debug RPC's reported timing, not consensus or Firehose output.
+
+Follow-up worth raising upstream: ask reth to make those constructors `pub` so the fork can use the
+fast path again.
+
+**Real pre-existing bug found and fixed while porting:** the `convert_to_block` closure was
+unconditionally re-shadowed as Block-only after `fh_tracer` setup, but that rewrite only happens on
+the *traced* branch — on the untraced branch `input` can still be `BlockOrPayload::Payload` and the
+old code hit `unreachable!()`. Reproduced by `priority::test_custom_block_priority_config`.
+
+Firehose-output audit on this delta:
+- **No new OP fee vault or fee component** — `reward_beneficiary` still credits exactly
+  `L1_FEE_RECIPIENT` / `BASE_FEE_RECIPIENT` / `OPERATOR_FEE_RECIPIENT`. `OpPostTxExtras` unchanged.
+- **`OpTxEnvelope::PostExec` (`0x7D`) IS a genuinely new tx type** in this delta. Already handled
+  safely: our `SignatureFields` impl guards on `signature().is_none()` (an `Option`, not a variant
+  match), and `PostExec` carries an unsigned `Sealed<TxPostExec>`, so it takes the same early
+  return as deposits. `reward_beneficiary`/`catch_error` treat it as non-deposit, so the
+  `tx.is_deposit()` gate in `OpPostTxExtras` stays correct.
+- `OpSpecId::INTEROP` → `LAGOON`: no references and no exhaustive `match` on `OpSpecId` anywhere in
+  the Firehose crate. Not applicable.
+- M2 (`journal.discard_tx()` on non-deposit failures): our tracer reads real post-tx balances from
+  the journal/inspector snapshot rather than reimplementing the handler's math, so it follows the
+  corrected state automatically.
+- M11: `post_exec_executor_for_block` / `post_exec_builder_for_next_block` delegate straight to
+  `self.inner` with no tracer wiring — historical replay stays untraced. Confirmed.
+- **H1 in `FirehoseWrappedExecutor` confirmed real** (`crates/firehose/src/executor.rs:252`
+  reimplements `execute_transaction_with_commit_condition` instead of delegating). Dormant for
+  current wiring — OP-side usage always builds via the canonical `create_executor` path where
+  `is_producing()` is false — but a latent trap if tracing is ever wired onto the producer path.
+  Fixed on the reth side.
+
+**Dormant, logged for the future — EIP-8037 reservoir gas.** Real new mechanism in
+`reward_beneficiary` (`effective_used = gas.used() - gas.reservoir()`), but
+`rust/alloy-op-evm/src/lib.rs:344-346` states no OP fork enables EIP-8037, so `reservoir` is always
+0 today. **If OP ever activates state gas, the `gas_used` that reth-firehose's `executor.rs` passes
+into `emit_post_tx_extras` must become reservoir-adjusted or fee-vault amounts will silently drift.**
+
+### 3b. streamingfast/optimism — original brief (superseded)
 Rebase `release/world-chain-2.x` Firehose commits onto tag `op-reth/v2.4.2`. Repoint all
 `reth-*` pins to the new SF reth tag. Crate `reth-optimism-firehose` (op-reth/crates/firehose):
 `OpFirehoseEvmConfig`, `OpFirehoseEngineValidatorBuilder`, `engine_validator.rs` (a clone of
@@ -196,11 +254,40 @@ Delta against the v2.4.0 fork table turned out to be almost nothing:
   absent from `Cargo.lock` and would only produce an unused-patch warning.
 - `[patch.crates-io] alloy-evm` → `v0.37.0-sf`.
 
+- [x] `Cargo.lock` regenerated via targeted `cargo update -p alloy-evm`. Verified: exactly ONE
+      `alloy-evm` (from `v0.37.0-sf`), one `op-revm`, one `reth-evm`, one `reth-optimism-evm`, and
+      **zero** remaining `op-rs/reth` or `ethereum-optimism/optimism` references. The duplication
+      hazard did not bite.
+- [x] `cargo check --workspace --all-targets` — **exit 0, zero errors** (6m53s). Only warning is a
+      third-party future-incompat notice for `proc-macro-error2 v2.0.1`.
+- [x] H1 patched locally in `crates/evm/src/execution/executor.rs` — forwards
+      `execute_transaction_with_commit_condition` to the inner executor. Upstream worldcoin bug;
+      patched here rather than waiting. Producer-path only, never affected Firehose output.
+- [x] `CHANGELOG.sf.md` entry written.
+
+**Environment change made during this work:** removed the rustup **directory override** pinning
+`/Users/stepd/repos/world-chain` to `1.95.0`. Upstream v2.4.2 ships its own `rust-toolchain.toml`
+(`nightly-2026-07-01`, needed because `crates/evm` now uses `#![feature(min_specialization)]`), and
+the override was shadowing it. The old `cargo +1.95.0` habit is obsolete on this branch.
+
+**Ref state at time of writing** (both reth tags MOVED once, after H1/H4 were applied — pin by tag
+name, not SHA):
+
+| Fork | Ref | Commit |
+| --- | --- | --- |
+| evm | `v0.37.0-sf` | `feee281e` |
+| reth | `op-rs-aef8d3e-fh` | `34c8983f` (was `969c68d6`) |
+| reth | `v2.4.1-fh` | `76c16304` (was `3ba31f12`) |
+| optimism | `release/world-chain-2.4.x` | `4628c8a8` |
+
+Note the optimism branch was built against reth `969c68d6` while world-chain now resolves reth
+`34c8983f`. Our lock governs and the workspace checks clean, but optimism's own lock is stale —
+refresh it there when convenient.
+
 **Still TODO in this repo:**
-- [ ] Regenerate `Cargo.lock` (blocked on the streamingfast/optimism branch only — reth and evm
-      refs are live). **Use targeted `cargo update -p alloy-evm`, not `cargo generate-lockfile`,
-      then assert exactly ONE `alloy-evm` entry sourced from the `v0.37.0-sf` tag** — see the
-      duplication hazard under §2. Same check for `op-revm` and anything else we patch.
+- [ ] Unit tests on the Firehose-path crates.
+- [ ] Battlefield validation.
+- [ ] Decide the release tag name and cut it.
 - [ ] `cargo check` / `cargo build`, then tests.
 - [ ] `CHANGELOG.sf.md` entry.
 - [ ] Battlefield validation (see v2.4.0 notes for the world-chain devnet harness caveats).

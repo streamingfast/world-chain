@@ -73,7 +73,76 @@ Branch `sf/v0.37.0`, tag **`v0.37.0-sf`** → commit `feee281e0488e5b1459adf06f2
   No behavior change from the port.
 - `cargo check --all-features` exit 0; `cargo test --workspace` exit 0 (52 unit + 1 doc test).
 
-### 2. streamingfast/reth — IN PROGRESS
+### 2. streamingfast/reth — ✅ DONE (both tags verified on remote)
+- **`op-rs-aef8d3e-fh`** → `969c68d66bc39b27f637cdcb0fb2489a30148d63`, branch
+  `firehose/op-reth-2.4.x-fh`, based on op-rs/reth `aef8d3ef`. **This is what world-chain pins.**
+- **`v2.4.1-fh`** → `3ba31f12f1a18873a3ee35e98d7182b1501129bf`, branch `firehose/2.x`, based on
+  paradigmxyz reth `v2.4.1` (`8eb21017`). Fast-forward from the old tip `b069ebb394` — verified,
+  no history lost.
+
+Ported by real 3-way `git merge` (merge-base was exactly the `v2.3.0` tag), not a manual replay.
+Three conflicts, resolved identically on both branches:
+1. `Cargo.lock` — mechanical, superseded by the lock fix below.
+2. `crates/chain-state/src/deferred_trie.rs` — deleted upstream (`82aaff6042`, consolidated into
+   `crates/trie/common/src/trie_data.rs`). Our only change to it was a cherry-picked upstream
+   `debug_assert`, not Firehose logic. Took the deletion.
+3. `crates/engine/tree/src/tree/payload_validator.rs` — upstream removed its `changeset_provider`
+   step (`7a0cbe8858`). Kept only the Firehose `mark_verified()` flush guard, now the last
+   statement before `spawn_deferred_trie_task`.
+
+Real API drift fixed (not just textual):
+- `PayloadHandle::state_hook()` **removed**; `execute_block` now takes an explicit
+  `Option<Box<dyn OnStateHook>>` from `state_root_job.take_execution_hook()`. The Firehose
+  `execute_and_trace_block` twin was rethreaded to match. No hook was left without an equivalent.
+- Deliberate non-change, documented in-code: the Firehose path skips upstream's new
+  `.with_jit_support()` (revmc JIT), because JIT-compiled execution is not guaranteed to preserve
+  fine-grained `Inspector` callbacks. Fidelity over speed.
+
+#### ⚠️ Silent tracing regression found and fixed — the alloy-evm duplication hazard
+Our `[patch.crates-io] alloy-evm` declares itself as exactly `0.37.0`, but crates.io has since
+published newer 0.37.x/0.38.x. When a lockfile already resolved `alloy-evm` to a newer *real*
+release, an **incremental** lock update adds our patched fork as a **second** `alloy-evm` entry
+instead of replacing the first — the existing consumers are still satisfied by the newer real
+version. With two `alloy-evm` identities in the graph, most of the executor pipeline links the
+**unpatched** one, which does *not* route EIP-4788 / EIP-2935 system calls through the `Inspector`.
+Consequence: `system_calls` silently disappear from Firehose output and every following ordinal
+shifts by -2. **No compile error, no check failure** — caught only by the `reth-firehose-tests`
+golden files (`nop_transfer`, `storage_sstore_oog`).
+
+Fix: from a clean post-merge lockfile, run a **targeted `cargo update -p alloy-evm`** — never
+`cargo generate-lockfile`, which drifts revm/alloy far past the intended pins.
+
+**This hazard applies to every repo in this bump, including world-chain.** After regenerating any
+lockfile, assert there is exactly ONE `alloy-evm` entry and its source is
+`git+https://github.com/streamingfast/evm.git?tag=v0.37.0-sf`. Verified true on both reth branches.
+Note the op-rs branch initially passed by luck of command ordering, not because it was safe — do
+not treat a green run as proof; grep the lock.
+
+#### Tracing-output audit (source-diffed, not assumed)
+No new variants or fields reached Firehose output across v2.3.0 → v2.4.1 / revm 40 → 41:
+- `Inspector` trait (revm-inspector 21.0.3 → 41.0.0): byte-for-byte identical.
+- `JournalEntry` (12 variants) and `SelfdestructionRevertStatus`: identical variant sets, all
+  already matched by family in `crates/firehose/src/inspector.rs` — nothing fell into an existing
+  `_ => {}`.
+- `CallScheme`, `CreateScheme`, `InstructionResult`: identical, no new halt/revert variants.
+- `EthereumTxEnvelope`/`TxType`, `ReceiptEnvelope` (alloy-consensus 2.0.5 → 2.1.1): no new
+  variants. `Block`/`BlockBody`: no new fields, only stricter RLP validation
+  (`#[rlp(trailing)]` → `#[rlp(trailing(no_gaps))]`).
+- EIP-7685 `Requests`: unchanged, only gained SSZ transport impls. No new request kind.
+- `revm-interpreter` SSTORE gas accounting refactored into a pluggable helper — no change to
+  journal entries, **no new `balance_incr`-style inspector bypass**.
+- Pipeline/staged-sync call site unchanged: still `executor.execute_and_trace_one(input)`.
+
+**Pre-existing gap surfaced, NOT introduced here — worth a follow-up:** `CreateScheme::Custom`
+already existed before v2.3.0 and is folded into the `_` arm in `inspector.rs::create()` alongside
+plain `Create`, using the nonce-derived address path rather than its own `address` field. Predates
+this port and is out of its scope, but it is precisely the catch-all class we are trying to
+eliminate. File separately.
+
+Tests: `cargo check` clean on both branches; `cargo test -p reth-firehose -p reth-firehose-tests`
+= 26 passed / 0 failed on each.
+
+### 2b. streamingfast/reth — original brief (superseded, kept for context)
 Port the Firehose commits currently on `firehose/2.x` (HEAD `b069ebb3`, reth v2.3.0 base) up to
 the v2.4.x era. Expect real drift, not just textual conflicts: reth v2.3.0 → v2.4.1 plus
 revm 40 → 41, alloy 2.0.5 → =2.1.1, revm-inspectors 0.40 → 0.41, reth-codecs /
@@ -128,7 +197,10 @@ Delta against the v2.4.0 fork table turned out to be almost nothing:
 - `[patch.crates-io] alloy-evm` → `v0.37.0-sf`.
 
 **Still TODO in this repo:**
-- [ ] Regenerate `Cargo.lock` (blocked until all three fork refs are pushed).
+- [ ] Regenerate `Cargo.lock` (blocked on the streamingfast/optimism branch only — reth and evm
+      refs are live). **Use targeted `cargo update -p alloy-evm`, not `cargo generate-lockfile`,
+      then assert exactly ONE `alloy-evm` entry sourced from the `v0.37.0-sf` tag** — see the
+      duplication hazard under §2. Same check for `op-revm` and anything else we patch.
 - [ ] `cargo check` / `cargo build`, then tests.
 - [ ] `CHANGELOG.sf.md` entry.
 - [ ] Battlefield validation (see v2.4.0 notes for the world-chain devnet harness caveats).

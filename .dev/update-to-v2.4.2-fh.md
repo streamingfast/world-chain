@@ -202,11 +202,28 @@ Firehose-output audit on this delta:
   corrected state automatically.
 - M11: `post_exec_executor_for_block` / `post_exec_builder_for_next_block` delegate straight to
   `self.inner` with no tracer wiring — historical replay stays untraced. Confirmed.
-- **H1 in `FirehoseWrappedExecutor` confirmed real** (`crates/firehose/src/executor.rs:252`
-  reimplements `execute_transaction_with_commit_condition` instead of delegating). Dormant for
-  current wiring — OP-side usage always builds via the canonical `create_executor` path where
-  `is_producing()` is false — but a latent trap if tracing is ever wired onto the producer path.
-  Fixed on the reth side.
+- **H1 in `FirehoseWrappedExecutor`: NOT fixed on the reth side — accepted as a documented known
+  gap, and the reasoning holds.** The wrapper *does* override
+  `execute_transaction_with_commit_condition` (it is where all per-tx tracing lives), but by
+  manually composing `execute_transaction_without_commit` + `commit_transaction` so it can
+  interleave tracing between them. It therefore cannot delegate to `self.inner`, so a wrapped
+  `Inner`'s own override of that method does not run.
+  Full delegation was **attempted and reverted**: the golden files in `crates/firehose-tests`
+  caught every `RewardTransactionFee.old_value` coming out wrong. A proven regression, not a
+  theoretical one.
+  Practical effect: OP's refund snapshot/restore around a *declined* candidate does not run when
+  Firehose wraps the executor. Canonical/traced execution always commits (`CommitChanges::Yes`) via
+  the `execute_transaction`/`execute_block` path, so **traced output is unaffected**. It only
+  matters for callers invoking the method directly with a real decline condition — i.e.
+  speculative/candidate execution during block building, which our wiring does not trace.
+  **Proper fix requires an alloy-evm public-trait change**: hand the closure `&mut Self::Evm` so
+  wrapper accounting can run inside it without violating Rust aliasing. That touches every
+  `BlockExecutor` implementor → separate piece of work in `streamingfast/evm`. Raise it if the
+  decline branch ever becomes reachable with tracing enabled.
+  The in-code comment also leaves a triage instruction for the next alloy-evm bump: for any new or
+  changed defaulted method, ask whether a wrapped `Inner` might override it and whether forwarding
+  needs EVM/inspector access from inside a closure `self.inner` already holds — if so, expect the
+  same wall.
 
 **Dormant, logged for the future — EIP-8037 reservoir gas.** Real new mechanism in
 `reward_beneficiary` (`effective_used = gas.used() - gas.reservoir()`), but
@@ -390,11 +407,17 @@ execution patches. Optimism side is 498 commits.
   Confirmed present in **our** tree: `WorldChainBlockExecutor`
   (`crates/evm/src/execution/executor.rs:42-98`) implements only the 7 required methods
   (`apply_pre_execution_changes`, `execute_transaction_without_commit`, `commit_transaction`,
-  `finish`, `evm_mut`, `evm`, `receipts`). This is **upstream worldcoin's own file and upstream's
-  own bug** — decision pending on whether to patch locally (future merge conflict) or report
-  upstream and carry it. Dispatched to the reth and optimism agents for our own executors.
-  A compile-time guard that fails the build when the trait gains a new defaulted method is worth
-  adding regardless.
+  `finish`, `evm_mut`, `evm`, `receipts`). Upstream worldcoin's own file and own bug.
+
+  Outcome per repo:
+  - **world-chain: FIXED locally** in `crates/evm/src/execution/executor.rs` (commit `a7fa711f`),
+    on the user's instruction to patch rather than wait on worldcoin. `WorldChainBlockExecutor` is
+    a thin witness wrapper with no tracing to interleave, so plain forwarding works. This is also
+    the layer where it matters most: the building path unwraps to `WorldChainEvmConfig` and still
+    goes through this wrapper, so the fix restores OP's override exactly where the decline branch
+    is reachable. Accepts a future merge conflict against upstream.
+  - **reth `FirehoseWrappedExecutor`: NOT fixed — accepted as a documented known gap.** Delegation
+    is impossible there without breaking tracing; proven by golden-file failures. See §3.
 - **H2. `validate_block_post_execution_with_hashed_state` changed shape *and* semantics.**
   reth `crates/engine/primitives/src/lib.rs:223-232` (#26330, #26398): `state_updates` became
   `impl FnOnce() -> &'a HashedPostState`, new `parent_state: impl FnOnce() -> ProviderResult<StateProviderBox>`,

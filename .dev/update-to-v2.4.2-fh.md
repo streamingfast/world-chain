@@ -267,9 +267,105 @@ If something genuinely cannot be traced: stop, do not tag, escalate with specifi
   witness-collection wrapper.
 - **`OpTxEnvelope`** gaining a variant (breaks `SignatureFields`, and anything matching on tx type).
 
-A dedicated read-only audit of the four upstream deltas (world-chain v2.4.0..v2.4.2, reth
-v2.3.0..v2.4.1, revm 40→41, optimism 423d93e6..op-reth/v2.4.2) is running to produce the
-definitive list; fold its findings in here when it lands.
+### Audit results (independent read-only pass over all four deltas) — LANDED
+
+Scope correction: world-chain v2.4.2 does **not** pin reth `v2.4.1`. `op-rs/reth aef8d3ef` resolves
+to `v2.4.1` **+10 / −3** — 9 plain upstream post-v2.4.1 commits, 1 op-rs cherry-pick (#26431, trie /
+state-root plumbing only), and it is **missing** `alloy core 1.6.1 (#26419)`. No proprietary
+execution patches. Optimism side is 498 commits.
+
+#### HIGH — silent (no compile error, no test failure, just wrong or missing trace data)
+
+- **H1. A `BlockExecutor` wrapper silently shadows the inner executor's overrides.**
+  `BlockExecutor` has 9 methods, only 7 required. alloy-evm v0.37.0
+  (`crates/evm/src/block/mod.rs:357-372`) supplies a *default*
+  `execute_transaction_with_commit_condition` composing `execute_transaction_without_commit` +
+  `commit_transaction`. In this bump `OpBlockExecutor` **newly overrides** it to snapshot/restore
+  refund-policy state on a declined candidate. Any wrapper forwarding only the 7 required methods
+  reinstates the default, so the inner override never runs.
+  Applies to `FirehoseBlockExecutor` / `FirehoseWrappedExecutor` — dispatched to the reth agent.
+  **Also applies to upstream world-chain's own new `WorldChainBlockExecutor`**
+  (`crates/evm/src/execution/executor.rs:41-98`), which forwards only the 7. That is an upstream
+  worldcoin bug affecting OP refund behavior, not only tracing → report upstream.
+  Fix shape: forward every defaulted method explicitly and add a compile-time guard so future
+  upstream defaults cannot be silently inherited.
+- **H2. `validate_block_post_execution_with_hashed_state` changed shape *and* semantics.**
+  reth `crates/engine/primitives/src/lib.rs:223-232` (#26330, #26398): `state_updates` became
+  `impl FnOnce() -> &'a HashedPostState`, new `parent_state: impl FnOnce() -> ProviderResult<StateProviderBox>`,
+  return `ConsensusError` → `InsertBlockErrorKind`, added `where Self: Sized`. On the OP side
+  (`rust/op-reth/crates/node/src/engine.rs:135-150`) the Isthmus L2ToL1MessagePasser
+  withdrawals-root check previously bailed with a bare `return Ok(())` when the parent was not
+  canonical (explicit `FIXME`); it now resolves the overlay-aware parent and **actually enforces**.
+  Also now called **twice** (`payload_validator.rs:788`, again at `:824` after a state-root
+  fallback). A mechanical port of our clone keeps the old early-out and silently never validates.
+- **H3. The cloned `BasicEngineValidator::validate_block_with_state` was restructured ~1150 lines**
+  (`payload_validator.rs` −764/+382, new `state_root_strategy/mod.rs` +1410). None of it errors in
+  a clone. Anchor points survive: `validated_block.get()` `:523`, `make_state_provider` `:656`, and
+  the last fallible post-exec step still immediately precedes `spawn_deferred_trie_task` `:880`.
+  **But the `mark_verified()` flush guard must now also drop on the new `ensure_ok_post_block!`
+  early returns at `:771` and `:796`.**
+- **H4. `ConfigureEvm` gained JIT hooks and the engine path opts in.**
+  `crates/evm/evm/src/lib.rs:274,283,291`; `payload_validator.rs:1008` now builds via
+  `.with_jit_support()`. Under a JIT-compiled frame **only `log`, `selfdestruct`, `frame_end` reach
+  the `Inspector` — `step`/`step_end` never fire**, so per-opcode storage and gas-reason data
+  silently vanishes. Only `RethEvmFactory` (L1) implements it today; `OpEvmFactory` does not, so
+  world-chain is dormant but `v2.4.1-fh` consumers are not. JIT is **also flippable at runtime via
+  the `reth_jit` RPC method**. Our clone must not opt in, and the node must refuse to start (or
+  hard-disable the `jit` feature) when the tracer is on. Dispatched to the reth agent.
+
+#### MEDIUM
+M1 `OnStateHook::on_state` now takes `EvmState` **by value** (revm v113). ·
+M2 **silent**: op-revm `handler.rs:398-505` split `catch_error`; non-deposit tx errors now
+`journal.discard_tx()`, so previously-leaked partial state and EIP-2929 warm stamps no longer bleed
+into the next tx — emitted per-tx state for failed txs legitimately changes. Deposit path unchanged,
+`OpPreTxAdjust` stays correct. · M3 `OpSpecId::INTEROP` → `LAGOON` (rename only; a `_` arm swallows
+it). · M4 warming-refund generalized to a pluggable refund policy, `ConfigurePostExecEvm` gains
+`type Snapshot`, second inspector on the post-exec path. · M5 `WorldChainEvmConfig` alias → generic
+wrapper struct, crate now needs nightly + `#![feature(min_specialization)]` (new
+`rust-toolchain.toml`, `nightly-2026-07-01`); our type now nests 3 deep. · M6
+`EngineValidatorBuilder::build` gained `state_trie_overlays`; obsoletes the fork's
+`TreeState::state_trie_overlays()` patch. · M7 `Chain` now stores `Arc<RecoveredBlock<_>>`. ·
+M8 alloy-evm 0.37: `PrecompilesMap` lost `Clone`, `DynPrecompile` is `Box` not `Arc`. ·
+M9 renames: `PayloadAttributes.target_gas_limit`, `DeferredTrieData`→`LazyTrieData`,
+`StateRootHandle`→`PayloadStateRootHandle`, `BuiltPayloadExecutedBlock.changed_paths`. ·
+M10 launch site moved to `proof_history::launch_node` — **already handled in our `main.rs`**. ·
+M11 **silent if wired wrong**: `reth-optimism-post-exec-replay` re-executes historical blocks; if
+our `ConfigurePostExecEvm` path is traced it emits **spurious** traces for historical blocks.
+Confirm post-exec delegates to the inner, untraced config.
+
+#### Pre-existing hazards — still live, not introduced here
+- **BAL parallel execution bypasses per-tx tracing.** `payload_validator.rs:697` dispatches to
+  `execute_block_bal` when `bal_path_eligible` (`:1085`); txs run on rayon workers with separate EVM
+  instances and the canonical executor only `commit_transaction`s in order. Identical at v2.3.0.
+  Gated on `decoded_bal.is_some()` → dormant until Amsterdam. If it activates, expect interleaved
+  traces from N worker executors plus a commit-only canonical pass.
+- **`alloy-op-evm` post-exec settlement writes balances straight into `EvmState`**
+  (`rust/alloy-op-evm/src/block/mod.rs:612,628,669,726`, `add_state_balance`/`sub_state_balance`
+  with `mark_touch()`) — no journal, no inspector, same bypass class as `balance_incr`. Present at
+  both revs, gated on a trailing `0x7D` PostExec tx. When PostExec activates, `OpPostTxExtras` will
+  under-report these exactly as it would fee vaults.
+- **`on_inserted_executed_block`**: locally-built sequencer payloads skip `validate_block_with_state`
+  — pre-existing builder-path blind spot.
+
+#### Cleared — do not re-investigate
+No new enum variants anywhere in revm 41 (`result.rs`, `instruction_result.rs`, `hardfork.rs` all
+identical); `Inspector` trait and handler byte-identical v112→v113; no new inspector-bypassing
+mutation (`journaled_state.rs` identical). alloy-consensus 2.0.5→2.1.1: no header fields, no tx or
+receipt variants. `OpHardfork`: no new variants, no activation-timestamp changes. op-revm: **no new
+fee vault** (`constants.rs`) and **no new fee component** (`l1block.rs`). op-alloy-consensus: no new
+OP tx type, no new receipt variant (`OpTxType::PostExec` `0x7D` already existed).
+**Flashblocks v2 RLP decoding is a net no-op** — `5d930d06` fully reverted by `118b934c` (#1038).
+**EIP-7928 / BAL is not new to world-chain** — `crates/evm/src/execution/bal.rs` unchanged since
+v2.4.0, `alloy-eip7928` only 0.4.3→0.4.5, and `bal_enabled` drives *payload building*, not canonical
+execution. (This supersedes the BAL concern raised earlier in this document.)
+`reth-optimism-exex` / `-trie` / `-post-exec-replay` are **not new crates** — all three already in
+v2.4.0's lock; v2.4.2 only promotes two to direct deps. Neither exex nor trie executes blocks.
+World Chain chainspec untouched. Witness collection and proofs-history are **default-off**.
+
+**Coverage caveat:** the revm and optimism sub-passes did not return, so those claims come from the
+auditor's own direct source diffs (cited by file and ref). The gap it would still want covered is
+the remaining ~490 optimism commits outside the files diffed — `reth-optimism-node` payload /
+flashblocks internals beyond `engine.rs`.
 
 ## Gotchas carried forward
 - Build with `cargo +1.95.0` (workspace `rust-version = 1.95.0`).

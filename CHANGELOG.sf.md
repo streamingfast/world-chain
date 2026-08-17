@@ -9,20 +9,36 @@ Merge of upstream `v2.4.2` (162 commits on top of `v2.4.0`). Upstream re-pointed
 dependency base in this release, so all three StreamingFast forks were rebased alongside it.
 
 **Beta.** Battlefield passes at the v2.4.0 baseline (79 passing / 6 pending / 0 failing) and
-`compare-blocks-rpc` reports 347/350 blocks identical, but one open issue is under investigation —
-see "Known issues" below. Not recommended for production until that is resolved.
+`compare-blocks-rpc` reports 347/350 blocks identical, with all three differences explained and
+none of them defects — see "Validation" below.
 
-### Known issues
+### Validation
 
-- **Block 1's L1-attributes deposit transaction is traced as a stub.** On a freshly initialized
-  node, the first traced block emits its deposit transaction with no call trace, no `gas_used`,
-  no `input` and no `type`; only `from`/`to`/`status` and a `logs_bloom`-only receipt are present.
-  Blocks 2 onward are byte-identical to RPC and their deposit transactions trace correctly, so this
-  is specific to the first block a node traces, not to deposit transactions in general.
-  Not yet established whether this is a regression or a long-standing bootstrap artifact — the
-  v2.4.0 validation only compared blocks 700-830, so block 1 was never examined. Under
-  investigation, including whether the same stubbing affects the first block after any node
-  restart (which would be materially more serious than a one-off at genesis+1).
+- Battlefield `world-chain-devnet` suite: **79 passing / 6 pending / 0 failing** — matches the
+  v2.4.0 baseline exactly.
+- `fireeth tools compare-blocks-rpc` over blocks 1-350: **347 identical**. All three differences
+  accounted for:
+  - Blocks 315 and 317: Firehose emits EIP-7702 `set_code_authorizations` (5 entries with 2
+    discarded, and 1 entry respectively) that the RPC representation does not expose at all.
+    Firehose is the richer side; expected diff.
+  - Block 1: no transaction trace. **This is by design, not a defect.** Block 1 is the Firehose
+    genesis marker — `FirehoseBlockTracer::start` emits `on_genesis_block` as a standalone event
+    and deliberately does not put the tracer into "block state", so the executor is intentionally
+    left unwrapped for that block (wrapping it would panic in `on_system_call_start`). The same
+    logic is present unchanged on the v2.4.0 branch, so this is long-standing behavior rather than
+    anything introduced by this merge.
+- Verified separately that node **restarts** are unaffected: a mid-chain restart against an
+  existing datadir traces its first block correctly (block 589: `type 126`,
+  `to 0x4200…0015`, `gas_used 48934`, 2 calls, 356-byte input).
+- `block_lib` advances normally (observed 0 → 38 → 127 → 668), so the v2.4.0 LIB-stuck-at-0 issue
+  remains fixed on the rebased branch.
+
+### Note for operators
+
+`fireeth` holds its firehose/substreams gRPC endpoints closed until the merger writes the first
+merged-blocks bundle — roughly the first 100 blocks plus a merger cycle. On a ~2s-block devnet that
+is about five minutes of `waiting to read the first_streamable_block` warnings before `:8089`
+accepts connections. This is normal startup behavior, not a fault.
 
 ### Changed
 

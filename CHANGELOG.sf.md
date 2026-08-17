@@ -3,10 +3,26 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
-## Unreleased
+## v2.4.2-fh3.1-beta
 
 Merge of upstream `v2.4.2` (162 commits on top of `v2.4.0`). Upstream re-pointed its entire EVM
 dependency base in this release, so all three StreamingFast forks were rebased alongside it.
+
+**Beta.** Battlefield passes at the v2.4.0 baseline (79 passing / 6 pending / 0 failing) and
+`compare-blocks-rpc` reports 347/350 blocks identical, but one open issue is under investigation —
+see "Known issues" below. Not recommended for production until that is resolved.
+
+### Known issues
+
+- **Block 1's L1-attributes deposit transaction is traced as a stub.** On a freshly initialized
+  node, the first traced block emits its deposit transaction with no call trace, no `gas_used`,
+  no `input` and no `type`; only `from`/`to`/`status` and a `logs_bloom`-only receipt are present.
+  Blocks 2 onward are byte-identical to RPC and their deposit transactions trace correctly, so this
+  is specific to the first block a node traces, not to deposit transactions in general.
+  Not yet established whether this is a regression or a long-standing bootstrap artifact — the
+  v2.4.0 validation only compared blocks 700-830, so block 1 was never examined. Under
+  investigation, including whether the same stubbing affects the first block after any node
+  restart (which would be materially more serious than a one-off at genesis+1).
 
 ### Changed
 

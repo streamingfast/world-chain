@@ -7,9 +7,9 @@ import {CertManager} from "@nitro-validator/CertManager.sol";
 import {ICertManager} from "@nitro-validator/ICertManager.sol";
 import {IP384Verifier} from "@nitro-validator/IP384Verifier.sol";
 import {P384Verifier} from "@nitro-validator/P384Verifier.sol";
-import {NitroAttestationVerifier} from "../../src/proofs/nitro/NitroAttestationVerifier.sol";
-import {NitroEnclaveKeyRegistry} from "../../src/proofs/nitro/NitroEnclaveKeyRegistry.sol";
-import {NitroProofVerifier} from "../../src/proofs/nitro/NitroProofVerifier.sol";
+import {NitroAttestationVerifier} from "../../src/dispute/nitro/NitroAttestationVerifier.sol";
+import {NitroEnclaveKeyRegistry} from "../../src/dispute/nitro/NitroEnclaveKeyRegistry.sol";
+import {NitroProofVerifier} from "../../src/dispute/nitro/NitroProofVerifier.sol";
 
 /// @title DeployNitro
 /// @notice Deploys the on-chain AWS Nitro attestation stack for WIP-1006:
@@ -58,11 +58,15 @@ import {NitroProofVerifier} from "../../src/proofs/nitro/NitroProofVerifier.sol"
 ///        3. Roll out new enclaves; each registers via
 ///           `NitroEnclaveKeyRegistry.registerKey`, which calls
 ///           `NitroAttestationVerifier.verifyAttestation`. The verifier
-///           accepts both old- and new-image attestations during overlap.
-///        4. After migration, `verifier.revokePCRSet(oldPcr0, oldPcr1,
-///           oldPcr2)` to stop accepting new registrations for the retired
-///           image. Already-registered keys remain in the registry until
-///           individually revoked via `registry.revokeKey(pubkey)`.
+///           records each signer's PCR0 image ID.
+///        4. Deploy a new game implementation pinned to
+///           `newPcr0`. The Nitro
+///           verifier is reusable; existing games remain pinned to the old
+///           image.
+///        5. No revocation is required for a routine upgrade: games pinned to
+///           `newPcr0` reject old-image signers. Optionally revoke the old PCR
+///           set to stop future old-image registrations. Revoke an individual
+///           signer only if its key may be compromised.
 contract DeployNitro is Script {
     function run() external {
         address owner = vm.envAddress("OWNER");
@@ -76,8 +80,9 @@ contract DeployNitro is Script {
         CertManager certManager = new CertManager(IP384Verifier(address(p384Verifier)));
         console.log("CertManager:", address(certManager));
 
-        NitroAttestationVerifier verifier =
-            new NitroAttestationVerifier(ICertManager(address(certManager)), IP384Verifier(address(p384Verifier)), owner);
+        NitroAttestationVerifier verifier = new NitroAttestationVerifier(
+            ICertManager(address(certManager)), IP384Verifier(address(p384Verifier)), owner
+        );
         console.log("NitroAttestationVerifier:", address(verifier));
 
         NitroEnclaveKeyRegistry registry = new NitroEnclaveKeyRegistry(verifier, owner);
@@ -87,6 +92,14 @@ contract DeployNitro is Script {
         console.log("NitroProofVerifier:", address(proofVerifier));
 
         vm.stopBroadcast();
+
+        _writeDeployment(
+            address(p384Verifier),
+            address(certManager),
+            address(verifier),
+            address(registry),
+            address(proofVerifier)
+        );
 
         // ════════════════════════════════════════════════════════════════════
         // IMPORTANT: NEXT STEP — pre-warm CertManager *before* any user call
@@ -118,11 +131,37 @@ contract DeployNitro is Script {
         // (rawPcr* are the 48-byte SHA-384 values from `nitro-cli describe-eif`.)
         // ════════════════════════════════════════════════════════════════════
         console.log("");
-        console.log("NEXT STEPS (owner) — mandatory before any registerKey call:");
+        console.log("NEXT STEPS (owner) -- mandatory before any registerKey call:");
         console.log("  1. certManager.verifyCACertWithHints(cert, parentHash, hints) for each cert");
         console.log("     in the AWS Nitro PKI chain (root -> intermediates -> issuer).");
         console.log("     Use tools/hinted_attestation_calls.js to generate calls + hints.");
         console.log("     Without this, the first registerKey will OOG.");
         console.log("  2. verifier.approvePCRSet(pcr0, pcr1, pcr2) for each approved EIF.");
+    }
+
+    /// @notice Writes deployed addresses to a JSON file if NITRO_DEPLOYMENT_OUT is set.
+    /// @dev Uses per-key writes so that existing fields (e.g. pcr0/pcr1/pcr2) are preserved.
+    function _writeDeployment(
+        address p384Verifier,
+        address certManager,
+        address nitroAttestationVerifier,
+        address nitroEnclaveKeyRegistry,
+        address nitroProofVerifier
+    ) internal {
+        string memory out = vm.envOr("NITRO_DEPLOYMENT_OUT", string(""));
+        if (bytes(out).length == 0) return;
+
+        // Seed the file with an empty JSON object if it doesn't exist yet.
+        if (!vm.isFile(out)) {
+            vm.writeJson("{}", out);
+        }
+
+        // Write each address to its own key, preserving any existing fields.
+        vm.writeJson(vm.toString(p384Verifier), out, ".p384Verifier");
+        vm.writeJson(vm.toString(certManager), out, ".certManager");
+        vm.writeJson(vm.toString(nitroAttestationVerifier), out, ".nitroAttestationVerifier");
+        vm.writeJson(vm.toString(nitroEnclaveKeyRegistry), out, ".nitroEnclaveKeyRegistry");
+        vm.writeJson(vm.toString(nitroProofVerifier), out, ".nitroProofVerifier");
+        console.log("Deployment written to", out);
     }
 }

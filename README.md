@@ -17,6 +17,7 @@
 <p align="center">
   <a href="#crates">Crates</a> •
   <a href="#proofs">Proofs</a> •
+  <a href="#versioning">Versioning</a> •
   <a href="#development">Development</a> •
   <a href="#specs">Specs</a> •
   <a href="#security">Security</a> •
@@ -47,18 +48,21 @@ World Chain is a blockchain designed for humans. It prioritizes scalability and 
 
 ## Proofs
 
-| Crate | Description |
-|-------|-------------|
-| [`world-chain-prover`](./proofs/prover) | Shared host-side prover library. |
-| [`world-chain-prover-sp1`](./proofs/prover-sp1) | SP1 zkVM prover CLI. |
-| [`world-chain-prover-nitro`](./proofs/prover-nitro) | AWS Nitro TEE host prover CLI. |
-| [`world-chain-proof-core`](./proofs/core) | Shared primitives for SP1 and Nitro TEE fault-proof backends. |
-| [`world-chain-proof-nitro`](./proofs/nitro) | AWS Nitro TEE attestation prover for OP Succinct Lite fault proofs. |
-| [`world-chain-proof-protocol`](./proofs/protocol) | Fault-proof protocol definitions and interfaces. |
-| [`world-chain-proofs`](./proofs/primitives) | Proof primitives and shared types. |
-| [`world-chain-challenger`](./proofs/challenger) | Fault-proof challenger service. |
-| [`world-chain-proposer`](./proofs/proposer) | Output root proposer service. |
-| [`world-chain-prover-service`](./proofs/prover-service) | Proof generation service. |
+| Crate                                                          | Description |
+|----------------------------------------------------------------|-------------|
+| [`world-chain-prover`](proofs/debug/prover)                    | Shared host-side prover library. |
+| [`world-chain-prover-sp1`](proofs/debug/bin/prover-sp1)        | SP1 zkVM prover CLI. |
+| [`world-chain-prover-nitro`](proofs/debug/bin/prover-nitro)    | AWS Nitro TEE host prover CLI. |
+| [`world-chain-proof-core`](./proofs/core)                      | Shared primitives for SP1 and Nitro TEE fault-proof backends. |
+| [`world-chain-proof-nitro-enclave`](./proofs/backends/nitro/enclave)    | AWS Nitro TEE attestation prover for OP Succinct Lite fault proofs. |
+| [`world-chain-proof-protocol`](./proofs/protocol)                    | Proof primitives and shared types. |
+| [`world-chain-challenger`](proofs/services/challenger)         | Fault-proof challenger service. |
+| [`world-chain-proposer`](proofs/services/proposer)             | Output root proposer service. |
+| [`world-chain-prover-service`](proofs/services/prover-service) | Proof generation service. |
+
+## Versioning
+
+World Chain's major and minor version numbers are aligned with the underlying reth release line. For a World Chain `X.Y.Z` release, `X.Y` must match reth's `X.Y`. World Chain patch versions are released independently and do not need to match the reth patch version.
 
 ## Development
 

@@ -7,7 +7,7 @@ use alloy_rpc_types_engine::{ExecutionPayloadEnvelopeV2, ExecutionPayloadV1};
 use op_alloy_consensus::{OpDepositReceipt, OpTxEnvelope, OpTxType};
 use op_alloy_rpc_types::{OpTransactionReceipt, OpTransactionRequest};
 use op_alloy_rpc_types_engine::{
-    OpExecutionData, OpExecutionPayloadEnvelopeV3, OpExecutionPayloadEnvelopeV4,
+    OpExecutionData, OpExecutionPayload, OpExecutionPayloadEnvelopeV3, OpExecutionPayloadEnvelopeV4,
 };
 use reth_node_api::{
     BuiltPayload, EngineTypes, FullNodeTypes, NodePrimitives, NodeTypes, PayloadTypes,
@@ -29,7 +29,7 @@ use reth_primitives_traits::{Block as _, BlockTy, SealedBlock};
 use reth_rpc_api::eth::RpcTypes;
 use world_chain_chainspec::WorldChainSpec;
 use world_chain_cli::{WorldChainArgs, WorldChainNodeConfig};
-use world_chain_evm::{OpRethReceiptBuilder, WorldChainEvmConfig};
+use world_chain_evm::{OpEvmConfig, OpRethReceiptBuilder};
 use world_chain_node::{
     context::{FlashblocksComponentsContext, WorldChainNetworkBuilder},
     engine::FlashblocksEngineApiBuilder,
@@ -63,10 +63,11 @@ impl PayloadTypes for WorldEngineTypes {
         block: SealedBlock<BlockTy<<Self::BuiltPayload as BuiltPayload>::Primitives>>,
         _bal: Option<alloy_primitives::Bytes>,
     ) -> Self::ExecutionData {
-        OpExecData::from(OpExecutionData::from_block_unchecked(
+        let (payload, sidecar) = OpExecutionPayload::from_block_unchecked(
             block.hash(),
             &block.into_block().into_ethereum_block(),
-        ))
+        );
+        OpExecData::from(OpExecutionData::new(payload, sidecar))
     }
 }
 
@@ -131,13 +132,10 @@ impl<Node> ExecutorBuilder<Node> for WorldExecutorBuilder
 where
     Node: FullNodeTypes<Types: NodeTypes<ChainSpec = WorldChainSpec, Primitives = WorldPrimitives>>,
 {
-    type EVM = WorldChainEvmConfig<WorldPrimitives, WorldReceiptBuilder>;
+    type EVM = OpEvmConfig<WorldChainSpec, WorldPrimitives, WorldReceiptBuilder>;
 
     async fn build_evm(self, ctx: &BuilderContext<Node>) -> eyre::Result<Self::EVM> {
-        Ok(WorldChainEvmConfig::new(
-            ctx.chain_spec(),
-            WorldReceiptBuilder,
-        ))
+        Ok(OpEvmConfig::new(ctx.chain_spec(), WorldReceiptBuilder))
     }
 }
 
@@ -195,12 +193,12 @@ where
             BasicWorldChainPool<
                 N,
                 OpPooledTransaction,
-                WorldChainEvmConfig<WorldPrimitives, WorldReceiptBuilder>,
+                OpEvmConfig<WorldChainSpec, WorldPrimitives, WorldReceiptBuilder>,
             >,
-            WorldChainEvmConfig<WorldPrimitives, WorldReceiptBuilder>,
+            OpEvmConfig<WorldChainSpec, WorldPrimitives, WorldReceiptBuilder>,
         >,
 {
-    type Evm = WorldChainEvmConfig<WorldPrimitives, WorldReceiptBuilder>;
+    type Evm = OpEvmConfig<WorldChainSpec, WorldPrimitives, WorldReceiptBuilder>;
     type Pool = BasicWorldChainPool<N, OpPooledTransaction, Self::Evm>;
     type Net = WorldChainNetworkBuilder;
     type PayloadServiceBuilder = BasicPayloadServiceBuilder<OpPayloadBuilder>;

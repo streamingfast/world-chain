@@ -33,9 +33,10 @@ use revm_primitives::TxKind;
 use std::str::FromStr;
 
 use world_chain_rpc::simulate::{
-    AssetType, ContractManagementType, SimulationInspector, assemble_contract_management,
-    decode_revert_reason, parse_asset_changes, parse_contract_management_events,
-    parse_exposure_changes, relax_cfg_for_simulation, selector_to_name,
+    AssetType, ContractManagementType, SimulationInspector, TraceKind, TraceOutcome,
+    assemble_contract_management, decode_revert_reason, parse_asset_changes,
+    parse_contract_management_events, parse_exposure_changes, relax_cfg_for_simulation,
+    selector_to_name,
 };
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -213,7 +214,7 @@ fn make_forked_db_at(
 async fn test_fork_view_calls() {
     let mut db = forked_db!();
     let env = metadata_evm_env();
-    let mut evm = OpEvmFactory::default().create_evm(&mut db, env);
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm(&mut db, env);
 
     // name()
     let res = RethEvm::transact(
@@ -300,7 +301,7 @@ async fn test_fork_view_calls() {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_simulate_new_token_reads_post_state_for_normalized_asset() {
     let mut db = forked_db!(ANT_METADATA_BLOCK_NUMBER);
-    let mut evm = OpEvmFactory::default().create_evm_with_inspector(
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm_with_inspector(
         &mut db,
         ant_metadata_evm_env(),
         SimulationInspector::default(),
@@ -340,7 +341,8 @@ async fn test_simulate_new_token_reads_post_state_for_normalized_asset() {
     drop(evm);
     db.commit(result.state);
 
-    let mut metadata_evm = OpEvmFactory::default().create_evm(&mut db, ant_metadata_evm_env());
+    let mut metadata_evm =
+        OpEvmFactory::<OpTx>::default().create_evm(&mut db, ant_metadata_evm_env());
     let name: String = match RethEvm::transact(
         &mut metadata_evm,
         OpTx(OpTransaction {
@@ -605,7 +607,7 @@ async fn test_native_eth_transfer_inspector() {
         },
     );
 
-    let mut evm = OpEvmFactory::default().create_evm_with_inspector(
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm_with_inspector(
         &mut db,
         simulate_evm_env(),
         SimulationInspector::default(),
@@ -672,7 +674,7 @@ async fn test_simulate_unfunded_caller_bypasses_l1_fee() {
             ..Default::default()
         },
     );
-    let mut evm = OpEvmFactory::default().create_evm(&mut db, simulate_evm_env());
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm(&mut db, simulate_evm_env());
 
     let result = RethEvm::transact(
         &mut evm,
@@ -717,7 +719,7 @@ async fn test_revert_with_reason() {
             ..Default::default()
         },
     );
-    let mut evm = OpEvmFactory::default().create_evm(&mut db, simulate_evm_env());
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm(&mut db, simulate_evm_env());
 
     let result = RethEvm::transact(
         &mut evm,
@@ -750,12 +752,10 @@ async fn test_revert_with_reason() {
     }
 }
 
-/// The inspector exposes the deepest reverted frame's decoded payload —
-/// which the handler uses for `revertReason` so wrappers like EntryPoint's
-/// `FailedOp(...)` don't mask the root cause. Single-frame case: WLD reverts
-/// directly with no wrapper.
+/// The inspector exposes the terminal failure path's decoded payload. In this
+/// single-frame case, WLD reverts directly with no wrapper.
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-async fn test_deepest_revert_reason_decodes_payload() {
+async fn test_terminal_revert_reason_decodes_payload() {
     let mut db = forked_db!();
     let caller = address!("00000000000000000000000000ffffffffffffff");
     db.insert_account_info(
@@ -766,7 +766,7 @@ async fn test_deepest_revert_reason_decodes_payload() {
         },
     );
 
-    let mut evm = OpEvmFactory::default().create_evm_with_inspector(
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm_with_inspector(
         &mut db,
         simulate_evm_env(),
         SimulationInspector::default(),
@@ -798,16 +798,16 @@ async fn test_deepest_revert_reason_decodes_payload() {
 
     let (_, inspector, _) = evm.components_mut();
     assert_eq!(
-        inspector.take_deepest_revert_reason().as_deref(),
+        inspector.terminal_revert_reason().as_deref(),
         Some("ERC20: transfer amount exceeds balance"),
     );
 }
 
-/// Halt frames (OOG, invalid opcode, etc.) carry no decodable payload, so
-/// the inspector returns `None` and the handler falls back to the
-/// `HaltReason` debug name for `revertReason`.
+/// Halt frames carry no ABI revert payload, but the inspector still reports
+/// their instruction-level halt reason. For a top-level halt, the handler may
+/// prefer the richer `HaltReason` from [`ExecutionResult`].
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-async fn test_deepest_revert_reason_skips_halts() {
+async fn test_terminal_revert_reason_reports_halts() {
     let mut db = forked_db!();
     let caller = address!("00000000000000000000000000ffffffffffffff");
     db.insert_account_info(
@@ -818,7 +818,7 @@ async fn test_deepest_revert_reason_skips_halts() {
         },
     );
 
-    let mut evm = OpEvmFactory::default().create_evm_with_inspector(
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm_with_inspector(
         &mut db,
         simulate_evm_env(),
         SimulationInspector::default(),
@@ -855,7 +855,10 @@ async fn test_deepest_revert_reason_skips_halts() {
     );
 
     let (_, inspector, _) = evm.components_mut();
-    assert!(inspector.take_deepest_revert_reason().is_none());
+    assert_eq!(
+        inspector.terminal_revert_reason().as_deref(),
+        Some("OutOfGas"),
+    );
 }
 
 /// Trace captures top-level calls from a simulated execution.
@@ -870,7 +873,7 @@ async fn test_trace_captures_calls() {
         },
     );
 
-    let mut evm = OpEvmFactory::default().create_evm_with_inspector(
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm_with_inspector(
         &mut db,
         simulate_evm_env(),
         SimulationInspector::default(),
@@ -901,9 +904,16 @@ async fn test_trace_captures_calls() {
     assert!(matches!(result.result, ExecutionResult::Success { .. }));
 
     let (_, inspector, _) = evm.components_mut();
-    let trace = inspector.take_trace_entries();
+    let trace = inspector
+        .trace_entries()
+        .expect("completed simulation should produce a complete trace");
     for entry in &trace {
-        assert!(entry.selector.starts_with("0x"));
+        assert!(
+            entry
+                .selector
+                .as_deref()
+                .is_some_and(|selector| selector.starts_with("0x"))
+        );
     }
 }
 
@@ -999,7 +1009,7 @@ async fn test_trace_detects_malicious_safe_call() {
     // selector is correctly decoded. Even though the call will revert
     // (not authorized), the inspector still captures it.
 
-    let mut evm = OpEvmFactory::default().create_evm_with_inspector(
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm_with_inspector(
         &mut db,
         simulate_evm_env(),
         SimulationInspector::default(),
@@ -1044,11 +1054,13 @@ async fn test_trace_detects_malicious_safe_call() {
     ];
 
     let (_, inspector, _) = evm.components_mut();
-    let trace = inspector.take_trace_entries();
+    let trace = inspector
+        .trace_entries()
+        .expect("completed simulation should produce a complete trace");
     // Log what the trace captured (informational)
     for entry in &trace {
         println!(
-            "trace: to={} method={:?} selector={}",
+            "trace: to={:?} method={:?} selector={:?}",
             entry.to, entry.method, entry.selector
         );
         // If any trace entry matches a forbidden method, flag it
@@ -1084,7 +1096,7 @@ async fn test_simulate_real_approve_emits_only_exposure() {
             ..Default::default()
         },
     );
-    let mut evm = OpEvmFactory::default().create_evm(&mut db, simulate_evm_env());
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm(&mut db, simulate_evm_env());
 
     let spender = address!("000000000022D473030F116dDEE9F6B43aC78BA3");
     let result = RethEvm::transact(
@@ -1517,7 +1529,7 @@ async fn test_inspector_captures_create_via_call_frame() {
     );
     install_runtime_code(&mut db, trampoline, CREATE_TRAMPOLINE_BYTECODE);
 
-    let mut evm = OpEvmFactory::default().create_evm_with_inspector(
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm_with_inspector(
         &mut db,
         simulate_evm_env(),
         SimulationInspector::default(),
@@ -1546,6 +1558,18 @@ async fn test_inspector_captures_create_via_call_frame() {
     let (deployer, deployed) = creations[0];
     assert_eq!(deployer, trampoline, "deployer is the trampoline contract");
     assert_ne!(deployed, Address::ZERO, "deployed address populated");
+
+    let trace = inspector
+        .trace_entries()
+        .expect("completed simulation should produce a complete trace");
+    let create = trace
+        .iter()
+        .find(|entry| entry.kind == TraceKind::Create)
+        .expect("CREATE should appear in trace");
+    assert_eq!(create.depth, 1);
+    assert_eq!(create.outcome, TraceOutcome::Success);
+    assert_eq!(create.to, Some(deployed));
+    assert_eq!(create.revert_reason, None);
 }
 
 /// CREATE inside a frame that subsequently REVERTs is rolled back: the
@@ -1565,7 +1589,7 @@ async fn test_inspector_drops_create_on_parent_revert() {
     );
     install_runtime_code(&mut db, trampoline, CREATE_THEN_REVERT_BYTECODE);
 
-    let mut evm = OpEvmFactory::default().create_evm_with_inspector(
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm_with_inspector(
         &mut db,
         simulate_evm_env(),
         SimulationInspector::default(),
@@ -1650,7 +1674,7 @@ async fn test_fresh_deploy_emits_only_contract_creation() {
     let sender = address!("e3e5dd70abcccc67fce203608cef7fab4d7d07d7");
     let call_data: Bytes = "0x7bb3742800000000000000000000000038869bf66a61cf6bdb996a6ae40d5853fd43b52600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000004448d80ff0a000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000003f900c301bace6e9409b1876347a3dc94ec24d18c1fe4000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003a4855700fd00000000000000000000000000000000000000000000000000000000000001a000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000000000000000000000000000000000000000022000000000000000000000000000000000000000000000000000000000000002a00000000000000000000000000000000000000000000000000000000000000340000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003600000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003800000000000000000000000000000000000000000000000000000000000000008546875674c696665000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000326544c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004968747470733a2f2f63646e2e7075662e776f726c642f697066732f516d574c57724d51526b41706b555044363832785635636a47764c456e3148773966314d53476e655759594241520000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006cc389206469666572656e74652c2070656e7361646f20656d20746f646f73206f73207175652071756572656d2067616e686172206d6173206e616f20706f64656d20696e766573746972206d7569746f2e0a556d20746f6b656e206469666572656e7465206520756e69636f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000".parse().expect("valid hex");
 
-    let mut evm = OpEvmFactory::default().create_evm_with_inspector(
+    let mut evm = OpEvmFactory::<OpTx>::default().create_evm_with_inspector(
         &mut db,
         simulate_evm_env(),
         SimulationInspector::default(),

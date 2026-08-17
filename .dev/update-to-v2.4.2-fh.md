@@ -303,8 +303,52 @@ refresh it there when convenient.
 
 **Still TODO in this repo:**
 - [ ] Unit tests on the Firehose-path crates.
-- [ ] Battlefield validation.
+- [ ] Battlefield validation (runbook below).
 - [ ] Decide the release tag name and cut it.
+
+## Battlefield runbook (world-chain harness)
+
+A world-chain target already exists in `battlefield-ethereum` on branch **`feature/world-chain`**
+(commit `c5e61bb`). Design: world-chain native devnet (`just devnet up -d`) as the sequencer
+network, plus a follower kona-node container driving the Firehose world-chain EL on authrpc
+`:28551`; `fireeth` wraps that EL. Tests hit the sequencer RPC (dynamic port, written to
+`scripts/world_chain/.devnet/rpc-url`; override with `WORLD_CHAIN_RPC_URL`).
+
+Three terminals:
+1. `./scripts/world_chain/run_world_chain_devnet.sh`
+2. `./scripts/run_firehose_world_chain_devnet.sh` (set `WORLD_CHAIN_BINARY` to the fh binary)
+3. `pnpm test:fh3.0:world-chain-devnet`
+
+Then `fireeth tools compare-blocks-rpc localhost:8089 http://localhost:28545 <from> <to>`.
+
+**v2.4.0 baseline to beat: 79 passing / 6 pending / 0 failing**, compare-blocks all identical.
+
+Prerequisites and traps carried forward from v2.4.0:
+- **Restart the devnet between suite runs.** Rerunning without a restart fails
+  `prague/setcode_set_delegations` — the EIP-7702 delegation persists and ordinals shift by 1.
+- Use the default **3** sequencers. `--sequencers 1` is unusable: op-conductor marks the lone
+  sequencer unhealthy on min-peer-count and stops sequencing.
+- `git submodule update --init --recursive` is required for the devnet's forge proof-system deploy.
+- The follower kona-node needs `--restart unless-stopped` (it exits fatally if the EL engine API is
+  down at startup), and the follower EL needs `--trusted-peers` (sequencer EL enodes via
+  `admin_nodeInfo`) to backfill bodies — kona only feeds unsafe tips.
+- kona bootnodes are `enode://` URLs, **not** libp2p multiaddrs.
+- Jovian EIP-7825 (tx gas cap 2^24) vs the devnet's 60M block gas limit breaks bare
+  `eth_estimateGas` ("intrinsic gas too high"); the battlefield global setup clamps estimation on
+  this network. Possibly worth an upstream report — affects any tooling on Jovian world-chain
+  networks whose block gas limit exceeds 2^24.
+- **LIB-stuck-at-0 fix is required** or fireeth never opens its gRPC endpoints. ✅ **Verified
+  present** in `release/world-chain-2.4.x`: commit `20d83d758d` "Advertise finalized head as LIB on
+  engine-API path", code at `rust/op-reth/crates/firehose/src/engine_validator.rs:702-716`.
+- The old `rustup override 1.95.0` on this repo is **gone** (see above); the Justfile uses bare
+  `cargo`, which now picks up `rust-toolchain.toml`'s `nightly-2026-07-01`. That is what v2.4.2
+  requires, so this is correct — but it is a change from the v2.4.0 run.
+
+Known coverage gaps, unchanged from v2.4.0: locally-built `no_tx_pool` block tracing (the op-reth
+payload-builder feature) is not wired into world-chain's custom payload builder — sequencer-only
+concern, follower fh node unaffected; flashblocks pre-canonical Firehose streaming is out of scope.
+If the flashblocks fast path ever skips `newPayload` re-execution, tracing coverage must be
+revisited.
 - [ ] `cargo check` / `cargo build`, then tests.
 - [ ] `CHANGELOG.sf.md` entry.
 - [ ] Battlefield validation (see v2.4.0 notes for the world-chain devnet harness caveats).

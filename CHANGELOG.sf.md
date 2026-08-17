@@ -35,10 +35,26 @@ none of them defects — see "Validation" below.
 
 ### Note for operators
 
-`fireeth` holds its firehose/substreams gRPC endpoints closed until the merger writes the first
-merged-blocks bundle — roughly the first 100 blocks plus a merger cycle. On a ~2s-block devnet that
-is about five minutes of `waiting to read the first_streamable_block` warnings before `:8089`
-accepts connections. This is normal startup behavior, not a fault.
+When `fireeth` starts against a **fresh** data dir with `--common-first-streamable-block=1`, its
+firehose/substreams gRPC endpoints stay closed for several minutes while it logs
+`waiting to read the first_streamable_block`. On the ~2s-block world-chain devnet this was about
+five minutes; the endpoint opened one second after the merger wrote the first merged-blocks bundle
+(`0000000000.dbin.zst`), so the two are clearly correlated.
+
+This is **not** caused by anything in this release, and not by a fireeth upgrade either:
+`firehose/info/endpoint_info.go` is byte-identical between the firehose-core in use during the
+v2.4.0 validation (`v1.15.1-0.20260709…`) and the current `v1.17.0`. The v2.4.0 run simply never
+noticed it, because that validation was a manual three-terminal procedure where minutes elapse
+between starting fireeth and launching the suite. Automating the sequence surfaces it.
+
+Practical note for anyone running Battlefield: **wait for `:8089` to accept connections before
+starting the suite**, rather than assuming fireeth is ready when it logs `Hub is ready`. Starting
+too early fails in global setup with `Block not found in Firehose ... ConnectError: [unavailable]`,
+which looks like a tracing fault but is not one.
+
+Unexplained residual: `getBlockFromOneBlockStore` polls every 500ms and block 1's one-block file is
+written early, so that probe ought to satisfy the gate well before the merged bundle exists. It did
+not. That is a firehose-core question rather than a world-chain one and was not chased further.
 
 ### Changed
 

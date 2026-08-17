@@ -3,6 +3,58 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## Unreleased
+
+Merge of upstream `v2.4.2` (162 commits on top of `v2.4.0`). Upstream re-pointed its entire EVM
+dependency base in this release, so all three StreamingFast forks were rebased alongside it.
+
+### Changed
+
+- Upstream moved reth from `paradigmxyz/reth` tag `v2.3.0` to **`op-rs/reth`** rev `aef8d3ef`
+  (the External OP Labs shallow fork: reth `v2.4.1` +10/−3, carrying one cherry-pick of
+  paradigmxyz/reth#26431). The Firehose patch key therefore changes from
+  `[patch."https://github.com/paradigmxyz/reth"]` to `[patch."https://github.com/op-rs/reth"]`.
+  Note upstream describes that fork as temporary, so expect a move back to a `paradigmxyz/reth`
+  tag in a future release.
+- Fork pins:
+  - `reth-firehose` → `streamingfast/reth` tag `op-rs-aef8d3e-fh` (Firehose on the op-rs base).
+    A sibling tag `v2.4.1-fh` on branch `firehose/2.x` carries the same Firehose commits on
+    plain reth `v2.4.1`, for consumers tracking real reth releases.
+  - `reth-optimism-firehose` → `streamingfast/optimism` branch `release/world-chain-2.4.x`
+    (rebased onto upstream tag `op-reth/v2.4.2`). The previous `release/world-chain-2.x`
+    branch is left in place for the shipped `v2.4.0-fh3.1-1` build.
+  - `alloy-evm` → `streamingfast/evm` tag `v0.37.0-sf` (alloy-rs/evm#323 is still unmerged
+    upstream, so the system-calls-through-Inspector patch is still required).
+- Dependency floor moves inherited from upstream: revm 40 → 41, alloy 2.0.5 → =2.1.1,
+  revm-inspectors 0.40 → 0.41, alloy-evm 0.36 → 0.37, reth-codecs and reth-primitives-traits
+  0.4.1 → 0.5.0, sqlx 0.8.6 → 0.9.0.
+- Upstream turned `WorldChainEvmConfig` from a type alias into a witness-collecting wrapper
+  struct. `WorldChainFirehoseEvmConfig` now wraps *outside* that collector, so the Firehose
+  executor still sees canonical execution while witness capture stays intact.
+
+### Fixed
+
+- `WorldChainBlockExecutor` now forwards `execute_transaction_with_commit_condition` to the inner
+  executor. `OpBlockExecutor` overrides that method to snapshot refund-policy state and restore it
+  when a candidate transaction is declined or errors; the witness wrapper implemented only
+  `BlockExecutor`'s required methods, so the trait default ran instead and a declined candidate
+  could bleed refund state into a later committed transaction, diverging the producer's payload
+  from commit-only derivation paths. Affects the payload-building path only — canonical execution,
+  and therefore Firehose output, was never wrong. This is an upstream bug; patched here rather than
+  waiting on worldcoin.
+
+### Notes
+
+- The Firehose execution path deliberately does **not** opt into reth's new revmc JIT support
+  (`ConfigureEvm::with_jit_support`). Under a JIT-compiled frame only `log`, `selfdestruct` and
+  `frame_end` reach the `Inspector` — `step`/`step_end` never fire — so per-opcode storage and
+  gas-reason data would silently disappear from the trace. Tracing fidelity is chosen over speed.
+- Verified unchanged for tracing purposes across this bump, by direct source diff: the revm
+  `Inspector` trait, `JournalEntry`, `CallScheme`, `CreateScheme`, `InstructionResult`, alloy
+  transaction and receipt envelope variants, `OpHardfork` activations, and the OP fee-vault
+  address and fee-component sets. No new transaction type, receipt variant, fee vault, or
+  inspector-bypassing state mutation was introduced.
+
 ## v2.4.0-fh3.1-1
 
 ### Fixed

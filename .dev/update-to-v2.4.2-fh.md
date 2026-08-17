@@ -283,12 +283,31 @@ execution patches. Optimism side is 498 commits.
   `commit_transaction`. In this bump `OpBlockExecutor` **newly overrides** it to snapshot/restore
   refund-policy state on a declined candidate. Any wrapper forwarding only the 7 required methods
   reinstates the default, so the inner override never runs.
-  Applies to `FirehoseBlockExecutor` / `FirehoseWrappedExecutor` — dispatched to the reth agent.
-  **Also applies to upstream world-chain's own new `WorldChainBlockExecutor`**
-  (`crates/evm/src/execution/executor.rs:41-98`), which forwards only the 7. That is an upstream
-  worldcoin bug affecting OP refund behavior, not only tracing → report upstream.
-  Fix shape: forward every defaulted method explicitly and add a compile-time guard so future
-  upstream defaults cannot be silently inherited.
+  **SCOPE CORRECTED after reading the source directly** (`streamingfast/evm` `v0.37.0-sf`
+  `crates/evm/src/block/mod.rs`; OP impl at `op-reth/v2.4.2`
+  `rust/alloy-op-evm/src/block/mod.rs:828-857`):
+
+  - OP's override is gated on `self.post_exec.is_producing()`. Outside Produce mode the snapshot is
+    `None` and the override is behaviorally identical to the default. Upstream's own comment: *"A
+    declined candidate must not affect a later committed transaction, or the producer's payload can
+    diverge from commit-only derivation paths."* So the blast radius is the **payload-building /
+    producing path only — canonical execution, the path Firehose traces, is unaffected.** Not a
+    tracing bug. It is a sequencer payload-divergence bug.
+  - **Exactly one method needs forwarding: `execute_transaction_with_commit_condition`.** The
+    `execute_transaction*` family defaults route through it, so that one covers them.
+  - **Must NOT be forwarded**, contrary to the audit's list: `apply_post_execution_changes` (default
+    is `self.finish().map(..)` — forwarding to the inner would bypass our own `finish()` override
+    and with it the witness capture) and `execute_block` (default dispatches back through the
+    wrapper's own overrides; forwarding bypasses the wrapper entirely).
+
+  Confirmed present in **our** tree: `WorldChainBlockExecutor`
+  (`crates/evm/src/execution/executor.rs:42-98`) implements only the 7 required methods
+  (`apply_pre_execution_changes`, `execute_transaction_without_commit`, `commit_transaction`,
+  `finish`, `evm_mut`, `evm`, `receipts`). This is **upstream worldcoin's own file and upstream's
+  own bug** — decision pending on whether to patch locally (future merge conflict) or report
+  upstream and carry it. Dispatched to the reth and optimism agents for our own executors.
+  A compile-time guard that fails the build when the trait gains a new defaulted method is worth
+  adding regardless.
 - **H2. `validate_block_post_execution_with_hashed_state` changed shape *and* semantics.**
   reth `crates/engine/primitives/src/lib.rs:223-232` (#26330, #26398): `state_updates` became
   `impl FnOnce() -> &'a HashedPostState`, new `parent_state: impl FnOnce() -> ProviderResult<StateProviderBox>`,

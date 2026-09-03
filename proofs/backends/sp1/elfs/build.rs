@@ -8,9 +8,9 @@
 //! `fs::read` of an ELF file.
 //!
 //! Behaviour:
-//! - Uses `docker: true` by default with the pinned SP1 toolchain tag
-//!   (matches the `=6.1.0` version of `sp1-sdk` / `sp1-zkvm` the workspace
-//!   pins to) for bit-for-bit reproducible ELFs. This is the ecosystem
+//! - Uses `docker: true` by default with the pinned SP1 toolchain image
+//!   (matches the `=6.3.1` version of `sp1-zkvm` the guest workspace pins to)
+//!   for bit-for-bit reproducible ELFs. This is the ecosystem
 //!   standard used by op-succinct, sp1-helios, and all other SP1 adopters.
 //!   Docker provides reproducibility by fixing the build environment path
 //!   layout inside the container.
@@ -52,9 +52,9 @@ fn main() {
         .unwrap_or(true);
 
     // The SP1 guest programs live in their own nested cargo workspace at
-    // `proofs/backends/sp1/programs/`, but they have path dependencies that
+    // `proofs/measured/sp1-programs/`, but they have path dependencies that
     // reach outside that nested workspace (e.g. `world-chain-proof-core`
-    // at `proofs/core`). By default `sp1_build` mounts the program's
+    // at `proofs/measured/core`). By default `sp1_build` mounts the program's
     // cargo-metadata workspace root into the Docker container at
     // `/root/program`, which would only expose the programs workspace
     // and break those out-of-workspace path deps (causing the container
@@ -92,8 +92,14 @@ fn main() {
             program_dir,
             sp1_build::BuildArgs {
                 docker,
-                tag: "v6.1.0".to_string(),
+                // Pin the linux/amd64 manifest that produced measurements.json. The tag remains in the
+                // reference for readability, while the digest prevents a mutable tag from
+                // silently rotating the guest ELFs and their on-chain vkeys.
+                tag:
+                    "v6.3.1@sha256:7c1c8201de6f63e3f1fb9075bd9a67a4c5fc8c2d546d11a5ff71587bb51e6eb3"
+                        .to_string(),
                 ignore_rust_version: true,
+                locked: true,
                 workspace_directory: Some(workspace_root.clone()),
                 ..Default::default()
             },
@@ -102,6 +108,6 @@ fn main() {
 
     // Paths are relative to this build script's CARGO_MANIFEST_DIR
     // (proofs/backends/sp1/elfs).
-    build("../programs/range-ethereum");
-    build("../programs/aggregation");
+    build("../../../measured/sp1-programs/range-ethereum");
+    build("../../../measured/sp1-programs/aggregation");
 }

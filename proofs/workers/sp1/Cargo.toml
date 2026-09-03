@@ -1,6 +1,6 @@
 [package]
 name = "world-chain-proof-sp1-worker"
-version.workspace = true
+version = "1.0.0-rc.1"
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
@@ -20,6 +20,7 @@ world-chain-chainspec.workspace = true
 world-chain-proof-core.workspace = true
 world-chain-proof-kona-host.workspace = true
 world-chain-proof-metrics.workspace = true
+world-chain-proof-protocol.workspace = true
 world-chain-proof-sp1-host = { workspace = true, features = ["sp1"] }
 world-chain-proof-sp1-types.workspace = true
 world-chain-proof-worker.workspace = true
@@ -40,12 +41,14 @@ anyhow.workspace = true
 async-trait.workspace = true
 clap.workspace = true
 dotenvy.workspace = true
+futures.workspace = true
 reqwest = { workspace = true, features = ["blocking", "json", "rustls-tls"] }
 rustls = { version = "0.23", default-features = false, features = ["ring"] }
+serde.workspace = true
 serde_cbor = "0.11"
 serde_json.workspace = true
 thiserror.workspace = true
-tokio = { workspace = true, features = ["rt-multi-thread", "signal", "time"] }
+tokio = { workspace = true, features = ["rt-multi-thread", "signal", "sync", "time"] }
 tracing.workspace = true
 telemetry-batteries.workspace = true
 url.workspace = true
@@ -54,4 +57,7 @@ url.workspace = true
 testcontainers.workspace = true
 testcontainers-modules.workspace = true
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "time"] }
-world-chain-proof-protocol.workspace = true
+
+# Proofs release train: cargo-release bumps every shared-version member in lockstep.
+[package.metadata.release]
+shared-version = "proofs"

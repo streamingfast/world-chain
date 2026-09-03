@@ -1,6 +1,6 @@
 [package]
 name = "world-chain-proof-worker"
-version.workspace = true
+version = "1.0.0-rc.1"
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
@@ -16,6 +16,7 @@ world-chain-proof-metrics.workspace = true
 world-chain-prover-service.workspace = true
 
 # misc
+alloy-primitives = { workspace = true, features = ["serde"] }
 anyhow.workspace = true
 async-trait.workspace = true
 tokio = { workspace = true, features = ["macros", "rt", "sync", "time"] }
@@ -24,5 +25,8 @@ tracing.workspace = true
 backon.workspace = true
 
 [dev-dependencies]
-alloy-primitives = { workspace = true, features = ["serde"] }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread", "time"] }
+
+# Proofs release train: cargo-release bumps every shared-version member in lockstep.
+[package.metadata.release]
+shared-version = "proofs"

@@ -36,9 +36,12 @@ parentRef, attempt)` and the game's factory UUID is
 - if a game exists, it becomes the `parent_ref` and we continue this loop
 - if it doesn't exist - i.e. the address is `0x00..00`, then the current `parent_ref` is returned
 
-The proposer resolves every determined game on this selected lineage. A positive resolution may
-advance the anchor after the registry finality delay; a proof-timeout resolution permits the next
-attempt to be created.
+The proposer resolves every determined game parent-first on this selected lineage. A child may
+resolve as soon as its parent resolves successfully, so consecutive games' registry finality
+windows can overlap. A positive resolution may advance the anchor after its own finality delay; a
+proof-timeout resolution permits the next attempt to be created. For anchor advancement, the
+proposer walks resolved defender-winning games newest-to-oldest and closes the first game whose
+claim is valid according to the registry, allowing it to skip a newer game still in its airgap.
 
 ## Retry operations
 
@@ -62,4 +65,7 @@ Bonds are custodied in `DelayedWETH` and paid out in two phases. The first `clai
 call unlocks the credit; the second, after the WETH delay, withdraws and transfers it. Both are
 gated on `AnchorStateRegistry.isGameFinalized`, since `claimCredit` calls `closeGame`, which reverts
 until the registry's finality airgap has elapsed. The bond manager keeps every discovered
-proposer-owned game tracked until it is resolved and its pending withdrawal is drained.
+proposer-owned game tracked until it is resolved and its pending withdrawal is drained. For games
+whose embedded proposal domain differs from the currently registered domain, it also submits any
+available positive or negative resolution because those games are no longer visible to the selected
+lineage proposer. Same-domain outcomes remain with the proposer to avoid racing retry creation.

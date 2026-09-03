@@ -430,7 +430,7 @@ impl LineageProvider for FakeExecution {
 #[async_trait]
 impl ProposerClient for FakeExecution {
     /// The fake has no registry finality airgap: a resolved game is immediately closeable.
-    async fn is_game_finalized(&self, _game: Address) -> Result<bool, ProposerError> {
+    async fn is_game_claim_valid(&self, _game: Address) -> Result<bool, ProposerError> {
         Ok(true)
     }
 
@@ -687,6 +687,17 @@ impl FakeProofBackend {
 impl ClaimedProofJobHandler for FakeProofBackend {
     fn lane(&self) -> ProofBackend {
         self.lane
+    }
+
+    fn verifier_id(&self) -> B256 {
+        match self.lane {
+            ProofBackend::Sp1 => AGGREGATION_VKEY,
+            ProofBackend::Nitro => TEE_IMAGE_ID,
+        }
+    }
+
+    fn range_vkey_commitment(&self) -> Option<B256> {
+        (self.lane == ProofBackend::Sp1).then_some(RANGE_VKEY_COMMITMENT)
     }
 
     async fn handle_claimed_job(&self, job: ProofJob) -> anyhow::Result<ProofData> {

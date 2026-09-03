@@ -1,6 +1,6 @@
 [package]
 name = "world-chain-proof-nitro-worker"
-version.workspace = true
+version = "1.0.0-rc.1"
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
@@ -19,10 +19,12 @@ path = "src/main.rs"
 # Generic worker infrastructure
 world-chain-proof-worker.workspace = true
 world-chain-proof-metrics.workspace = true
+world-chain-proof-protocol.workspace = true
 world-chain-prover-service.workspace = true
 
 # Nitro prover (host-side, requires Linux + enclave feature)
 world-chain-proof-nitro-enclave = { workspace = true, features = ["enclave"] }
+world-chain-proof-nitro-register.workspace = true
 
 # Witness generation (shared with sp1-worker)
 world-chain-proof-kona-host.workspace = true
@@ -32,6 +34,7 @@ world-chain-chainspec.workspace = true
 
 # Alloy types
 alloy-primitives = { workspace = true, features = ["serde"] }
+alloy-provider = { workspace = true, features = ["reqwest", "reqwest-rustls-tls"] }
 alloy-sol-types.workspace = true
 
 # Async / runtime
@@ -50,3 +53,7 @@ dotenvy.workspace = true
 
 # Misc
 hex.workspace = true
+
+# Proofs release train: cargo-release bumps every shared-version member in lockstep.
+[package.metadata.release]
+shared-version = "proofs"

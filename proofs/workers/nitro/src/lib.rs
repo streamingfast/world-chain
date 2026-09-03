@@ -22,10 +22,10 @@
 
 #![cfg(target_os = "linux")]
 
-use alloy_primitives::Bytes;
+use alloy_primitives::{B256, Bytes, keccak256};
 use alloy_sol_types::SolValue;
-use anyhow::{Context, Result, anyhow, bail};
-use tracing::info;
+use anyhow::{Context, bail};
+use tracing::{debug, info};
 use world_chain_proof_kona_host::online::{
     OnlineHostConfig, RangeWitnessRequest, build_range_input,
 };
@@ -33,6 +33,7 @@ use world_chain_proof_nitro_enclave::{
     ExpectedPcrs, NitroRangeProofRequest,
     host::{EnclaveEndpoint, NitroProver},
 };
+use world_chain_proof_protocol::ProofGameProvider;
 use world_chain_proof_worker::{ClaimedProofJobHandler, ProofJob};
 use world_chain_prover_service::{ProofBackend, ProofData};
 
@@ -42,50 +43,65 @@ use world_chain_prover_service::{ProofBackend, ProofData};
 
 #[derive(Clone, Debug)]
 pub struct NitroBackendConfig {
-    pub block_interval: u64,
     pub online: OnlineHostConfig,
     pub enclave_cid: u32,
     pub enclave_port: u32,
     pub expected_pcrs: ExpectedPcrs,
 }
 
-pub struct NitroBackend {
+pub struct NitroBackend<G> {
     config: NitroBackendConfig,
+    game_provider: G,
 }
 
-impl NitroBackend {
-    pub fn new(config: NitroBackendConfig) -> Self {
-        Self { config }
+impl<G> NitroBackend<G> {
+    pub fn new(config: NitroBackendConfig, game_provider: G) -> Self {
+        Self {
+            config,
+            game_provider,
+        }
     }
 }
 
 #[async_trait::async_trait]
-impl ClaimedProofJobHandler for NitroBackend {
+impl<G> ClaimedProofJobHandler for NitroBackend<G>
+where
+    G: ProofGameProvider,
+{
     fn lane(&self) -> ProofBackend {
         ProofBackend::Nitro
+    }
+
+    fn verifier_id(&self) -> B256 {
+        keccak256(self.config.expected_pcrs.pcr0)
     }
 
     async fn handle_claimed_job(&self, job: ProofJob) -> anyhow::Result<ProofData> {
         let request = &job.request;
 
-        let start_block = request
-            .l2_block_number
-            .checked_sub(self.config.block_interval)
-            .ok_or_else(|| {
-                anyhow!(
-                    "l2_block_number {} is below block_interval {}",
-                    request.l2_block_number,
-                    self.config.block_interval
-                )
-            })?;
+        let game_context = self
+            .game_provider
+            .proof_game_context(request.game)
+            .await
+            .context("failed to read proof game context")?;
+        let start_block = game_context
+            .validated_start_block(
+                request.game,
+                request.root_claim,
+                request.l2_block_number,
+                request.l1_head,
+                self.config.online.rollup_config_hash,
+            )
+            .context("proof request does not match its game")?;
 
-        info!(
+        debug!(
             proof_id = %request.id(),
             game_address = %request.game,
             l2_block_number = request.l2_block_number,
             pre_state_block = start_block,
+            block_interval = game_context.block_interval,
             worker_id = %job.worker_id,
-            "nitro worker claimed proof job"
+            "validated Nitro proof range against game"
         );
 
         let endpoint =
@@ -173,46 +189,4 @@ impl ClaimedProofJobHandler for NitroBackend {
             signature: Bytes::from(artifact.signature),
         })
     }
-}
-
-// ──────────────────────────────────────────────────────────────────────────────────────
-// PCR helpers (used by the binary to validate CLI inputs)
-// ──────────────────────────────────────────────────────────────────────────────────────
-
-pub fn build_expected_pcrs(
-    pcr0: Option<&str>,
-    pcr1: Option<&str>,
-    pcr2: Option<&str>,
-) -> Result<ExpectedPcrs> {
-    use tracing::warn;
-    match (pcr0, pcr1, pcr2) {
-        (Some(p0), Some(p1), Some(p2)) => Ok(ExpectedPcrs {
-            pcr0: hex_to_pcr(p0)?,
-            pcr1: hex_to_pcr(p1)?,
-            pcr2: hex_to_pcr(p2)?,
-        }),
-        (None, None, None) => {
-            warn!(
-                "PCRs not configured; using placeholder zeros. \
-                 Production REQUIRES --pcr0/--pcr1/--pcr2."
-            );
-            Ok(ExpectedPcrs::PLACEHOLDER)
-        }
-        _ => bail!("provide all three of --pcr0/--pcr1/--pcr2, or none"),
-    }
-}
-
-pub fn hex_to_pcr(s: &str) -> Result<[u8; world_chain_proof_nitro_enclave::PCR_LEN]> {
-    let bytes =
-        hex::decode(s.trim_start_matches("0x")).with_context(|| format!("invalid PCR hex: {s}"))?;
-    if bytes.len() != world_chain_proof_nitro_enclave::PCR_LEN {
-        bail!(
-            "PCR must be {} bytes, got {}",
-            world_chain_proof_nitro_enclave::PCR_LEN,
-            bytes.len()
-        );
-    }
-    let mut arr = [0u8; world_chain_proof_nitro_enclave::PCR_LEN];
-    arr.copy_from_slice(&bytes);
-    Ok(arr)
 }

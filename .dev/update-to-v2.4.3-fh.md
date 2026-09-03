@@ -93,7 +93,7 @@ tar so the build regenerates it.
 - [x] `cargo check -p op-reth -p reth-optimism-firehose -p alloy-op-evm` — clean.
 - [x] `cargo test -p reth-optimism-firehose -p alloy-op-evm` — 76 passed. `cargo test -p reth-optimism-node --test it` — 14 passed. CLI snapshot (`--features dev`) — 5 passed.
 - [x] `CHANGELOG.sf.md` entry
-- [x] PR: streamingfast/optimism#15 against `release/op-reth-2.x` (branch pushed, commit `b8095190`). Tag `world-chain-v2.4.3-fh3.1` still to create after merge.
+- [x] PR: streamingfast/optimism#15 merged as `02eb3aa4`, tagged `world-chain-v2.4.3-fh3.1`.
 
 Tag name is undecided: `96ffbb2a` is untagged upstream, so the previous
 `op-reth-v<version>-fh3.1` scheme has no version to hang on. `op-reth-96ffbb2a-fh3.1`
@@ -114,7 +114,7 @@ trigger is `*-fh*`, so it does not constrain the choice.
       `world-chain-proof-succinct-elfs` fails without network (SP1 docker guest build);
       exclude it.
 - [x] `CHANGELOG.sf.md` entry
-- [x] PR against `release/2.x` (branch `bump/v2.4.3`). Tag after streamingfast/optimism#15 is merged+tagged and the Cargo.toml rev is flipped to tag `world-chain-v2.4.3-fh3.1`.
+- [x] PR against `release/2.x` (branch `bump/v2.4.3`). streamingfast/optimism#15 merged (merge commit `02eb3aa4`) and tagged `world-chain-v2.4.3-fh3.1`; Cargo.toml pins flipped to the tag.
 
 ## Known doc drift (not blocking)
 

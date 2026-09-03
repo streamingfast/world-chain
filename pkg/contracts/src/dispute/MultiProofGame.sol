@@ -32,7 +32,6 @@ import {
     ClaimAlreadyResolved,
     GameNotFinalized,
     GameNotOver,
-    GameNotResolved,
     GameOver,
     GamePaused,
     IncorrectBondAmount,
@@ -190,7 +189,7 @@ contract MultiProofGame is Clone, ISemver, IMultiProofGame {
     constructor(GameConfig memory config) {
         if (
             config.blockInterval == 0 || config.challengePeriod == 0 || config.proofPeriod <= config.challengePeriod
-                || config.proposerBond == 0 || config.challengerBond == 0 || config.proofThreshold == 0
+                || config.proposerBond == 0 || config.challengerBond == 0 || config.proofThreshold < 2
                 || config.proofThreshold > LibProof.PROOF_LANE_COUNT || config.protocolFeeRecipient == address(0)
                 || config.aggregationVKey == bytes32(0) || config.rangeVKeyCommitment == bytes32(0)
                 || config.teeImageId == bytes32(0) || address(config.anchorStateRegistry) == address(0)
@@ -473,6 +472,8 @@ contract MultiProofGame is Clone, ISemver, IMultiProofGame {
     }
 
     /// @notice Proves the game through one of the proof lanes.
+    /// @dev The lane proof does not commit to its reward recipient. Therefore proof submissions
+    ///      should be broadcasted via a private relay; To avoid the possibility of being front run.
     /// @param proof A compact encoding of the lane id, the proof recipient, and the proof payload.
     function submitProofLane(bytes calldata proof) external returns (ProposalStatus) {
         // INVARIANT: Cannot prove if the game is already resolved.
@@ -529,8 +530,7 @@ contract MultiProofGame is Clone, ISemver, IMultiProofGame {
     }
 
     /// @notice Returns the parent's resolution inputs.
-    /// @dev The anchor sentinel counts as a finalized parent: the anchor is only ever set from
-    ///      a claim-valid game, so its root is already trusted.
+    /// @dev The anchor sentinel counts as a resolved parent: its root is already trusted.
     function _parentResolution() internal view returns (GameStatus parentStatus, bool parentBlacklisted) {
         address parentRef_ = parentRef();
         if (parentRef_ == address(anchorStateRegistry)) {
@@ -560,7 +560,7 @@ contract MultiProofGame is Clone, ISemver, IMultiProofGame {
                 normalModeCredit[claimData.challenger] += challengerBond;
             }
         } else if (parentStatus == GameStatus.IN_PROGRESS) {
-            // INVARIANT: Cannot resolve a game if the parent game has not been resolved.
+            // INVARIANT: Cannot resolve a game before its parent has resolved.
             revert ParentGameNotResolved();
         } else {
             // INVARIANT: Game must be completed either by clock expiration or the threshold.
@@ -703,9 +703,6 @@ contract MultiProofGame is Clone, ISemver, IMultiProofGame {
         // While the system is paused games are temporarily invalid; closing now would lock in
         // refund mode spuriously.
         if (anchorStateRegistry.paused()) revert GamePaused();
-
-        // Make sure that the game is resolved.
-        if (resolvedAt.raw() == 0) revert GameNotResolved();
 
         IDisputeGame self = IDisputeGame(address(this));
 

@@ -3,6 +3,49 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## v2.4.3-fh3.1
+
+Merge of upstream `v2.4.3` (37 commits on top of `v2.4.2`). Almost all of it is proof-system
+work (SP1 planner, Nitro enclave/register split, measured-crate workspace) that does not touch
+block execution or tracing. The one change that matters here is the op-reth re-pin.
+
+### Changed
+
+- Upstream moved the optimism monorepo from tag `op-reth/v2.4.2` to the untagged `develop` rev
+  `96ffbb2a`, 107 commits ahead, whose tip is the superchain-registry update for the World Chain
+  Karst activations (paired with world-chain's own `set Karst upgrade timestamps`). The
+  `streamingfast/optimism` Firehose line was moved onto that rev and every optimism pin in
+  `Cargo.toml` now points at it (`streamingfast/optimism#15`, tag `world-chain-v2.4.3-fh3.1`).
+  Leaving the old fork in place would have built and run while silently executing pre-Karst
+  op-reth: `[patch]` is keyed by source URL alone and never checks the requested rev.
+- Reth pin is unchanged. Upstream still pins `op-rs/reth` rev `aef8d3ef` both in world-chain and
+  inside op-reth, so `streamingfast/reth` tag `op-reth-v2.4.2-fh3.1` still applies. `alloy-evm`
+  stays at `0.37.0`, so `streamingfast/evm` tag `v0.37.0-sf` still applies.
+
+### Validation
+
+- Battlefield `world-chain-devnet`: **80 passing / 5 pending / 0 failing** (v2.4.2 baseline was
+  79 / 6 / 0). All 280 baseline snapshots from the v2.4.2 run are unchanged. The additional pass is
+  the genesis-block trace test, which had no world-chain-devnet baseline and captured one; its
+  shape matches the op-reth-devnet genesis baseline.
+- `fireeth tools compare-blocks-rpc` over blocks 0-448: **447 identical, 2 different**. Both
+  differences are blocks 399 and 401, path `transaction_traces[1].set_code_authorizations`:
+  Firehose emits the EIP-7702 authorization list (5 entries with 2 discarded, then 1 entry)
+  that the RPC block representation does not expose. Same two blocks and same content as the
+  v2.4.2 run; Firehose is the richer side. The block-1 difference the v2.4.2 run reported (no
+  transaction trace on the genesis marker) is gone: blocks 0 and 1 now compare identical, which
+  is the genesis-block emission fix from `v2.4.2-fh3.1-1` doing its job.
+- `cargo test -p world-chain-evm -p world-chain-node`: 21 passed, 0 failed.
+- In `streamingfast/optimism`: `cargo test -p reth-optimism-firehose -p alloy-op-evm` 76 passed;
+  `cargo test -p reth-optimism-node --test it` 14 passed, including upstream's new
+  `debug_trace_post_exec` and `estimate_gas_7825` Karst tests through the Firehose-wrapped
+  executor; CLI surface snapshot (`--features dev`) 5 passed.
+
+### Known issues
+
+- The EIP-7928 Block Access List gaps listed under `v2.4.2-fh3.1-beta` are unchanged. World-chain
+  still sets no Amsterdam timestamp, so they remain unreachable on this chain.
+
 ## v2.4.2-fh3.1-beta
 
 Merge of upstream `v2.4.2` (162 commits on top of `v2.4.0`). Upstream re-pointed its entire EVM

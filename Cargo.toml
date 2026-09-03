@@ -1,5 +1,5 @@
 [workspace.package]
-version = "2.4.2"
+version = "2.4.3"
 edition = "2024"
 rust-version = "1.95.0"
 license = "MIT"
@@ -25,16 +25,15 @@ members = [
     "crates/commands",
     "crates/devnet",
     "crates/test-utils",
-    "proofs/core",
     "proofs/protocol",
     "proofs/metrics",
     "proofs/it",
-    "proofs/kona/client",
-    "proofs/kona/host",
+    "proofs/kona-host",
+    "proofs/backends/sp1/guest-builder",
     "proofs/backends/sp1/elfs",
     "proofs/backends/sp1/host",
     "proofs/backends/sp1/types",
-    "proofs/backends/nitro/enclave",
+    "proofs/backends/nitro/register",
     "proofs/workers/core",
     "proofs/workers/sp1",
     "proofs/workers/nitro",
@@ -51,7 +50,13 @@ members = [
     "xtask",
 ]
 
-exclude = ["proofs/backends/sp1/programs", "proofs/backends/nitro/fuzz"]
+exclude = [
+    # Measured crates: everything under proofs/measured resolves outside the node's
+    # dependency graph, so an unrelated bump cannot rotate an on-chain trust anchor.
+    # One lockfile per measured artifact (sp1-programs → vkeys, nitro-enclave → PCRs).
+    "proofs/measured",
+    "proofs/backends/nitro/fuzz",
+]
 
 default-members = ["bin/world-chain"]
 
@@ -99,13 +104,14 @@ world-chain-test-utils = { path = "crates/test-utils", default-features = false 
 world-chain-prover = { path = "proofs/debug/prover", default-features = false }
 world-chain-prover-sp1 = { path = "proofs/debug/bin/prover-sp1", default-features = false }
 world-chain-prover-nitro = { path = "proofs/debug/bin/prover-nitro", default-features = false }
-world-chain-proof-core = { path = "proofs/core", default-features = false }
-world-chain-proof-kona-client = { path = "proofs/kona/client", default-features = false }
-world-chain-proof-kona-host = { path = "proofs/kona/host", default-features = false }
+world-chain-proof-core = { path = "proofs/measured/core", default-features = false }
+world-chain-proof-kona-client = { path = "proofs/measured/kona-client", default-features = false }
+world-chain-proof-kona-host = { path = "proofs/kona-host", default-features = false }
 world-chain-proof-sp1-elfs = { path = "proofs/backends/sp1/elfs" }
 world-chain-proof-sp1-host = { path = "proofs/backends/sp1/host", default-features = false }
 world-chain-proof-sp1-types = { path = "proofs/backends/sp1/types", default-features = false }
-world-chain-proof-nitro-enclave = { path = "proofs/backends/nitro/enclave", default-features = false }
+world-chain-proof-nitro-enclave = { path = "proofs/measured/nitro-enclave", default-features = false }
+world-chain-proof-nitro-register = { path = "proofs/backends/nitro/register", default-features = false }
 world-chain-proof-worker = { path = "proofs/workers/core", default-features = false }
 world-chain-proof-sp1-worker = { path = "proofs/workers/sp1", default-features = false }
 world-chain-proof-nitro-worker = { path = "proofs/workers/nitro", default-features = false }
@@ -175,27 +181,27 @@ reth-storage-api = { git = "https://github.com/op-rs/reth", rev = "aef8d3ef92117
 reth-storage-errors = { git = "https://github.com/op-rs/reth", rev = "aef8d3ef92117f91455e16969f0adf5bf7c6e9e1", default-features = false }
 
 # reth-optimism
-reth-optimism-evm = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-node = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-cli = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-rpc = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-consensus = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-chainspec = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-payload-builder = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-forks = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-primitives = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-storage = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-exex = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-flashblocks = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-reth-optimism-trie = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
+reth-optimism-evm = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-node = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-cli = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-rpc = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-consensus = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-chainspec = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-payload-builder = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-forks = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-primitives = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-storage = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-exex = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-flashblocks = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+reth-optimism-trie = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
 
 # alloy op
-op-alloy-consensus = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-op-alloy-rpc-types = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-op-alloy-rpc-types-engine = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-op-alloy-network = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-alloy-op-hardforks = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-op-alloy-provider = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
+op-alloy-consensus = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+op-alloy-rpc-types = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+op-alloy-rpc-types-engine = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+op-alloy-network = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+alloy-op-hardforks = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+op-alloy-provider = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
 
 # alloy
 alloy = { version = "=2.1.1" }
@@ -244,8 +250,14 @@ alloy-trie = { version = "0.9.4", default-features = false, features = [
 ] }
 
 # aws
-aws-config = { version = "1", default-features = false, features = ["rt-tokio", "rustls"] }
-aws-sdk-kms = { version = "1", default-features = false, features = ["rt-tokio", "rustls"] }
+aws-config = { version = "1", default-features = false, features = [
+    "rt-tokio",
+    "rustls",
+] }
+aws-sdk-kms = { version = "1", default-features = false, features = [
+    "rt-tokio",
+    "rustls",
+] }
 
 # revm
 revm = { version = "41.0.0", default-features = false }
@@ -256,24 +268,24 @@ revm-state = { version = "41.0.0", default-features = false }
 revm-primitives = { version = "41.0.0", default-features = false }
 revm-interpreter = { version = "41.0.0", default-features = false }
 revm-database-interface = { version = "41.0.0", default-features = false }
-op-revm = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
+op-revm = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
 revm-inspectors = "0.41.0"
 
-alloy-op-evm = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
+alloy-op-evm = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
 alloy-evm = { version = "0.37.0", default-features = false }
 
 # kona
-kona-derive = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-kona-driver = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2" }
-kona-executor = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2" }
-kona-genesis = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-kona-preimage = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", features = [
+kona-derive = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+kona-driver = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3" }
+kona-executor = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3" }
+kona-genesis = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+kona-preimage = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", features = [
     "rkyv",
     "serde",
 ] }
-kona-host = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
-kona-proof = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2" }
-kona-protocol = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v2.4.2", default-features = false }
+kona-host = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
+kona-proof = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3" }
+kona-protocol = { git = "https://github.com/ethereum-optimism/optimism", rev = "96ffbb2a94f19886fe7e27c45f3310e64ccd18b3", default-features = false }
 
 # rpc
 jsonrpsee = { version = "0.26.0", features = ["server", "client", "macros"] }
@@ -319,7 +331,14 @@ test-case = "3"
 serde_json = "1"
 rand = { version = "0.9", features = ["small_rng"] }
 reqwest = { version = "0.12", default-features = false }
-sqlx = { version = "0.9.0", default-features = false, features = ["runtime-tokio", "postgres", "migrate", "macros", "uuid", "chrono"] }
+sqlx = { version = "0.9.0", default-features = false, features = [
+    "runtime-tokio",
+    "postgres",
+    "migrate",
+    "macros",
+    "uuid",
+    "chrono",
+] }
 bon = "3.3.0"
 rayon = "1.12.0"
 auto_impl = "1"
@@ -328,7 +347,10 @@ dashmap = { version = "6.2.1", features = ["rayon"] }
 spin = "0.10"
 rkyv = { version = "0.8", features = ["hashbrown-0_15", "std"] }
 tower = "0.5.0"
-backon = { version = "1", default-features = false, features = ["std", "tokio-sleep"] }
+backon = { version = "1", default-features = false, features = [
+    "std",
+    "tokio-sleep",
+] }
 arbitrary = { version = "=1.4.2", features = ["derive"] }
 blake3 = "1.8.4"
 ed25519-dalek = { version = "2", features = ["serde"] }
@@ -360,7 +382,7 @@ proptest = "1.9.0"
 # pulled straight from git rather than via [patch].
 firehose-tracer = "5"
 reth-firehose = { git = "https://github.com/streamingfast/reth.git", tag = "op-reth-v2.4.2-fh3.1" }
-reth-optimism-firehose = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
+reth-optimism-firehose = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
 
 # The reth-chain-state ExEx debug_assert floods debug-build logs during live engine-API
 # execution; compiled out in release. Mirrors the same override in the SF reth/optimism forks.
@@ -374,7 +396,7 @@ debug-assertions = false
 alloy-evm = { git = "https://github.com/streamingfast/evm.git", tag = "v0.37.0-sf" }
 
 # Redirect the whole reth dependency graph to the StreamingFast Firehose-instrumented fork.
-# Upstream world-chain v2.4.2 pins reth from op-rs/reth (the External OP Labs shallow fork,
+# Upstream world-chain pins reth from op-rs/reth (the External OP Labs shallow fork,
 # rev aef8d3ef = reth v2.4.1-ish + paradigmxyz/reth#26431), not paradigmxyz/reth, so the
 # patch key is the op-rs URL. Our tag op-reth-v2.4.2-fh3.1 is built on that same rev.
 [patch."https://github.com/op-rs/reth"]
@@ -483,7 +505,9 @@ reth-trie-parallel = { git = "https://github.com/streamingfast/reth.git", tag = 
 reth-trie-sparse = { git = "https://github.com/streamingfast/reth.git", tag = "op-reth-v2.4.2-fh3.1" }
 
 # Redirect the optimism-monorepo crates to the StreamingFast Firehose-instrumented fork
-# (streamingfast/optimism tag op-reth-v2.4.2-fh3.1-1, based on upstream tag op-reth/v2.4.2).
+# (streamingfast/optimism, based on upstream optimism rev 96ffbb2a — the untagged develop
+# commit world-chain pins above, which carries the superchain-registry update for the World
+# Chain Karst activations).
 #
 # This is the shared `release/op-reth-2.x` line, not the former world-chain-only branch: that
 # branch was a rebased duplicate of the same Firehose work, and keeping two copies meant every
@@ -495,46 +519,46 @@ reth-trie-sparse = { git = "https://github.com/streamingfast/reth.git", tag = "o
 # drift, cargo resolves two separate copies of every reth crate and the executor pipeline
 # silently links against the untraced one.
 [patch."https://github.com/ethereum-optimism/optimism"]
-alloy-op-evm = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-alloy-op-hardforks = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-cli = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-client = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-derive = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-driver = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-executor = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-genesis = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-hardforks = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-host = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-interop = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-macros = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-mpt = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-preimage = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-proof = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-proof-interop = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-protocol = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-providers-alloy = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-registry = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-std-fpvm = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-kona-std-fpvm-proc = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-op-alloy = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-op-alloy-consensus = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-op-alloy-network = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-op-alloy-provider = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-op-alloy-rpc-jsonrpsee = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-op-alloy-rpc-types = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-op-alloy-rpc-types-engine = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-op-revm = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-chainspec = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-consensus = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-evm = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-exex = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-flashblocks = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-forks = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-node = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-payload-builder = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-post-exec-replay = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-primitives = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-rpc = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-storage = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-trie = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
-reth-optimism-txpool = { git = "https://github.com/streamingfast/optimism.git", tag = "op-reth-v2.4.2-fh3.1-1" }
+alloy-op-evm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+alloy-op-hardforks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-cli = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-client = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-derive = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-driver = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-executor = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-genesis = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-hardforks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-host = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-interop = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-macros = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-mpt = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-preimage = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-proof = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-proof-interop = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-protocol = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-providers-alloy = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-registry = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-std-fpvm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+kona-std-fpvm-proc = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+op-alloy = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+op-alloy-consensus = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+op-alloy-network = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+op-alloy-provider = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+op-alloy-rpc-jsonrpsee = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+op-alloy-rpc-types = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+op-alloy-rpc-types-engine = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+op-revm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-chainspec = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-consensus = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-evm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-exex = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-flashblocks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-forks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-node = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-payload-builder = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-post-exec-replay = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-primitives = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-rpc = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-storage = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-trie = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }
+reth-optimism-txpool = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1" }

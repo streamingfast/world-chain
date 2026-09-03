@@ -181,6 +181,16 @@ contract MultiProofGameTest is OPStackFixtures {
         new MultiProofGame(config);
 
         config = _gameConfig();
+        config.proofThreshold = 1;
+        vm.expectRevert(IMultiProofGame.InvalidActivationParameters.selector);
+        new MultiProofGame(config);
+
+        config = _gameConfig();
+        config.proofThreshold = LibProof.PROOF_LANE_COUNT + 1;
+        vm.expectRevert(IMultiProofGame.InvalidActivationParameters.selector);
+        new MultiProofGame(config);
+
+        config = _gameConfig();
         config.proofPeriod = config.challengePeriod;
         vm.expectRevert(IMultiProofGame.InvalidActivationParameters.selector);
         new MultiProofGame(config);
@@ -555,7 +565,7 @@ contract MultiProofGameTest is OPStackFixtures {
         dgf.create{value: PROPOSER_BOND}(WC_GAME_TYPE, claim, retryExtraData);
     }
 
-    function test_ChildWaitsForParentThenFinalizes() public {
+    function test_ChildWaitsForParentResolutionNotFinality() public {
         MultiProofGame parent = _proposeAtAnchor();
         MultiProofGame child = _proposeChild(0);
         _challenge(child);
@@ -565,8 +575,30 @@ contract MultiProofGameTest is OPStackFixtures {
         child.resolve();
 
         _resolveUnchallenged(parent);
+        assertFalse(asr.isGameFinalized(IDisputeGame(address(parent))));
+
+        (bool resolvable, GameStatus outcome, InvalidationReason reason) = child.resolutionStatus();
+        assertTrue(resolvable);
+        assertEq(uint8(outcome), uint8(GameStatus.DEFENDER_WINS));
+        assertEq(uint8(reason), uint8(InvalidationReason.NONE));
+
         child.resolve();
         assertEq(uint8(child.status()), uint8(GameStatus.DEFENDER_WINS));
+    }
+
+    function test_ParentBlacklistedDuringFinalityAirgap_InvalidatesChild() public {
+        MultiProofGame parent = _proposeAtAnchor();
+        MultiProofGame child = _proposeChild(0);
+        _challenge(child);
+        _submitLanes(child, 2);
+        _resolveUnchallenged(parent);
+
+        vm.prank(guardian);
+        asr.blacklistDisputeGame(IDisputeGame(address(parent)));
+        child.resolve();
+
+        assertEq(uint8(child.status()), uint8(GameStatus.CHALLENGER_WINS));
+        assertEq(uint8(child.invalidationReason()), uint8(InvalidationReason.INVALID_PARENT));
     }
 
     function test_InvalidParent_CascadesAndRefundsChildBonds() public {

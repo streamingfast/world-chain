@@ -91,9 +91,9 @@ tar so the build regenerates it.
 
 ### Status
 - [x] `cargo check -p op-reth -p reth-optimism-firehose -p alloy-op-evm` — clean.
-- [ ] `cargo test -p reth-optimism-firehose -p alloy-op-evm`
-- [ ] `CHANGELOG.sf.md` entry
-- [ ] PR against `release/op-reth-2.x`, then tag
+- [x] `cargo test -p reth-optimism-firehose -p alloy-op-evm` — 76 passed. `cargo test -p reth-optimism-node --test it` — 14 passed. CLI snapshot (`--features dev`) — 5 passed.
+- [x] `CHANGELOG.sf.md` entry
+- [x] PR: streamingfast/optimism#15 against `release/op-reth-2.x` (branch pushed, commit `b8095190`). Tag `world-chain-v2.4.3-fh3.1` still to create after merge.
 
 Tag name is undecided: `96ffbb2a` is untagged upstream, so the previous
 `op-reth-v<version>-fh3.1` scheme has no version to hang on. `op-reth-96ffbb2a-fh3.1`
@@ -105,17 +105,16 @@ trigger is `*-fh*`, so it does not constrain the choice.
 - [x] `Cargo.lock` was the only conflicted file: 43 identical one-line hunks, each swapping
       the `source =` of an optimism-monorepo crate. Resolved by taking our side (the
       `streamingfast/optimism` URL); the values get rewritten when the patch tag is bumped.
-- [ ] Bump both `reth-optimism-firehose` and the whole
+- [x] Bump both `reth-optimism-firehose` and the whole
       `[patch."https://github.com/ethereum-optimism/optimism"]` block to the new
       `streamingfast/optimism` tag.
-- [ ] Regenerate `Cargo.lock` and confirm every optimism-monorepo crate resolves to the new
+- [x] Regenerate `Cargo.lock` and confirm every optimism-monorepo crate resolves to the new
       tag with no duplicate reth graph.
-- [ ] `cargo +1.95.0 check` — the machine default rustc is older than the workspace
-      `rust-version = 1.95.0` and world-chain has no `rust-toolchain.toml`.
+- [x] `cargo check -p world-chain` — clean. (world-chain has `rust-toolchain.toml` = nightly-2026-07-01, so plain `cargo`; the old `+1.95.0` note is obsolete.)
       `world-chain-proof-succinct-elfs` fails without network (SP1 docker guest build);
       exclude it.
-- [ ] `CHANGELOG.sf.md` entry
-- [ ] PR against `release/2.x`, then tag
+- [x] `CHANGELOG.sf.md` entry
+- [x] PR against `release/2.x` (branch `bump/v2.4.3`). Tag after streamingfast/optimism#15 is merged+tagged and the Cargo.toml rev is flipped to tag `world-chain-v2.4.3-fh3.1`.
 
 ## Known doc drift (not blocking)
 
@@ -123,3 +122,32 @@ trigger is `*-fh*`, so it does not constrain the choice.
 tag `op-rs-aef8d3e-fh-1` (`40e4c07a`), but `rust/Cargo.toml` pins `op-reth-v2.4.2-fh3.1`
 (`281bc4a1`). The Cargo.toml is what matters and it matches world-chain; the changelog prose
 is stale.
+
+## Battlefield run notes
+
+Target: `battlefield-ethereum` (now on `master`) `world-chain-devnet`. Three processes:
+`scripts/world_chain/run_world_chain_devnet.sh`, then `scripts/run_firehose_world_chain_devnet.sh`,
+then `pnpm test:fh3.0:world-chain-devnet`; finish with `fireeth tools compare-blocks-rpc`.
+Baseline snapshots (280 files under `test/snapshots/*/fh3.0/world-chain-devnet/`) come from the
+v2.4.2 run, so Karst-related differences are expected and have to be read, not auto-accepted.
+
+Environment traps hit on the first attempt:
+
+- The disk was at 100% (1.8 GiB free). rustc died writing rmeta and OrbStack's docker daemon went
+  down with it. Freed by deleting `optimism/rust/target/debug` (116 GB); op-reth results were
+  already recorded and world-chain builds op-reth from `~/.cargo/git` into its own target.
+- `just devnet up` builds `xtask`, which depends on `world-chain-devnet` →
+  `world-chain-proof-sp1-host` → `world-chain-proof-sp1-elfs`. That crate's build script compiles
+  the SP1 guest programs inside docker, fetching `ethereum-optimism/optimism` over the network.
+  `SP1_SKIP_PROGRAM_BUILD=true` only helps once `target/elf-compilation` exists, and it did not.
+  So the devnet launch needs docker running and network, and the first build is slow.
+
+### Results
+
+- Battlefield `world-chain-devnet`: 80 passing / 5 pending / 0 failing (baseline 79 / 6 / 0). All
+  280 v2.4.2 baseline snapshots unchanged. New genesis-block snapshot captured (no prior
+  world-chain-devnet baseline); shape matches op-reth-devnet's.
+- `cargo test -p world-chain-evm -p world-chain-node`: 21 passed, 0 failed.
+- compare-blocks-rpc 0..448: 447 identical / 2 different (399, 401: `set_code_authorizations`,
+  Firehose-only field, same as v2.4.2). Blocks 0 and 1 identical (genesis fix confirmed). Raw output
+  was at /tmp/wc-compare-blocks-0-448.txt.

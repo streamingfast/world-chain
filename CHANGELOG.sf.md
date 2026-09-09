@@ -8,7 +8,8 @@ This changelog tracks changes that the StreamingFast fork applies on top of upst
 ### Fixed
 
 * Stopped advertising a finalized block that is not an ancestor of the block being emitted
-  (`streamingfast/reth` `op-reth-v2.4.2-fh3.2`). Every `FIRE BLOCK` line carried the node's
+  (`streamingfast/reth` `op-reth-v2.4.2-fh3.2`, carried through `streamingfast/optimism`
+  `world-chain-v2.4.3-fh3.2`). Every `FIRE BLOCK` line carried the node's
   finalized head as of the moment the block executed, so a block from a side branch was published
   with a LIB number naming the canonical chain's block at that height; downstream marked it
   irreversible and then saw it replaced by the reorg. The advertised block is now clamped to the

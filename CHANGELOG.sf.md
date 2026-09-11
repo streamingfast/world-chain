@@ -3,6 +3,19 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## v2.4.3-fh3.1-1
+
+Same code as `v2.4.3-fh3.2`, released under the `fh3.1-N` naming. Both Firehose forks now carry
+World Chain on a dedicated `release/world-chain-2.x` branch, tagged `world-chain-v2.4.3-fh3.1-1`.
+
+### Changed
+
+* Re-pointed every `streamingfast/reth` pin from `op-reth-v2.4.2-fh3.2` to
+  `world-chain-v2.4.3-fh3.1-1`. Both tags are the same reth commit (`08953593`).
+* Re-pointed every `streamingfast/optimism` pin from `world-chain-v2.4.3-fh3.2` to
+  `world-chain-v2.4.3-fh3.1-1`. The only difference is that its own reth pin uses the new tag
+  name, which keeps a single copy of every reth crate in the build.
+
 ## v2.4.3-fh3.2
 
 ### Fixed

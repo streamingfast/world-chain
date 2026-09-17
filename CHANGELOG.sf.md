@@ -3,6 +3,20 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## v2.4.3-fh3.1-2
+
+### Changed
+
+* Bumped both Firehose forks to `world-chain-v2.4.3-fh3.1-2` (`streamingfast/reth` and
+  `streamingfast/optimism`), which stops recording keccak preimages larger than 256 bytes.
+  `Call.keccak_preimages` exists so a consumer can walk a storage slot back to the expression that
+  produced it, and Solidity's slot derivations are small: 32 bytes for a dynamic array or a
+  `bytes`/`string` longer than 31 bytes, 64 bytes for a mapping with a value-type key, and 32 bytes
+  plus the key for a `mapping(string => V)`. 256 bytes covers all of those, with room for a
+  224-byte dynamic key. The large ones came from contracts hashing their own data and could reach
+  64 KiB each; they are dropped rather than truncated, since a truncated preimage no longer hashes
+  back to its key.
+
 ## v2.4.3-fh3.1-1
 
 Same code as `v2.4.3-fh3.2`, released under the `fh3.1-N` naming. Both Firehose forks now carry

@@ -3,6 +3,12 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## v2.4.3-fh3.1-3
+
+### Changed
+
+* The Docker image contains `firehose-ethereum` `v2.23.0`.
+
 ## v2.4.3-fh3.1-2
 
 ### Changed

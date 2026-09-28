@@ -3,6 +3,12 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## Unreleased
+
+### Changed
+
+- Firehose `Call.keccak_preimages` now keeps only the preimages that explain a storage change key of the transaction or system call; set `FIREHOSE_ETHEREUM_TRACER_DISABLE_KECCAK_FILTER=true` to keep them all (streamingfast/evm-firehose-tracer-rs#36).
+
 ## v2.4.3-fh3.1-3
 
 ### Changed

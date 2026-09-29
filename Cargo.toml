@@ -382,7 +382,7 @@ proptest = "1.9.0"
 # pulled straight from git rather than via [patch].
 firehose-tracer = "5.5.0"
 reth-firehose = { git = "https://github.com/streamingfast/reth.git", tag = "world-chain-v2.4.3-fh3.1-3" }
-reth-optimism-firehose = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
+reth-optimism-firehose = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
 
 # The reth-chain-state ExEx debug_assert floods debug-build logs during live engine-API
 # execution; compiled out in release. Mirrors the same override in the SF reth/optimism forks.
@@ -517,46 +517,46 @@ reth-trie-sparse = { git = "https://github.com/streamingfast/reth.git", tag = "w
 # drift, cargo resolves two separate copies of every reth crate and the executor pipeline
 # silently links against the untraced one.
 [patch."https://github.com/ethereum-optimism/optimism"]
-alloy-op-evm = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-alloy-op-hardforks = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-cli = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-client = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-derive = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-driver = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-executor = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-genesis = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-hardforks = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-host = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-interop = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-macros = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-mpt = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-preimage = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-proof = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-proof-interop = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-protocol = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-providers-alloy = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-registry = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-std-fpvm = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-kona-std-fpvm-proc = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-op-alloy = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-op-alloy-consensus = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-op-alloy-network = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-op-alloy-provider = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-op-alloy-rpc-jsonrpsee = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-op-alloy-rpc-types = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-op-alloy-rpc-types-engine = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-op-revm = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-chainspec = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-consensus = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-evm = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-exex = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-flashblocks = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-forks = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-node = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-payload-builder = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-post-exec-replay = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-primitives = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-rpc = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-storage = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-trie = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
-reth-optimism-txpool = { git = "https://github.com/streamingfast/optimism.git", branch = "firehose-keccak-filter/world-chain-2.x" }
+alloy-op-evm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+alloy-op-hardforks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-cli = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-client = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-derive = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-driver = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-executor = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-genesis = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-hardforks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-host = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-interop = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-macros = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-mpt = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-preimage = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-proof = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-proof-interop = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-protocol = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-providers-alloy = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-registry = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-std-fpvm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+kona-std-fpvm-proc = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+op-alloy = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+op-alloy-consensus = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+op-alloy-network = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+op-alloy-provider = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+op-alloy-rpc-jsonrpsee = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+op-alloy-rpc-types = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+op-alloy-rpc-types-engine = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+op-revm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-chainspec = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-consensus = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-evm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-exex = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-flashblocks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-forks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-node = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-payload-builder = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-post-exec-replay = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-primitives = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-rpc = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-storage = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-trie = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }
+reth-optimism-txpool = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.4.3-fh3.1-3" }

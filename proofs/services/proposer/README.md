@@ -48,8 +48,33 @@ claim is valid according to the registry, allowing it to skip a newer game still
 The automated services assume proof-timeout retries are exceptional. The proposer creates the next
 attempt and the defender follows that replacement. Games descending from the abandoned attempt
 become resolvable as `INVALID_PARENT`; the bond manager keeps proposer-owned games tracked, resolves
-those descendants as their parents settle, and claims the refunded bonds. Retry creation remains
+those descendants as their parents settle, and closes them to release their bonds. Retry creation remains
 logged at warn level for operator visibility.
+
+## Recovering from an unusable anchor
+
+Restart both proposer and defender with `--recovery-parent <P>` (or `RECOVERY_PARENT=<P>`),
+where P is an eligible ancestor of the unusable anchor. While the ASR anchor is unusable,
+both services select the replacement lineage from P using the active implementation's domain.
+The proposer creates and resolves replacement games; the defender supplies their proofs.
+Existing replacement games are rediscovered across ticks and restarts.
+
+P must be a registered, proper, respected game resolved with `DEFENDER_WINS`, and its root must
+match the canonical finalized L2 root. Eligibility and root checks are repeated while P is used.
+Invalid parents or failed RPC reads stop that scan without falling back to the unusable anchor.
+The ASR sentinel and zero address cannot be recovery parents.
+
+Both services automatically resume from the ASR once it has a claim-valid anchor at a block
+above P. A replacement at the old anchor's block cannot advance the ASR; a later replacement
+must resolve and pass the registry finality delay. Remove the flag after recovery to avoid
+reusing P during a subsequent incident. `lineage.recovery_active` reports whether recovery
+selection is active, and startup logs include the configured parent.
+
+The flag does not change onchain state or bypass parent and retry checks. Replacing a blacklisted
+successful game with the same root and parent requires a new proof domain to avoid its occupied
+factory UUID. Activate that domain through governance before restarting the services. Keep the
+block interval unchanged for this recovery procedure; the flag does not reconcile cadence changes.
+If P is retired or no eligible game parent exists, onchain recovery is required.
 
 ### `root_claim`
 
@@ -61,11 +86,11 @@ logged at warn level for operator visibility.
 
 ## Bond settlement
 
-Bonds are custodied in `DelayedWETH` and paid out in two phases. The first `claimCredit(recipient)`
-call unlocks the credit; the second, after the WETH delay, withdraws and transfers it. Both are
-gated on `AnchorStateRegistry.isGameFinalized`, since `claimCredit` calls `closeGame`, which reverts
-until the registry's finality airgap has elapsed. The bond manager keeps every discovered
-proposer-owned game tracked until it is resolved and its pending withdrawal is drained. For games
+Bonds are locked from the proposer's available balance in the singleton ERC-20 staking vault.
+After a game resolves and passes the registry's finality airgap, its permissionless `closeGame()`
+call settles the complete bond pot into immediately reusable vault balances. The service never
+requests an external bond-token withdrawal. The bond manager keeps every discovered proposer-owned
+game tracked until it is resolved and settled. For games
 whose embedded proposal domain differs from the currently registered domain, it also submits any
 available positive or negative resolution because those games are no longer visible to the selected
 lineage proposer. Same-domain outcomes remain with the proposer to avoid racing retry creation.

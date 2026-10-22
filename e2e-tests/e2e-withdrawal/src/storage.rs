@@ -1,0 +1,294 @@
+use crate::retry::{self, DEFAULT_TIMEOUT, MAX_ATTEMPTS};
+use async_trait::async_trait;
+use aws_credential_types::provider::ProvideCredentials;
+use aws_sdk_s3::{
+    error::{ProvideErrorMetadata, SdkError},
+    operation::{
+        delete_object::DeleteObjectError, get_object::GetObjectError, head_object::HeadObjectError,
+        put_object::PutObjectError,
+    },
+};
+use eyre::eyre::{Context, OptionExt, bail};
+use serde::{Serialize, de::DeserializeOwned};
+
+/// Byte-oriented blob store used for withdrawal handoff JSON.
+#[async_trait]
+pub trait BlobStore: Send + Sync {
+    /// Read the blob at `key`.
+    async fn get(&self, key: &str) -> eyre::Result<Vec<u8>>;
+    /// Write `bytes` to `key`.
+    async fn put(&self, key: &str, bytes: &[u8]) -> eyre::Result<()>;
+    /// Return whether `key` exists.
+    async fn exists(&self, key: &str) -> eyre::Result<bool>;
+    /// Delete `key`. Missing keys are ignored.
+    async fn delete(&self, key: &str) -> eyre::Result<()>;
+}
+
+/// Filesystem-backed store. The key is treated as a filesystem path.
+pub struct LocalStore;
+
+#[async_trait]
+impl BlobStore for LocalStore {
+    async fn get(&self, key: &str) -> eyre::Result<Vec<u8>> {
+        Ok(tokio::fs::read(key).await?)
+    }
+
+    async fn put(&self, key: &str, bytes: &[u8]) -> eyre::Result<()> {
+        Ok(tokio::fs::write(key, bytes).await?)
+    }
+
+    async fn exists(&self, key: &str) -> eyre::Result<bool> {
+        Ok(tokio::fs::try_exists(key).await?)
+    }
+
+    async fn delete(&self, key: &str) -> eyre::Result<()> {
+        match tokio::fs::remove_file(key).await {
+            Ok(()) => Ok(()),
+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => Ok(()),
+            Err(err) => Err(err.into()),
+        }
+    }
+}
+
+/// S3-backed store for a single bucket.
+pub struct S3Store {
+    client: aws_sdk_s3::Client,
+    bucket: String,
+}
+
+#[async_trait]
+impl BlobStore for S3Store {
+    async fn get(&self, key: &str) -> eyre::Result<Vec<u8>> {
+        let object = self
+            .client
+            .get_object()
+            .bucket(&self.bucket)
+            .key(key)
+            .send()
+            .await
+            .wrap_err_with(|| format!("failed to get s3://{}/{}", self.bucket, key))?;
+        let bytes = object
+            .body
+            .collect()
+            .await
+            .wrap_err_with(|| format!("failed to read s3://{}/{} body", self.bucket, key))?
+            .into_bytes()
+            .to_vec();
+        Ok(bytes)
+    }
+
+    async fn put(&self, key: &str, bytes: &[u8]) -> eyre::Result<()> {
+        self.client
+            .put_object()
+            .bucket(&self.bucket)
+            .key(key)
+            .content_type("application/json")
+            .body(bytes.to_vec().into())
+            .send()
+            .await
+            .wrap_err_with(|| format!("failed to put s3://{}/{}", self.bucket, key))?;
+        Ok(())
+    }
+
+    async fn exists(&self, key: &str) -> eyre::Result<bool> {
+        match self
+            .client
+            .head_object()
+            .bucket(&self.bucket)
+            .key(key)
+            .send()
+            .await
+        {
+            Ok(_) => Ok(true),
+            Err(err) => {
+                if err.as_service_error().is_some_and(|e| e.is_not_found()) {
+                    Ok(false)
+                } else {
+                    Err(err)
+                        .wrap_err_with(|| format!("failed to head s3://{}/{}", self.bucket, key))
+                }
+            }
+        }
+    }
+
+    async fn delete(&self, key: &str) -> eyre::Result<()> {
+        self.client
+            .delete_object()
+            .bucket(&self.bucket)
+            .key(key)
+            .send()
+            .await
+            .wrap_err_with(|| format!("failed to delete s3://{}/{}", self.bucket, key))?;
+        Ok(())
+    }
+}
+
+/// Open a location URI and return the store plus the key within that store.
+///
+/// - Local path: any string that does not start with `s3://`
+/// - S3: `s3://bucket/key`
+pub async fn open(location: &str) -> eyre::Result<(Box<dyn BlobStore>, String)> {
+    if let Some(rest) = location.strip_prefix("s3://") {
+        let (bucket, key) = rest
+            .split_once('/')
+            .ok_or_eyre("s3 location must be s3://bucket/key")?;
+        if bucket.is_empty() {
+            bail!("s3 location missing bucket: {location}");
+        }
+        if key.is_empty() {
+            bail!("s3 location missing key: {location}");
+        }
+        let config = aws_config::defaults(aws_config::BehaviorVersion::latest())
+            .load()
+            .await;
+        if config.region().is_none() {
+            bail!(
+                "AWS region not configured; set AWS_REGION or AWS_DEFAULT_REGION \
+                 (needed for s3:// locations)"
+            );
+        }
+        // Resolve credentials early so missing AWS_PROFILE / expired SSO is obvious,
+        // instead of a later opaque "dispatch failure" from IMDS fallback.
+        if let Some(provider) = config.credentials_provider() {
+            provider.provide_credentials().await.wrap_err(
+                "AWS credentials unavailable; set AWS_PROFILE to an SSO profile \
+                 (e.g. tfh-crypto-dev-poweruseraccess) and run \
+                 `aws sso login --profile <profile>`",
+            )?;
+        }
+        let store = S3Store {
+            client: aws_sdk_s3::Client::new(&config),
+            bucket: bucket.to_string(),
+        };
+        return Ok((Box::new(store), key.to_string()));
+    }
+
+    Ok((Box::new(LocalStore), location.to_string()))
+}
+
+/// Read and deserialize JSON from a local path or `s3://bucket/key`.
+pub async fn read_json<T: DeserializeOwned>(location: &str) -> eyre::Result<T> {
+    with_retries("read", location, || async {
+        let (store, key) = open(location).await?;
+        Ok(serde_json::from_slice(&store.get(&key).await?)?)
+    })
+    .await
+}
+
+/// Serialize and write JSON to a local path or `s3://bucket/key`.
+pub async fn write_json<T: Serialize>(location: &str, value: &T) -> eyre::Result<()> {
+    with_retries("write", location, || async {
+        let (store, key) = open(location).await?;
+        store.put(&key, &serde_json::to_vec_pretty(value)?).await
+    })
+    .await
+}
+
+/// Return whether a local path or `s3://bucket/key` exists.
+pub async fn exists(location: &str) -> eyre::Result<bool> {
+    with_retries("exists", location, || async {
+        let (store, key) = open(location).await?;
+        store.exists(&key).await
+    })
+    .await
+}
+
+/// Delete a local path or `s3://bucket/key`. Missing objects are ignored.
+pub async fn delete(location: &str) -> eyre::Result<()> {
+    with_retries("delete", location, || async {
+        let (store, key) = open(location).await?;
+        store.delete(&key).await
+    })
+    .await
+}
+
+async fn with_retries<T, F, Fut>(
+    operation: &str,
+    location: &str,
+    mut attempt_fn: F,
+) -> eyre::Result<T>
+where
+    F: FnMut() -> Fut,
+    Fut: std::future::Future<Output = eyre::Result<T>>,
+{
+    retry::with_backoff(
+        MAX_ATTEMPTS,
+        || with_deadline(operation, location, attempt_fn()),
+        |error| !is_permanent_error(error),
+        |attempt, delay, error| {
+            tracing::warn!(
+                error = ?error,
+                operation,
+                location,
+                attempt,
+                retry_in_secs = delay.as_secs_f64(),
+                "storage operation failed, retrying"
+            );
+        },
+    )
+    .await
+}
+
+async fn with_deadline<T>(
+    operation: &str,
+    location: &str,
+    future: impl std::future::Future<Output = eyre::Result<T>>,
+) -> eyre::Result<T> {
+    tokio::time::timeout(DEFAULT_TIMEOUT, future)
+        .await
+        .wrap_err_with(|| {
+            format!("storage {operation} timed out after 30 seconds at `{location}`")
+        })?
+}
+
+/// Recognize permanent failures without matching human-readable error strings.
+pub fn is_permanent_error(error: &eyre::Report) -> bool {
+    if let Some(error) = error.downcast_ref::<std::io::Error>() {
+        return matches!(
+            error.kind(),
+            std::io::ErrorKind::PermissionDenied
+                | std::io::ErrorKind::InvalidInput
+                | std::io::ErrorKind::NotFound
+        );
+    }
+    if error.downcast_ref::<serde_json::Error>().is_some() {
+        return true;
+    }
+    // Persistence and cleanup retain typed SDK errors through context.
+    matches!(
+        s3_service_code(error),
+        Some(
+            "AccessDenied"
+                | "InvalidAccessKeyId"
+                | "SignatureDoesNotMatch"
+                | "NoSuchBucket"
+                | "InvalidArgument"
+                | "NoSuchKey"
+        )
+    )
+}
+
+fn s3_service_code(error: &eyre::Report) -> Option<&str> {
+    error
+        .downcast_ref::<SdkError<PutObjectError>>()
+        .and_then(|error| error.as_service_error())
+        .and_then(|error| error.code())
+        .or_else(|| {
+            error
+                .downcast_ref::<SdkError<DeleteObjectError>>()
+                .and_then(|error| error.as_service_error())
+                .and_then(|error| error.code())
+        })
+        .or_else(|| {
+            error
+                .downcast_ref::<SdkError<GetObjectError>>()
+                .and_then(|error| error.as_service_error())
+                .and_then(|error| error.code())
+        })
+        .or_else(|| {
+            error
+                .downcast_ref::<SdkError<HeadObjectError>>()
+                .and_then(|error| error.as_service_error())
+                .and_then(|error| error.code())
+        })
+}

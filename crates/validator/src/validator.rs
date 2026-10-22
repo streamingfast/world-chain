@@ -2,7 +2,7 @@ use alloy_consensus::{
     Header,
     transaction::{Recovered, SignerRecoverable},
 };
-use alloy_eips::Decodable2718;
+use op_alloy_consensus::decode_2718_canonical;
 use reth_primitives_traits::SealedHeader;
 use std::{marker::PhantomData, sync::Arc, time::Instant};
 
@@ -52,11 +52,7 @@ pub fn into_executed_payload(
             },
         )
     };
-    let trie_data = ComputedTrieData::new_with_changed_paths(
-        Arc::new(hashed_state),
-        Arc::new(trie_updates),
-        payload.changed_paths,
-    );
+    let trie_data = ComputedTrieData::new(Arc::new(hashed_state), Arc::new(trie_updates));
     ExecutedBlock::new(payload.recovered_block, payload.execution_output, trie_data)
 }
 
@@ -200,8 +196,8 @@ pub fn decode_transactions_with_indices(
         .iter()
         .enumerate()
         .map(|(i, tx)| {
-            let tx_envelope = OpTransactionSigned::decode_2718(&mut tx.as_ref())
-                .map_err(BalExecutorError::other)?;
+            let tx_envelope: OpTransactionSigned =
+                decode_2718_canonical(tx).map_err(BalExecutorError::other)?;
 
             let signer = tx_envelope
                 .recover_signer()

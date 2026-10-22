@@ -14,6 +14,7 @@ use anyhow::{Context, Result};
 use clap::{ArgGroup, Parser};
 use tracing::info;
 use url::Url;
+use world_chain_proof_metrics::RPC_ENDPOINT_VERIFYING;
 use world_chain_proof_protocol::{OptimismConsensusClient, VerifyingConsensusProvider};
 use world_chain_proof_tx_signer::build_transaction_signer;
 use world_chain_proposer::{
@@ -34,6 +35,10 @@ struct Cli {
     #[arg(long, env = "L1_RPC_URL")]
     l1_rpc: String,
 
+    /// Optional Ethereum L1 execution RPC URL used after the primary endpoint fails.
+    #[arg(long, env = "L1_FALLBACK_RPC_URL")]
+    l1_fallback_rpc: Option<String>,
+
     /// op-node rollup RPC URL used to read canonical L2 output roots.
     #[arg(long, env = "OUTPUT_ROOT_RPC_URL")]
     output_root_rpc: String,
@@ -41,6 +46,10 @@ struct Cli {
     /// Optional verifying op-node rollup RPC URL. Every result must match the primary endpoint.
     #[arg(long, env = "VERIFYING_OUTPUT_ROOT_RPC_URL")]
     verifying_output_root_rpc: Option<String>,
+
+    /// Start from this eligible game until a valid ASR anchor advances above it.
+    #[arg(long, env = "RECOVERY_PARENT")]
+    recovery_parent: Option<Address>,
 
     /// OP Stack `DisputeGameFactory` address on L1.
     #[arg(long, env = "FACTORY_ADDRESS")]
@@ -62,7 +71,7 @@ struct Cli {
     #[arg(long, env = "MAX_RESOLUTIONS_PER_TICK", default_value_t = 1)]
     max_resolutions_per_tick: usize,
 
-    /// Seconds between proposer-bond discovery and withdrawal passes.
+    /// Seconds between proposer-bond discovery and settlement passes.
     #[arg(
         long,
         env = "BOND_MANAGER_POLL_INTERVAL_SECONDS",
@@ -73,6 +82,14 @@ struct Cli {
     /// Number of recent factory games scanned when the bond manager starts.
     #[arg(long, env = "BOND_MANAGER_INITIAL_SCAN_LIMIT", default_value_t = 1_000)]
     bond_manager_initial_scan_limit: u64,
+
+    /// Maximum superseded proof-timeout resolution attempts per bond-manager pass; zero disables them.
+    #[arg(
+        long,
+        env = "BOND_MANAGER_MAX_RETRY_RESOLUTIONS_PER_TICK",
+        default_value_t = 1
+    )]
+    bond_manager_max_retry_resolutions_per_tick: usize,
 
     /// Number of confirmations to require after sending a tx onchain.
     #[arg(long, env = "CONFIRMATIONS", default_value_t = 5)]
@@ -112,8 +129,15 @@ async fn main() -> Result<()> {
         .context("failed to initialize proposer signer")?
         .wallet();
     let proposer_address = wallet.default_signer().address();
+    let l1_fallback_rpc_url = cli
+        .l1_fallback_rpc
+        .as_deref()
+        .map(Url::parse)
+        .transpose()
+        .context("invalid L1 fallback RPC URL")?;
     let l1_rpc_client = world_chain_proof_metrics::metered_http_client(
-        l1_rpc_url,
+        l1_rpc_url.clone(),
+        l1_fallback_rpc_url,
         world_chain_proof_metrics::RPC_TARGET_L1_EXECUTION,
         Duration::from_secs(cli.l1_rpc_timeout_seconds),
     )
@@ -137,19 +161,23 @@ async fn main() -> Result<()> {
     )
     .await
     .context("failed to bind the World Chain proof system")?;
+    contracts.refresh_vault_balance().await;
     let bond_manager_config = BondManagerConfig {
         poll_interval: Duration::from_secs(cli.bond_manager_poll_interval_seconds),
         initial_scan_limit: cli.bond_manager_initial_scan_limit,
+        max_retry_resolutions_per_tick: cli.bond_manager_max_retry_resolutions_per_tick,
     };
     let mut bond_manager = BondManager::new(bond_manager_config, contracts.clone());
     let output_roots = VerifyingConsensusProvider::new(
         OptimismConsensusClient::new(cli.output_root_rpc.clone()),
         cli.verifying_output_root_rpc
             .clone()
-            .map(OptimismConsensusClient::new),
+            .map(|url| OptimismConsensusClient::new(url).with_endpoint(RPC_ENDPOINT_VERIFYING)),
     );
     let registered = contracts.registered_lineage_config();
+    let bond_vault = contracts.bond_vault_address();
     let config = ProposerConfig {
+        recovery_parent: cli.recovery_parent,
         poll_interval: Duration::from_secs(cli.poll_interval_seconds),
         max_resolutions_per_tick: cli.max_resolutions_per_tick,
     };
@@ -157,10 +185,13 @@ async fn main() -> Result<()> {
 
     info!(
         l1_rpc_url = world_chain_proof_metrics::redact_endpoint(&cli.l1_rpc),
+        l1_fallback_rpc_configured = cli.l1_fallback_rpc.is_some(),
         output_root_rpc_url = world_chain_proof_metrics::redact_endpoint(&cli.output_root_rpc),
         verifying_output_root_rpc_configured = cli.verifying_output_root_rpc.is_some(),
         dispute_game_factory = %cli.factory_address,
+        recovery_parent = ?cli.recovery_parent,
         anchor = %registered.anchor_registry,
+        bond_vault = %bond_vault,
         proposer = %proposer_address,
         domain_hash = %registered.domain_hash,
         block_interval = registered.block_interval,

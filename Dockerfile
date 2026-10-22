@@ -67,10 +67,10 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     cargo build --locked --profile ${PROFILE} --features ${FEATURES} --bin ${WORLD_CHAIN_BUILDER_BIN}
 
 # Deployments depend on sh wget and awscli v2
-FROM public.ecr.aws/docker/library/debian:bookworm-slim
+FROM public.ecr.aws/docker/library/debian:bookworm-slim AS runtime
 WORKDIR /app
 
-# Install wget in the final image
+# Install runtime tools and require Debian's eMudhra distrust update.
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
   ca-certificates \
@@ -81,6 +81,7 @@ RUN apt-get update && \
   jq \
   netcat-traditional \
   tzdata && \
+  dpkg --compare-versions "$(dpkg-query -W -f='${Version}' ca-certificates)" ge '20250419~deb12u2' && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 

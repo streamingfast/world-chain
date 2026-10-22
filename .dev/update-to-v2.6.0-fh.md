@@ -77,7 +77,21 @@ The op-reth line already moved to these revs: reth `op-reth-v2.6.1-fh3.1` (`d487
 - [x] `cargo check -p world-chain` clean (only upstream's unused-workspace-dependency warnings).
 - [x] `cargo test -p world-chain-evm -p world-chain-node`: 23 passed, 0 failed.
       `cargo check -p world-chain-builder --benches` clean.
-- [ ] Battlefield `world-chain-devnet`, compare-blocks.
+- [x] Battlefield `world-chain-devnet` (battlefield-ethereum `master` `ffd9260`, fireeth `d0f4ef2`):
+      78 passing, 23 pending, 1 failing. No snapshot changed. `FIRE INIT` read, genesis block
+      emitted, the node kept up with the sequencer at 2 s blocks.
+  - The 23 pending tests are skipped by network (Amsterdam, blobs, BSC, Arc assets).
+  - The failure is `zz_compare_blocks` (`fireeth tools compare-blocks-rpc` over #1–#277): all 277
+    blocks differ, and only in `transaction_traces[N].blob_gas` and
+    `transaction_traces[N].receipt.blob_gas_used`, which the RPC side has and the Firehose block
+    does not. This is a false diff from the compare tool, not a node change: under Jovian,
+    op-reth's receipt builder puts the transaction's DA footprint in receipt `blobGasUsed`
+    (`op-reth/crates/rpc/src/eth/receipt.rs`, already present at `96ffbb2a`/v2.4.3), and
+    firehose-ethereum `44ac168` (2026-09-29, after the v2.4.3 run) started copying receipt
+    `blobGasUsed` into `blob_gas`/`blob_gas_used` when rebuilding a block from RPC. The block
+    header's `blobGasUsed` is 0 and the transactions are not EIP-4844. The fix belongs in
+    `compare-blocks-rpc` (skip the field on OP Jovian chains), not here.
+  - The v2.4.3 diff on `set_code_authorizations` (blocks 399/401) is gone (fireeth `d5a5e39`).
 - [x] `CHANGELOG.sf.md`, `ACTIVATIONS.md`, `Dockerfile.sf` toolchain note (nightly-2026-10-10).
 - [ ] Draft PR → `release/2.x`; flip branch pins to tags once the fork PRs are merged and tagged.
 

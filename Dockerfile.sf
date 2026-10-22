@@ -8,7 +8,7 @@ ARG FIREHOSE_ETHEREUM="latest"
 # invocation below — that nightly, not this version, is what compiles the node.
 ARG RUST_VERSION=1.95.0
 
-FROM public.ecr.aws/docker/library/rust:${RUST_VERSION}-bookworm AS builder
+FROM mirror.gcr.io/library/rust:${RUST_VERSION}-bookworm AS builder
 WORKDIR /app
 ARG TARGETARCH
 

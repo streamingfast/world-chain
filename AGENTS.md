@@ -1,64 +1,73 @@
 # AGENTS.md
 
-This repository is the **StreamingFast fork** of `worldcoin/world-chain`, carrying
-Firehose instrumentation on top of upstream World Chain.
+These instructions apply across the repository.
 
-## Git remotes
+## Find the code
 
-| Remote | Points to | Access |
-| --- | --- | --- |
-| `origin` | `worldcoin/world-chain` | **read-only** — upstream, we cannot push to it |
-| `sf` | `streamingfast/world-chain` | read/write — our fork, this is where our work lands |
+- `bin/world-chain/` and `crates/`: node, builder, validator, Flashblocks, PBH, and RPC.
+- `proofs/`: proof services, workers, backends, and measured SP1/Nitro code.
+- `pkg/contracts/`: Solidity contracts and Foundry tests; `opstack/` builds pinned OP Stack artifacts.
+- `e2e-tests/`, `crates/test-utils/`, and `xtask/`: integration tests, shared fixtures, and development tools.
+- `specs/` and `wips/`: protocol specifications; `docs/`: development and operating guides.
 
-The remote naming is a convention, not a guarantee: on some clones the
-StreamingFast fork may be named differently (`streamingfast`, `fork`, ...). Resolve
-it by URL rather than by name — pick the remote whose URL points at
-`streamingfast/world-chain`:
+For WIP-1006 changes, read `wips/wip-1006.md` and `pkg/contracts/README.md`. Use `../world-id-protocol/` for World ID specifications when available.
 
-```bash
-git remote -v | grep streamingfast
-```
+For live node debugging with temporary log filters, use `.agents/skills/debug-node-tracing/SKILL.md`.
 
-**Never push to `origin`.** Pushing our fork's work to the upstream World Chain
-repository is wrong even when permissions would allow it.
+## Make focused changes
 
-## Pull requests
+- Read the relevant code and tests before editing. State assumptions that affect behavior; ask when the answer changes the implementation.
+- Follow existing patterns. Fix the cause with the smallest complete change; avoid unrelated refactors, dependency upgrades, and formatting.
+- Preserve existing work. Do not edit vendored contracts under `pkg/contracts/lib/` unless the task requires it.
+- Propagate errors or handle them explicitly. Bound remote calls and retries. Never add `.unwrap()` to production Rust.
+- Add the smallest useful regression test for changed behavior. Explain why in comments only when the code cannot; keep comments to one line by default.
 
-Always open PRs **against the StreamingFast fork**, targeting its default branch,
-which follows the `release/*` pattern (currently `release/2.x`):
+## Verify changes
 
-```bash
-git push -u sf HEAD
-gh pr create --repo streamingfast/world-chain --base release/2.x
-```
+Use the toolchain pinned in `rust-toolchain.toml`. Start with affected tests during development. Before every commit, run Rust formatting, Clippy, and workspace tests below. Do not commit while a required check fails or remains unrun; report blockers.
 
-Do not target `main` — on this fork `main` is a stale mirror of upstream and is
-not the integration branch. Do not target a branch on `worldcoin/world-chain`.
+| Check | Command from the repository root |
+| --- | --- |
+| Rust formatting | `cargo fmt --all` then `cargo fmt --all -- --check` |
+| Rust lint | `cargo clippy --workspace --all-targets --all-features --locked -- -D warnings` |
+| Affected Rust tests | `cargo nextest run --locked -p <package>` |
+| Workspace Rust tests | `just test --profile ci --locked` |
+| Solidity formatting and tests | `just contracts-fmt` then `just test-contracts -vvv` |
 
-The default branch moves as upstream releases advance (`release/2.x` →
-`release/3.x` → ...), so confirm it rather than hardcoding:
+For Solidity changes, also run `forge coverage` from `pkg/contracts/`. `just test-contracts` initializes dependencies and builds the required OP Stack artifacts before testing.
 
-```bash
-gh repo view streamingfast/world-chain --json defaultBranchRef --jq .defaultBranchRef.name
-```
+Check the relevant `.github/workflows/` file for additional requirements. Some tests need Docker or RPC credentials; report missing prerequisites and failed checks. Never claim unrun tests passed.
 
-Note the local `sf/HEAD` symbolic ref is often stale (it may still point at
-`sf/main`) — trust the `gh repo view` output above, not `sf/HEAD`.
+## Preserve proof boundaries
 
-Rebase onto the current default branch before pushing, so the PR is conflict-free
-and the diff shows only our change.
+- `proofs/measured/` is excluded from the root workspace. Run its checks with the affected manifest; root workspace checks do not cover it.
+- Keep measured dependencies separate from host services. Source, dependency, and toolchain changes can rotate SP1 verification keys or Nitro PCRs.
+- Follow `docs/proof/reproducible-builds.md` when measured inputs change. Regenerate affected values in `proofs/measurements.json` through the build recipes; never invent or hand-adjust hashes.
+- Use `just verify-proof-vkeys` for SP1 verification. Nitro measurements require Linux x86_64 and Nix; see `.github/workflows/verify-measurements.yml`.
+- Read `docs/proof/release.md` before changing proof release or activation behavior. Account for workers serving games pinned to older measurements.
 
-## Fork-specific files
+## Protect credentials and deployments
 
-Our additions are suffixed `.sf` so upstream merges stay clean. Keep changes
-confined to these files whenever possible:
+- Never print or commit private keys, JWTs, authenticated RPC URLs, or secret files. Do not dump the environment.
+- Check recipes before running them: proof deployment recipes broadcast by default. Use `dry_run=true` for simulation; broadcast only when authorized for the target environment.
+- Keep mocks and devnet deployment scripts out of production procedures. Preserve authorization checks, contract storage compatibility, and protocol invariants.
 
-- `Dockerfile.sf` — Firehose-enabled image
-- `CHANGELOG.sf.md` — our changelog; `.github/workflows/sf-release.yml` reads its
-  top section for release notes
-- `.github/workflows/sf-release.yml` — our build/push/release pipeline, triggered
-  by `v*-fh*` tags and pushes to `release/*` and `firehose/*` branches
+## Hand off
 
-Upstream-maintained files (other workflows, crates, etc.) should only be touched
-when the Firehose integration genuinely requires it — every edit there is a
-future merge conflict.
+Keep replies short. State the result, checks run, and any blocker. Commit only when asked; use a one-line conventional commit. Keep PR descriptions within six lines: what changed, why, and how it was verified.
+
+## PR labels and AI disclosure
+
+- Apply `ai-generated` when AI generated or materially edited retained code, commits, PR descriptions, or review replies. Include drafts; discarded output and trivial spelling or formatting suggestions do not require it.
+- Under `AI usage/prompt(s) (if applicable)`, name each tool and describe what it actually did. Keep this current after review changes. Do not publish requester prompts, hidden instructions, internal reasoning, or secrets.
+- Follow these case-sensitive prefixes: `A-<area>` for affected subsystems and `C-<category>` for the change's purpose. Apply at least one of each, plus `ai-generated` when applicable.
+- Check labels with `gh label list --repo worldcoin/world-chain --limit 100`. Reuse matching names; create missing required labels with clear descriptions when labeling a PR. Preserve unrelated labels and update your labels when the scope changes.
+- Use `S-` status and `P-` priority labels only when supported by the PR's actual state or agreed urgency.
+
+| Change | Example labels |
+| --- | --- |
+| RPC bug fix | `A-rpc`, `C-bug`; add `C-regression` for a regression |
+| Proof-system feature | `A-proofs`, `C-enhancement` |
+| Block-building performance | `A-block-building`, `C-perf` |
+| Contract documentation or tests | `A-contracts` with `C-docs` or `C-test` |
+| Dependency or CI maintenance | `A-dependencies` or `A-ci`, usually `C-debt` |

@@ -3,7 +3,7 @@
 # (fireeth) image, mirroring streamingfast/base's Dockerfile.sf.
 ARG FIREHOSE_ETHEREUM="latest"
 # Selects the base image only. Since upstream v2.4.2 the workspace ships a
-# rust-toolchain.toml pinning nightly-2026-07-01 (crates/evm needs
+# rust-toolchain.toml pinning nightly-2026-10-10 (crates/evm needs
 # #![feature(min_specialization)]), which rustup installs on the first cargo
 # invocation below — that nightly, not this version, is what compiles the node.
 ARG RUST_VERSION=1.95.0

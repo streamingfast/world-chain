@@ -3,8 +3,9 @@ use crate::{
     IDisputeGameFactory, IMultiProofGame, InvalidationReasonError, MAX_ATTEMPT_SCAN,
     MULTI_PROOF_GAME_TYPE, ProposalCommitment, ResolutionStatus,
 };
-use alloy_primitives::{Address, B256};
+use alloy_primitives::{Address, B256, U256};
 use alloy_provider::Provider;
+use alloy_sol_types::SolValue;
 use async_trait::async_trait;
 use thiserror::Error;
 
@@ -15,6 +16,15 @@ pub struct LineageAnchor {
     pub address: Address,
     /// L2 block number committed by the anchor.
     pub l2_block_number: u64,
+}
+
+/// Registry eligibility and claim of an operator-selected recovery parent.
+#[derive(Debug, Clone, Copy)]
+pub struct RecoveryParent {
+    pub anchor: LineageAnchor,
+    pub root_claim: B256,
+    /// Registered, proper, respected, and resolved with `DEFENDER_WINS`.
+    pub eligible: bool,
 }
 
 /// Expected state transition at one proposal interval.
@@ -103,6 +113,10 @@ impl SelectedLineage {
 /// Failure while reading or reconstructing the selected proposal lineage.
 #[derive(Debug, Error)]
 pub enum LineageError {
+    #[error("recovery parent {0} must be a registered, proper, respected defender-winning game")]
+    InvalidRecoveryParent(Address),
+    #[error("recovery parent {0} does not match the canonical finalized L2 root")]
+    NonCanonicalRecoveryParent(Address),
     #[error("contract error: {0}")]
     Contract(String),
     #[error("l2 block number overflow: parent {parent_block} + interval {block_interval}")]
@@ -128,6 +142,11 @@ pub trait LineageProvider: Send + Sync {
 
     async fn lineage_anchor(&self) -> Result<LineageAnchor, LineageError>;
 
+    /// Reads the claim and registry eligibility of a recovery parent.
+    async fn recovery_parent(&self, game: Address) -> Result<RecoveryParent, LineageError>;
+
+    async fn lineage_anchor_claim_valid(&self, game: Address) -> Result<bool, LineageError>;
+
     async fn game_for_transition(
         &self,
         transition: LineageTransition,
@@ -143,6 +162,7 @@ pub trait LineageProvider: Send + Sync {
 pub async fn select_lineage<E, C>(
     execution: &E,
     consensus: &C,
+    recovery_parent: Option<Address>,
 ) -> Result<SelectedLineage, LineageError>
 where
     E: LineageProvider,
@@ -153,8 +173,32 @@ where
         return Err(LineageError::ZeroBlockInterval);
     }
 
-    let anchor = execution.lineage_anchor().await?;
+    let mut anchor = execution.lineage_anchor().await?;
     let finalized_block = consensus.latest_l2_finalized_block().await?;
+    world_chain_proof_metrics::record_lineage_recovery_active(false);
+    if let Some(address) = recovery_parent {
+        if address == Address::ZERO {
+            return Err(LineageError::InvalidRecoveryParent(address));
+        }
+        let recovery = execution.recovery_parent(address).await?;
+        let recovered = anchor.l2_block_number > recovery.anchor.l2_block_number
+            && execution.lineage_anchor_claim_valid(anchor.address).await?;
+        if !recovered {
+            world_chain_proof_metrics::record_lineage_recovery_active(true);
+            if !recovery.eligible {
+                return Err(LineageError::InvalidRecoveryParent(address));
+            }
+            if recovery.anchor.l2_block_number > finalized_block
+                || consensus
+                    .output_root_at_block(recovery.anchor.l2_block_number)
+                    .await?
+                    != recovery.root_claim
+            {
+                return Err(LineageError::NonCanonicalRecoveryParent(address));
+            }
+            anchor = recovery.anchor;
+        }
+    }
     let mut parent = anchor;
     let mut games = Vec::new();
 
@@ -208,6 +252,45 @@ where
     }
 }
 
+/// Reads recovery eligibility using only the standard dispute-game ABI, including legacy parents.
+pub async fn read_recovery_parent<P>(
+    provider: &P,
+    registry: &IAnchorStateRegistry::IAnchorStateRegistryInstance<P>,
+    address: Address,
+) -> Result<RecoveryParent, LineageError>
+where
+    P: Provider + Clone,
+{
+    if address == Address::ZERO || address == *registry.address() {
+        return Err(LineageError::InvalidRecoveryParent(address));
+    }
+    let game = IMultiProofGame::IMultiProofGameInstance::new(address, provider.clone());
+    let (proper, respected, status, root_claim, block_number) = provider
+        .multicall()
+        .add(registry.isGameProper(address))
+        .add(registry.isGameRespected(address))
+        .add(game.status())
+        .add(game.rootClaim())
+        .add(game.l2SequenceNumber())
+        .aggregate()
+        .await
+        .map_err(|error| {
+            LineageError::Contract(format!("read recovery parent {address}: {error}"))
+        })?;
+    Ok(RecoveryParent {
+        anchor: LineageAnchor {
+            address,
+            l2_block_number: block_number.try_into().map_err(|_| {
+                LineageError::Contract(format!(
+                    "recovery parent {address} block number overflows u64"
+                ))
+            })?,
+        },
+        root_claim,
+        eligible: proper && respected && GameStatus::try_from(status)? == GameStatus::DefenderWins,
+    })
+}
+
 /// Reads the current game-or-registry anchor sentinel.
 pub async fn read_lineage_anchor<P>(
     provider: &P,
@@ -246,20 +329,7 @@ pub async fn read_registered_lineage_config<P>(
 where
     P: Provider + Clone,
 {
-    let implementation_address = factory
-        .gameImpls(MULTI_PROOF_GAME_TYPE)
-        .call()
-        .await
-        .map_err(|error| LineageError::Contract(error.to_string()))?;
-    if implementation_address == Address::ZERO {
-        return Err(LineageError::Contract(format!(
-            "dispute-game factory {} has no implementation for game type {MULTI_PROOF_GAME_TYPE}",
-            factory.address()
-        )));
-    }
-
-    let implementation =
-        IMultiProofGame::IMultiProofGameInstance::new(implementation_address, provider.clone());
+    let implementation = read_registered_game_implementation(provider, factory).await?;
     let (domain_hash, anchor_registry, block_interval) = provider
         .multicall()
         .add(implementation.domainHash())
@@ -285,6 +355,52 @@ where
         block_interval,
         anchor_registry,
     })
+}
+
+/// Discovers the singleton bond vault from the factory's registered WIP-1006 implementation.
+pub async fn read_registered_bond_vault<P>(
+    provider: &P,
+    factory: &IDisputeGameFactory::IDisputeGameFactoryInstance<P>,
+) -> Result<Address, LineageError>
+where
+    P: Provider + Clone,
+{
+    let implementation = read_registered_game_implementation(provider, factory).await?;
+    let bond_vault = implementation
+        .bondVault()
+        .call()
+        .await
+        .map_err(|error| LineageError::Contract(error.to_string()))?;
+    if bond_vault == Address::ZERO {
+        return Err(LineageError::Contract(
+            "registered game implementation has no bond vault".into(),
+        ));
+    }
+    Ok(bond_vault)
+}
+
+async fn read_registered_game_implementation<P>(
+    provider: &P,
+    factory: &IDisputeGameFactory::IDisputeGameFactoryInstance<P>,
+) -> Result<IMultiProofGame::IMultiProofGameInstance<P>, LineageError>
+where
+    P: Provider + Clone,
+{
+    let implementation_address = factory
+        .gameImpls(MULTI_PROOF_GAME_TYPE)
+        .call()
+        .await
+        .map_err(|error| LineageError::Contract(error.to_string()))?;
+    if implementation_address == Address::ZERO {
+        return Err(LineageError::Contract(format!(
+            "dispute-game factory {} has no implementation for game type {MULTI_PROOF_GAME_TYPE}",
+            factory.address()
+        )));
+    }
+    Ok(IMultiProofGame::IMultiProofGameInstance::new(
+        implementation_address,
+        provider.clone(),
+    ))
 }
 
 /// Looks up the highest sequential retry attempt for a transition.
@@ -324,20 +440,69 @@ where
     Ok(latest)
 }
 
-/// Reads and decodes a game's current resolution evaluation.
+/// Returns whether the factory contains the next attempt for this exact transition.
+/// Attempts are sequential, so finding the immediate successor establishes supersession.
+pub async fn read_game_has_retry<P>(
+    factory: &IDisputeGameFactory::IDisputeGameFactoryInstance<P>,
+    game: &IMultiProofGame::IMultiProofGameInstance<P>,
+) -> Result<bool, LineageError>
+where
+    P: Provider + Clone,
+{
+    let (domain, block_number, parent, attempt, root) = game
+        .provider()
+        .multicall()
+        .add(game.proposalDomainHash())
+        .add(game.l2SequenceNumber())
+        .add(game.parentRef())
+        .add(game.attempt())
+        .add(game.rootClaim())
+        .aggregate()
+        .await
+        .map_err(|error| {
+            LineageError::Contract(format!(
+                "read retry context for {}: {error}",
+                game.address()
+            ))
+        })?;
+    let Some(next_attempt) = attempt.checked_add(U256::from(1)) else {
+        return Ok(false);
+    };
+    let extra_data = (domain, block_number, parent, next_attempt).abi_encode();
+    let entry = factory
+        .games(MULTI_PROOF_GAME_TYPE, root, extra_data.into())
+        .call()
+        .await
+        .map_err(|error| {
+            LineageError::Contract(format!("look up retry for {}: {error}", game.address()))
+        })?;
+    Ok(entry.proxy != Address::ZERO)
+}
+
+/// Reads the stored status and resolution evaluation atomically so resolution between
+/// separate RPC calls cannot produce an inconsistent snapshot.
 pub async fn read_lineage_resolution_status<P>(
     game: &IMultiProofGame::IMultiProofGameInstance<P>,
 ) -> Result<ResolutionStatus, LineageError>
 where
     P: Provider + Clone,
 {
-    let result = game
-        .resolutionStatus()
-        .call()
+    let (status, result) = game
+        .provider()
+        .multicall()
+        .add(game.status())
+        .add(game.resolutionStatus())
+        .aggregate()
         .await
-        .map_err(|error| LineageError::Contract(error.to_string()))?;
+        .map_err(|error| {
+            LineageError::Contract(format!(
+                "read resolution status for {}: {error}",
+                game.address()
+            ))
+        })?;
 
     Ok(ResolutionStatus {
+        status: status.try_into()?,
         resolvable: result.resolvable,
         outcome: result.outcome.try_into()?,
         invalidation_reason: result.reason.try_into()?,

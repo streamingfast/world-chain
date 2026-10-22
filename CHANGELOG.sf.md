@@ -3,6 +3,34 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## v2.6.0-fh3.1
+
+### Changed
+
+* Merged upstream `worldcoin/world-chain` `v2.6.0` (84 commits since `v2.4.3`, through `v2.4.4`
+  and `v2.4.5`). Upstream moved reth from `op-rs/reth` `aef8d3ef` to `ethereum-optimism/reth`
+  `0fbe4285` (reth v2.5.2), the optimism monorepo from `96ffbb2a` to `op-reth/v2.6.0`, revm to 42
+  and alloy-evm to 0.38.
+* Both Firehose forks moved to the new revs on their `release/world-chain-2.x` branches:
+  `streamingfast/reth` and `streamingfast/optimism` `world-chain-v2.6.0-fh3.1`. The reth
+  `[patch]` is now keyed on `https://github.com/ethereum-optimism/reth`, the URL upstream pins.
+* `alloy-evm` now comes from `streamingfast/evm` `v0.38.0-sf`, so block traces keep their
+  `systemCalls`.
+* Firehose code changes report the previous code hash and code from revm 42's `CodeChange` journal
+  entry instead of assuming empty code. A contract creation starts from empty code, so its code
+  change is reported as before.
+* `FIRE INIT` and the genesis block are emitted from the node builder's `on_component_initialized`
+  hook, before the consensus engine exists. The genesis block used to be emitted from
+  `on_node_started`, which can run after the engine has traced a block. No Firehose execution
+  extension (ExEx) is installed; the only ExEx left is upstream's `proofs-history`, when
+  `--proofs-history` is set.
+* `firehose-tracer` stays locked at 5.5.0, the version the forks are built against.
+
+### Added
+
+* `ACTIVATIONS.md` lists every World Chain hardfork with its mainnet and Sepolia status and its
+  effect on the Firehose block.
+
 ## v2.4.3-fh3.1-4
 
 ### Changed

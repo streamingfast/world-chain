@@ -32,15 +32,7 @@ pub async fn launch_node(
     if !config.args.rollup.proofs_history {
         let handle = builder
             .node(WorldChainNode::<WorldChainDefaultContext>::new(config))
-            // Genesis emission must wait until the DB is initialized (the genesis block is
-            // written during launch), hence `on_node_started` rather than alongside
-            // `init_blockchain` in `main`.
-            .on_node_started(|node| {
-                reth_optimism_firehose::emit_genesis_block_if_empty(
-                    &node.provider,
-                    node.chain_spec().as_ref(),
-                )
-            })
+            .on_component_initialized(|node| reth_optimism_firehose::init_blockchain(&node.provider))
             .launch()
             .await?;
         return handle.node_exit_future.await;
@@ -91,11 +83,8 @@ where
 
     let handle = builder
         .node(WorldChainNode::<WorldChainDefaultContext>::new(config))
+        .on_component_initialized(|node| reth_optimism_firehose::init_blockchain(&node.provider))
         .on_node_started(move |node| {
-            reth_optimism_firehose::emit_genesis_block_if_empty(
-                &node.provider,
-                node.chain_spec().as_ref(),
-            )?;
             spawn_proofs_db_metrics(
                 node.task_executor,
                 storage,

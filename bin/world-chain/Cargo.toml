@@ -18,7 +18,6 @@ firehose-tracer.workspace = true
 # world-chain
 world-chain-cli.workspace = true
 world-chain-chainspec.workspace = true
-reth-chainspec.workspace = true
 world-chain-evm.workspace = true
 world-chain-node.workspace = true
 world-chain-rpc.workspace = true

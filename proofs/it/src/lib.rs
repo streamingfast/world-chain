@@ -23,7 +23,7 @@ use world_chain_proof_protocol::{
     ClaimData, ConsensusError, ConsensusProvider, GameCreation, GameStatus, InvalidationReason,
     LineageAnchor, LineageError, LineageGame, LineageProvider, LineageTransition, MAX_ATTEMPT_SCAN,
     PROOF_SYSTEM_VERSION, PROOF_THRESHOLD, ProofDomain, ProofLane, ProposalCommitment,
-    ProposalStatus, ResolutionStatus, RootCommitment, has_threshold,
+    ProposalStatus, RecoveryParent, ResolutionStatus, RootCommitment, has_threshold,
 };
 use world_chain_proof_worker::{ClaimedProofJobHandler, ProofJob};
 use world_chain_proposer::{
@@ -65,11 +65,15 @@ impl GameLifecycle {
         }
     }
 
-    const fn proposal_status(self, proven: bool) -> ProposalStatus {
+    const fn proposal_status(self, proof_bitmap: u8) -> ProposalStatus {
         match self {
-            Self::Proposed if proven => ProposalStatus::UnchallengedAndValidProofProvided,
+            Self::Proposed if proof_bitmap != 0 => {
+                ProposalStatus::UnchallengedAndValidProofProvided
+            }
             Self::Proposed => ProposalStatus::Unchallenged,
-            Self::Challenged if proven => ProposalStatus::ChallengedAndValidProofProvided,
+            Self::Challenged if has_threshold(proof_bitmap) => {
+                ProposalStatus::ChallengedAndValidProofProvided
+            }
             Self::Challenged => ProposalStatus::Challenged,
             Self::Finalized | Self::Invalidated => ProposalStatus::Resolved,
         }
@@ -338,6 +342,30 @@ impl LineageProvider for FakeExecution {
             .anchor)
     }
 
+    async fn recovery_parent(&self, game: Address) -> Result<RecoveryParent, LineageError> {
+        let state = self.state.lock().expect("fake execution mutex poisoned");
+        let record = state
+            .games_by_address
+            .get(&game)
+            .ok_or(LineageError::InvalidRecoveryParent(game))?;
+        Ok(RecoveryParent {
+            anchor: LineageAnchor {
+                address: game,
+                l2_block_number: record.creation.l2_block_number,
+            },
+            root_claim: record.creation.root_claim,
+            eligible: record.state == GameLifecycle::Finalized,
+        })
+    }
+
+    async fn lineage_anchor_claim_valid(&self, game: Address) -> Result<bool, LineageError> {
+        let state = self.state.lock().expect("fake execution mutex poisoned");
+        Ok(state
+            .games_by_address
+            .get(&game)
+            .is_some_and(|record| record.state == GameLifecycle::Finalized))
+    }
+
     async fn game_for_transition(
         &self,
         transition: LineageTransition,
@@ -373,13 +401,30 @@ impl LineageProvider for FakeExecution {
         let outcome = record.state.outcome();
         if record.state == GameLifecycle::Finalized {
             return Ok(ResolutionStatus {
+                status: outcome,
                 resolvable: false,
                 outcome,
                 invalidation_reason: InvalidationReason::None,
             });
         }
+        let local_timeout = match record.state {
+            GameLifecycle::Proposed => record.challenge_deadline == 0 && record.proof_bitmap == 0,
+            GameLifecycle::Challenged => {
+                record.proof_deadline == 0 && !has_threshold(record.proof_bitmap)
+            }
+            _ => false,
+        };
+        if local_timeout {
+            return Ok(ResolutionStatus {
+                status: outcome,
+                resolvable: !parent_is_unresolved(&state, record),
+                outcome: GameStatus::ChallengerWins,
+                invalidation_reason: InvalidationReason::ProofTimeout,
+            });
+        }
         if parent_is_unresolved(&state, record) {
             return Ok(ResolutionStatus {
+                status: outcome,
                 resolvable: false,
                 outcome,
                 invalidation_reason: InvalidationReason::None,
@@ -391,35 +436,23 @@ impl LineageProvider for FakeExecution {
         ) && has_threshold(record.proof_bitmap)
         {
             return Ok(ResolutionStatus {
+                status: outcome,
                 resolvable: true,
                 outcome: GameStatus::DefenderWins,
                 invalidation_reason: InvalidationReason::None,
             });
         }
-        if record.state == GameLifecycle::Challenged && record.proof_deadline == 0 {
-            return Ok(ResolutionStatus {
-                resolvable: true,
-                outcome: GameStatus::ChallengerWins,
-                invalidation_reason: InvalidationReason::ProofTimeout,
-            });
-        }
         if record.state == GameLifecycle::Proposed && record.challenge_deadline == 0 {
             return Ok(ResolutionStatus {
+                status: outcome,
                 resolvable: true,
-                outcome: if record.proof_bitmap == 0 {
-                    GameStatus::ChallengerWins
-                } else {
-                    GameStatus::DefenderWins
-                },
-                invalidation_reason: if record.proof_bitmap == 0 {
-                    InvalidationReason::ProofTimeout
-                } else {
-                    InvalidationReason::None
-                },
+                outcome: GameStatus::DefenderWins,
+                invalidation_reason: InvalidationReason::None,
             });
         }
 
         Ok(ResolutionStatus {
+            status: outcome,
             resolvable: false,
             outcome,
             invalidation_reason: InvalidationReason::None,
@@ -548,7 +581,7 @@ impl ChallengerClient for FakeExecution {
             .games_by_address
             .get(&game)
             .map_or(ProposalStatus::Resolved, |record| {
-                record.state.proposal_status(record.proof_bitmap != 0)
+                record.state.proposal_status(record.proof_bitmap)
             }))
     }
 
@@ -611,7 +644,7 @@ impl DefenderClient for FakeExecution {
             .games_by_address
             .get(&game)
             .map(|record| ClaimData {
-                status: record.state.proposal_status(record.proof_bitmap != 0),
+                status: record.state.proposal_status(record.proof_bitmap),
                 challenger: Address::ZERO,
                 deadline: record.proof_deadline,
                 proof_bitmap: record.proof_bitmap,

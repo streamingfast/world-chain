@@ -1,6 +1,5 @@
 use clap::Parser;
 use eyre::config::HookBuilder;
-use reth_chainspec::EthChainSpec;
 use reth_optimism_consensus::OpBeaconConsensus;
 use reth_tracing::tracing::info;
 use std::sync::Arc;
@@ -49,10 +48,6 @@ fn main() {
             |mut builder, args| async move {
                 info!(target: "reth::cli", "Launching node");
                 let config: WorldChainNodeConfig = args.into_config(builder.config_mut())?;
-
-                // Record the chain config on the Firehose tracer (emits `FIRE INIT`) before the
-                // node launches, so it happens ahead of the first engine-API payload.
-                reth_optimism_firehose::init_blockchain(builder.config().chain.chain_id());
 
                 info!(target: "reth::cli", "Starting in Flashblocks mode");
                 proof_history::launch_node(builder, config).await

@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::{
     ProofData,
     config::ProverServiceConfig,
@@ -159,7 +161,7 @@ impl ProverServiceStore {
         };
 
         let proof_status_str: &str = row.get("proof_status");
-        let proof_status = ProofStatus::try_from(proof_status_str)
+        let proof_status = ProofStatus::from_str(proof_status_str)
             .map_err(ProofRequestError::UnknownProofStatus)?;
 
         if !request_matches(&row, &proof_request)? {
@@ -177,10 +179,10 @@ impl ProverServiceStore {
             return Err(ProofRequestError::RequestMismatch(id));
         }
 
-        if proof_status == ProofStatus::Failed {
-            // retry the entire proof job if retry_count is less than the max_retry
+        if matches!(proof_status, ProofStatus::Failed | ProofStatus::Cancelled) {
+            // A later challenge or reorg can require cancelled work again without a proof failure.
             let retry_count: i32 = row.get("retry_count");
-            if retry_count > self.config.max_retries as i32 {
+            if proof_status == ProofStatus::Failed && retry_count > self.config.max_retries as i32 {
                 tx.rollback().await?;
                 return Err(ProofRequestError::TooManyRetries(TooManyRetriesErrorData {
                     proof_id: id,
@@ -193,7 +195,7 @@ impl ProverServiceStore {
                 UPDATE proof_requests
                 SET proof_status = $1,
                     job_status = $2,
-                    retry_count = retry_count + 1,
+                    retry_count = retry_count + $5,
                     l1_head = $3,
                     failure_reason = NULL,
                     proof_data = NULL,
@@ -209,6 +211,7 @@ impl ProverServiceStore {
             .bind(ProofJobStatus::Pending.as_str())
             .bind(proof_request.l1_head.as_slice())
             .bind(&proof_id)
+            .bind(i32::from(proof_status == ProofStatus::Failed))
             .execute(&mut *tx)
             .await?;
 
@@ -219,9 +222,9 @@ impl ProverServiceStore {
                 game_address = %proof_request.game,
                 %backend,
                 l2_block_number = proof_request.l2_block_number,
-                retry_count = retry_count + 1,
+                retry_count = retry_count + i32::from(proof_status == ProofStatus::Failed),
                 max_retries = self.config.max_retries,
-                "re-queued failed proof request"
+                "re-queued proof request"
             );
 
             let request_proof_response = RequestProofResponse {
@@ -277,17 +280,50 @@ impl ProverServiceStore {
                     proof,
                 }))
             }
-            ProofStatus::Failed => Ok(ProofResponse::Failed(FailedProofResponse {
-                id: proof_id,
-                reason: row
-                    .get::<Option<String>, _>("failure_reason")
-                    .unwrap_or_else(|| "proof job failed".to_string()),
-            })),
+            ProofStatus::Failed | ProofStatus::Cancelled => {
+                Ok(ProofResponse::Failed(FailedProofResponse {
+                    id: proof_id,
+                    reason: row
+                        .get::<Option<String>, _>("failure_reason")
+                        .unwrap_or_else(|| "proof job failed".to_string()),
+                }))
+            }
             status => Ok(ProofResponse::Pending(PendingProofResponse {
                 id: proof_id,
                 status,
             })),
         }
+    }
+
+    pub(crate) async fn active_games(&self) -> Result<Vec<Address>, ProofJobQueueError> {
+        let games: Vec<Vec<u8>> = sqlx::query_scalar(
+            "SELECT DISTINCT game FROM proof_requests WHERE proof_status IN ('CREATED', 'RUNNING')",
+        )
+        .fetch_all(&self.pool)
+        .await?;
+        games.into_iter().map(address_from_bytes).collect()
+    }
+
+    pub(crate) async fn cancel_game_proofs(&self, game: Address) -> Result<u64, sqlx::Error> {
+        const FAILURE_REASON: &str = "game no longer requires proof support";
+        let result = sqlx::query(
+            r#"
+            UPDATE proof_requests
+            SET proof_status = $1, job_status = $2,
+                failure_reason = $3,
+                worker_id = NULL, lock_id = NULL, lock_expires_at = NULL,
+                updated_at = $5, finished_at = $5
+            WHERE game = $4 AND proof_status IN ('CREATED', 'RUNNING')
+            "#,
+        )
+        .bind(ProofStatus::Cancelled.as_str())
+        .bind(ProofJobStatus::Failed.as_str())
+        .bind(FAILURE_REASON)
+        .bind(game.as_slice())
+        .bind(Utc::now())
+        .execute(&self.pool)
+        .await?;
+        Ok(result.rows_affected())
     }
 
     pub(crate) async fn mark_exhausted_proof_requests_failed(&self) -> Result<u64, sqlx::Error> {
@@ -465,7 +501,7 @@ impl ProverServiceStore {
         let session = if let Some(row) = row {
             let backend_session_id: String = row.try_get("backend_session_id")?;
             let status_str: String = row.try_get("status")?;
-            let state = BackendSessionStatus::try_from(status_str.as_str())
+            let state = BackendSessionStatus::from_str(status_str.as_str())
                 .map_err(ProofJobQueueError::UnknownBackendSessionStatus)?;
 
             Some(BackendSession {
@@ -511,7 +547,7 @@ impl ProverServiceStore {
         };
 
         let stored_job_status_str: &str = claim.get("job_status");
-        let stored_job_status = ProofJobStatus::try_from(stored_job_status_str)
+        let stored_job_status = ProofJobStatus::from_str(stored_job_status_str)
             .map_err(ProofJobQueueError::UnknownProofJobStatus)?;
 
         let stored_lock_id: Option<Uuid> = claim.get("lock_id");
@@ -564,7 +600,7 @@ impl ProverServiceStore {
         // retry, any other status is a conflict.
         for row in &existing_backend_sessions {
             let status_str: &str = row.get("status");
-            let stored = BackendSessionStatus::try_from(status_str)
+            let stored = BackendSessionStatus::from_str(status_str)
                 .map_err(ProofJobQueueError::UnknownBackendSessionStatus)?;
             if stored.is_terminal() {
                 if stored == status {
@@ -686,7 +722,7 @@ impl ProverServiceStore {
         let stored_worker_id: Option<String> = existing.get("worker_id");
         let stored_lock_expires_at: Option<chrono::DateTime<Utc>> = existing.get("lock_expires_at");
         let stored_job_status_str: String = existing.get("job_status");
-        let stored_job_status = ProofJobStatus::try_from(stored_job_status_str.as_str())
+        let stored_job_status = ProofJobStatus::from_str(stored_job_status_str.as_str())
             .map_err(ProofJobQueueError::UnknownProofJobStatus)?;
         // validation
         if stored_proof_request.backend != proof.proof.backend() {
@@ -779,7 +815,7 @@ impl ProverServiceStore {
             let stored_lock_expires_at: Option<chrono::DateTime<Utc>> =
                 existing.get("lock_expires_at");
             let stored_job_status_str: String = existing.get("job_status");
-            let stored_job_status = ProofJobStatus::try_from(stored_job_status_str.as_str())
+            let stored_job_status = ProofJobStatus::from_str(stored_job_status_str.as_str())
                 .map_err(ProofJobQueueError::UnknownProofJobStatus)?;
             // validation
             if stored_job_status == ProofJobStatus::Succeeded
@@ -885,7 +921,7 @@ impl ProverServiceStore {
             let stored_worker_id: Option<String> = existing.get("worker_id");
             let stored_lock_expires_at: Option<chrono::DateTime<Utc>> =
                 existing.get("lock_expires_at");
-            let stored_parsed_status = ProofJobStatus::try_from(stored_job_status_str)
+            let stored_parsed_status = ProofJobStatus::from_str(stored_job_status_str)
                 .map_err(ProofJobQueueError::UnknownProofJobStatus)?;
             if matches!(
                 stored_parsed_status,
@@ -985,7 +1021,7 @@ fn request_from_row(row: &PgRow) -> Result<ProofRequest, ProofJobQueueError> {
     }
 
     Ok(ProofRequest {
-        backend: ProofBackend::try_from(row.try_get::<String, _>("backend")?.as_str())
+        backend: ProofBackend::from_str(row.try_get::<String, _>("backend")?.as_str())
             .map_err(ProofJobQueueError::UnknownProofBackend)?,
         game: address_from_bytes(row.try_get("game")?)?,
         root_claim: b256_from_bytes(row.try_get("root_claim")?)?,
@@ -997,7 +1033,7 @@ fn request_from_row(row: &PgRow) -> Result<ProofRequest, ProofJobQueueError> {
 }
 
 fn parse_status(status: String) -> Result<ProofStatus, ProofRequestError> {
-    ProofStatus::try_from(status.as_str()).map_err(ProofRequestError::UnknownProofStatus)
+    ProofStatus::from_str(status.as_str()).map_err(ProofRequestError::UnknownProofStatus)
 }
 
 fn l2_to_i64(value: u64) -> Result<i64, ProofRequestError> {

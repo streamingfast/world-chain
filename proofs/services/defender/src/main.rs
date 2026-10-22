@@ -8,16 +8,20 @@
 use std::time::Duration;
 
 use alloy_primitives::Address;
-use alloy_provider::ProviderBuilder;
+use alloy_provider::{Provider, ProviderBuilder};
 use alloy_signer_local::PrivateKeySigner;
 use anyhow::{Context, Result};
 use clap::{ArgGroup, Parser};
-use tracing::info;
+use tracing::{info, warn};
 use url::Url;
 use world_chain_defender::{
     AlloyDefenderClient, DEFAULT_L1_TX_CONFIRMATIONS, DefenderConfig, WorldChainDefender,
 };
-use world_chain_proof_protocol::{OptimismConsensusClient, VerifyingConsensusProvider};
+use world_chain_proof_metrics::RPC_ENDPOINT_VERIFYING;
+use world_chain_proof_protocol::{
+    IDisputeGameFactory, IERC20StakingVault, OptimismConsensusClient, VerifyingConsensusProvider,
+    read_registered_bond_vault,
+};
 use world_chain_proof_tx_signer::build_transaction_signer;
 use world_chain_prover_service::RpcProverServiceClient;
 
@@ -35,6 +39,14 @@ struct Cli {
     #[arg(long, env = "L1_RPC_URL")]
     l1_rpc: String,
 
+    /// Optional Ethereum L1 execution RPC URL used after the primary endpoint fails.
+    #[arg(long, env = "L1_FALLBACK_RPC_URL")]
+    l1_fallback_rpc: Option<String>,
+
+    /// Private L1 RPC for proof estimation and submission. Never falls back to the read RPC.
+    #[arg(long, env = "L1_SUBMISSION_RPC_URL", hide_env_values = true)]
+    l1_submission_rpc: Option<Url>,
+
     /// op-node rollup RPC URL used to read canonical L2 output roots.
     #[arg(long, env = "OUTPUT_ROOT_RPC_URL")]
     output_root_rpc: String,
@@ -46,6 +58,10 @@ struct Cli {
     /// prover-service JSON-RPC URL.
     #[arg(long, env = "PROVER_SERVICE_URL")]
     prover_service_url: String,
+
+    /// Start from this eligible game until a valid ASR anchor advances above it.
+    #[arg(long, env = "RECOVERY_PARENT")]
+    recovery_parent: Option<Address>,
 
     /// OP Stack `DisputeGameFactory` address on L1.
     #[arg(long, env = "FACTORY_ADDRESS")]
@@ -116,21 +132,71 @@ async fn main() -> Result<()> {
         .wallet();
     let defender_address = wallet.default_signer().address();
     let reward_recipient = cli.proof_reward_recipient.unwrap_or(defender_address);
+    let l1_fallback_rpc_url = cli
+        .l1_fallback_rpc
+        .as_deref()
+        .map(Url::parse)
+        .transpose()
+        .context("invalid L1 fallback RPC URL")?;
     let l1_rpc_client = world_chain_proof_metrics::metered_http_client(
         l1_rpc_url,
+        l1_fallback_rpc_url,
         world_chain_proof_metrics::RPC_TARGET_L1_EXECUTION,
         Duration::from_secs(cli.l1_rpc_timeout_seconds),
     )
     .context("failed to build the L1 RPC client")?;
-    let provider = ProviderBuilder::new()
-        .disable_recommended_fillers()
-        .with_gas_estimation()
-        .with_blob_gas_estimation()
-        .with_simple_nonce_management()
-        .fetch_chain_id()
-        .wallet(wallet)
-        .connect_client(l1_rpc_client);
+    let build_provider = |rpc_client| {
+        ProviderBuilder::new()
+            .disable_recommended_fillers()
+            .with_gas_estimation()
+            .with_blob_gas_estimation()
+            .with_simple_nonce_management()
+            .fetch_chain_id()
+            .wallet(wallet.clone())
+            .connect_client(rpc_client)
+    };
+    let provider = build_provider(l1_rpc_client);
+    let submission_provider = if let Some(url) = &cli.l1_submission_rpc {
+        let rpc_client = world_chain_proof_metrics::metered_http_client(
+            url.clone(),
+            None,
+            "l1_submission",
+            Duration::from_secs(cli.l1_rpc_timeout_seconds),
+        )
+        .context("failed to build the L1 submission RPC client")?;
+        let submission_provider = build_provider(rpc_client);
+        anyhow::ensure!(
+            provider.get_chain_id().await? == submission_provider.get_chain_id().await?,
+            "L1 read and submission RPCs must use the same chain"
+        );
+        submission_provider
+    } else {
+        warn!("L1_SUBMISSION_RPC_URL is unset; proofs use the normal L1 RPC and its fallback");
+        provider.clone()
+    };
     world_chain_proof_metrics::refresh_wallet_balance(&provider, defender_address).await;
+    let factory = IDisputeGameFactory::IDisputeGameFactoryInstance::new(
+        cli.factory_address,
+        provider.clone(),
+    );
+    match read_registered_bond_vault(&provider, &factory).await {
+        Ok(bond_vault) => {
+            let vault =
+                IERC20StakingVault::IERC20StakingVaultInstance::new(bond_vault, provider.clone());
+            match vault.availableBalance(reward_recipient).call().await {
+                Ok(balance) => world_chain_proof_metrics::record_vault_balance(
+                    bond_vault,
+                    reward_recipient,
+                    "defender",
+                    balance,
+                ),
+                Err(error) => {
+                    warn!(%error, "failed to fetch defender reward-recipient ERC-20 vault balance")
+                }
+            }
+        }
+        Err(error) => warn!(%error, "failed to discover ERC-20 vault for defender telemetry"),
+    }
 
     let client = AlloyDefenderClient::new(
         provider,
@@ -140,16 +206,18 @@ async fn main() -> Result<()> {
         reward_recipient,
     )
     .await
-    .context("failed to connect defender to the registered proof system")?;
+    .context("failed to connect defender to the registered proof system")?
+    .with_submission_provider(submission_provider);
     let output_roots = VerifyingConsensusProvider::new(
         OptimismConsensusClient::new(cli.output_root_rpc.clone()),
         cli.verifying_output_root_rpc
             .clone()
-            .map(OptimismConsensusClient::new),
+            .map(|url| OptimismConsensusClient::new(url).with_endpoint(RPC_ENDPOINT_VERIFYING)),
     );
     let proof_requester = RpcProverServiceClient::new(&cli.prover_service_url)
         .with_context(|| format!("failed to connect to {}", cli.prover_service_url))?;
     let config = DefenderConfig {
+        recovery_parent: cli.recovery_parent,
         poll_interval: Duration::from_secs(cli.poll_interval_seconds),
         max_game_concurrency: cli.max_game_concurrency,
     };
@@ -157,10 +225,13 @@ async fn main() -> Result<()> {
 
     info!(
         l1_rpc_url = world_chain_proof_metrics::redact_endpoint(&cli.l1_rpc),
+        l1_fallback_rpc_configured = cli.l1_fallback_rpc.is_some(),
+        private_submission_configured = cli.l1_submission_rpc.is_some(),
         output_root_rpc_url = world_chain_proof_metrics::redact_endpoint(&cli.output_root_rpc),
         verifying_output_root_rpc_configured = cli.verifying_output_root_rpc.is_some(),
         prover_service = %cli.prover_service_url,
         dispute_game_factory = %cli.factory_address,
+        recovery_parent = ?cli.recovery_parent,
         defender = %defender_address,
         reward_recipient = %reward_recipient,
         l1_tx_confirmations = cli.l1_tx_confirmations,

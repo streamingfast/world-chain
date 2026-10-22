@@ -35,7 +35,7 @@ The op-reth line already moved to these revs: reth `op-reth-v2.6.1-fh3.1` (`d487
       to `op-reth-v2.6.1-fh3.1` (`d4875c13`).
 - [x] CHANGELOG section `world-chain-v2.6.0-fh3.1`.
 - [x] `cargo test -p reth-firehose -p reth-firehose-tests`: 35 passed, 0 failed. Branch pushed.
-- [ ] Draft PR → `release/world-chain-2.x`; tag `world-chain-v2.6.0-fh3.1` after merge.
+- [x] streamingfast/reth#82 merged as `29828ae2`, tagged `world-chain-v2.6.0-fh3.1`.
 
 ### streamingfast/optimism
 - [x] Branch `bump/world-chain-v2.6.0` off `release/world-chain-2.x`, merge `op-reth/v2.6.0`
@@ -49,7 +49,8 @@ The op-reth line already moved to these revs: reth `op-reth-v2.6.1-fh3.1` (`d487
       `TxEvent.account_abstraction_trx_input` field, and `reth-firehose` fails to compile.
 - [x] `cargo check -p op-reth -p reth-optimism-firehose -p alloy-op-evm` clean;
       `cargo test -p reth-optimism-firehose -p alloy-op-evm`: 86 passed. Branch pushed.
-- [ ] Draft PR → `release/world-chain-2.x`; tag `world-chain-v2.6.0-fh3.1` after merge.
+- [x] Reth pin flipped to the tag (`f32db0bb`). streamingfast/optimism#27 merged as `b8bbd08e`,
+      tagged `world-chain-v2.6.0-fh3.1`.
 
 ### streamingfast/world-chain
 - [x] Branch `bump/v2.6.0` off `release/2.x`, `git merge v2.6.0`.
@@ -93,7 +94,9 @@ The op-reth line already moved to these revs: reth `op-reth-v2.6.1-fh3.1` (`d487
     `compare-blocks-rpc` (skip the field on OP Jovian chains), not here.
   - The v2.4.3 diff on `set_code_authorizations` (blocks 399/401) is gone (fireeth `d5a5e39`).
 - [x] `CHANGELOG.sf.md`, `ACTIVATIONS.md`, `Dockerfile.sf` toolchain note (nightly-2026-10-10).
-- [ ] Draft PR → `release/2.x`; flip branch pins to tags once the fork PRs are merged and tagged.
+- [x] Pins flipped to both `world-chain-v2.6.0-fh3.1` tags; lock resolves 105 reth crates and 47
+      optimism crates from the tags. `cargo check -p world-chain` and the 23 tests pass again.
+- [x] streamingfast/world-chain#12 merged, tagged `v2.6.0-fh3.1`.
 
 ## Firehose bug pattern review
 

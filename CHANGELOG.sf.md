@@ -3,6 +3,23 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## v2.8.1-fh3.1
+
+### Changed
+
+* Merged upstream `worldcoin/world-chain` `v2.8.1` (5 commits since `v2.6.0`, through
+  `v2.8.1-rc.2`), which World Chain requires to keep nodes from falling out of sync. Upstream moved
+  reth from `ethereum-optimism/reth` `0fbe4285` to `op-v2.6.0-2` (reth v2.6.0), the optimism
+  monorepo from `da6d3252` to `op-reth/v2.8.1`, revm to 43 and alloy-evm to 0.39.
+* Both Firehose forks moved to the new revs on their `release/world-chain-2.x` branches:
+  `streamingfast/reth` and `streamingfast/optimism` `world-chain-v2.8.1-fh3.1`.
+* `alloy-evm` now comes from `streamingfast/evm` `v0.39.0-sf`, so block traces keep their
+  `systemCalls`.
+* `firehose-tracer` stays locked at 5.5.0, the version the forks are built against. The Firehose
+  block model does not change.
+* Upstream now rejects `--proofs-history.storage-version v1` and any nonzero
+  `--engine.num-state-masking-blocks`.
+
 ## v2.6.0-fh3.1
 
 ### Changed

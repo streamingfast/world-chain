@@ -6,7 +6,7 @@ ARG FIREHOSE_ETHEREUM="latest"
 # rust-toolchain.toml pinning nightly-2026-10-10 (crates/evm needs
 # #![feature(min_specialization)]), which rustup installs on the first cargo
 # invocation below — that nightly, not this version, is what compiles the node.
-ARG RUST_VERSION=1.95.0
+ARG RUST_VERSION=1.99.0
 
 FROM mirror.gcr.io/library/rust:${RUST_VERSION}-bookworm AS builder
 WORKDIR /app

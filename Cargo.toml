@@ -197,12 +197,12 @@ reth-optimism-flashblocks = { git = "https://github.com/ethereum-optimism/optimi
 reth-optimism-trie = { git = "https://github.com/ethereum-optimism/optimism", rev = "722072949ce583f361424a160082186ee14cac71", default-features = false }
 
 # alloy op
-op-alloy-consensus = { git = "https://github.com/ethereum-optimism/optimism", rev = "722072949ce583f361424a160082186ee14cac71", default-features = false }
-op-alloy-rpc-types = { git = "https://github.com/ethereum-optimism/optimism", rev = "722072949ce583f361424a160082186ee14cac71", default-features = false }
-op-alloy-rpc-types-engine = { git = "https://github.com/ethereum-optimism/optimism", rev = "722072949ce583f361424a160082186ee14cac71", default-features = false }
-op-alloy-network = { git = "https://github.com/ethereum-optimism/optimism", rev = "722072949ce583f361424a160082186ee14cac71", default-features = false }
-alloy-op-hardforks = { git = "https://github.com/ethereum-optimism/optimism", rev = "722072949ce583f361424a160082186ee14cac71", default-features = false }
-op-alloy-provider = { git = "https://github.com/ethereum-optimism/optimism", rev = "722072949ce583f361424a160082186ee14cac71", default-features = false }
+op-alloy-consensus = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1", default-features = false }
+op-alloy-rpc-types = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1", default-features = false }
+op-alloy-rpc-types-engine = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1", default-features = false }
+op-alloy-network = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1", default-features = false }
+alloy-op-hardforks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1", default-features = false }
+op-alloy-provider = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1", default-features = false }
 
 # alloy
 alloy = { version = "2.3.0" }
@@ -277,10 +277,10 @@ revm-state = { version = "43.0.0", default-features = false }
 revm-primitives = { version = "43.0.0", default-features = false }
 revm-interpreter = { version = "43.0.1", default-features = false }
 revm-database-interface = { version = "43.0.0", default-features = false }
-op-revm = { git = "https://github.com/ethereum-optimism/optimism", rev = "722072949ce583f361424a160082186ee14cac71", default-features = false }
+op-revm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1", default-features = false }
 revm-inspectors = "0.43.0"
 
-alloy-op-evm = { git = "https://github.com/ethereum-optimism/optimism", rev = "722072949ce583f361424a160082186ee14cac71", default-features = false }
+alloy-op-evm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1", default-features = false }
 alloy-evm = { version = "0.39.0", default-features = false }
 
 # kona
@@ -517,8 +517,13 @@ reth-trie-sparse = { git = "https://github.com/streamingfast/reth.git", tag = "w
 
 # Redirect the optimism-monorepo crates to the StreamingFast Firehose-instrumented fork
 # (streamingfast/optimism, based on upstream optimism tag op-reth/v2.8.1 = rev 72207294, the rev
-# world-chain pins above for op-reth, op-alloy and op-revm). The kona crates world-chain pins at
-# rev da6d3252 resolve to the same fork tag, since a git patch applies to every rev of its URL.
+# world-chain pins above for op-reth).
+#
+# Upstream keeps the kona crates, used only by the proof services and the devnet, on rev da6d3252
+# together with the op-alloy, op-revm and alloy-op-evm crates of that rev. A git patch applies to
+# every rev of its URL, so only the crates that exist solely at 72207294 are patched here; the
+# op-alloy, op-revm and alloy-op-evm dependencies above point at the fork directly, and the
+# da6d3252 set stays on upstream's code.
 #
 # Both forks follow their `release/world-chain-2.x` branch, which carries exactly the upstream
 # revs world-chain pins; `release/op-reth-2.x` and `release/optimism-2.x` follow op-reth releases.
@@ -528,37 +533,7 @@ reth-trie-sparse = { git = "https://github.com/streamingfast/reth.git", tag = "w
 # drift, cargo resolves two separate copies of every reth crate and the executor pipeline
 # silently links against the untraced one.
 [patch."https://github.com/ethereum-optimism/optimism"]
-alloy-op-evm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-alloy-op-hardforks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-cli = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-client = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-derive = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-driver = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-executor = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-genesis = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-hardforks = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-host = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-interop = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-macros = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-mpt = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-preimage = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-proof = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-proof-interop = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-protocol = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-providers-alloy = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-registry = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-sp1-client-utils = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-sp1-host-utils = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-std-fpvm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-kona-std-fpvm-proc = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-op-alloy = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-op-alloy-consensus = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-op-alloy-network = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-op-alloy-provider = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
 op-alloy-rpc-jsonrpsee = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-op-alloy-rpc-types = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-op-alloy-rpc-types-engine = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
-op-revm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
 reth-optimism-chainspec = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
 reth-optimism-consensus = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }
 reth-optimism-evm = { git = "https://github.com/streamingfast/optimism.git", tag = "world-chain-v2.8.1-fh3.1" }

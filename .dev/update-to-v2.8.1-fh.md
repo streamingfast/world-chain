@@ -53,14 +53,26 @@ on `op-v2.6.0-2`) and optimism `op-reth-v2.8.1-fh3.1` (streamingfast/optimism#28
   - `Cargo.lock`: started from upstream's v2.8.1 lock, let cargo swap sources to the forks, then
     `cargo update -p firehose-tracer --precise 5.5.0` (a fresh resolve picks 5.7.0, which
     `reth-firehose` does not compile against).
-- [x] `Cargo.toml`: both fork patches on `world-chain-v2.8.1-fh3.1`, `alloy-evm` on
-      `streamingfast/evm` `v0.39.0-sf`. The lock has no `ethereum-optimism/*` source left and no
-      unused patch. The kona crates pinned at `da6d3252` resolve to the optimism fork tag too
-      (a git patch applies to every rev of its URL); they build.
+- [x] `Cargo.toml`: reth patch on `world-chain-v2.8.1-fh3.1`, `alloy-evm` on `streamingfast/evm`
+      `v0.39.0-sf`. The optimism side needs more than a URL patch: upstream keeps the kona crates
+      (proof services and devnet only) on rev `da6d3252`, with the op-alloy, op-revm and
+      alloy-op-evm crates of that rev, while the node uses the same crate names at `72207294`. A
+      git patch applies to every rev of its URL, so patching those names moved the proof client
+      (`proofs/measured/kona-client`, which depends on alloy-op-evm and op-revm at `da6d3252`)
+      onto `op-reth/v2.8.1`, and it failed to compile (`PostExecEvmFactoryHooks::Snapshot` is
+      gone). Fix: the 8 root dependencies on names that exist at both revs (`op-alloy-*`,
+      `alloy-op-hardforks`, `op-revm`, `alloy-op-evm`) point at the fork tag directly, and the
+      optimism patch keeps only the crates that exist solely at `72207294` (`reth-optimism-*`,
+      `op-alloy-rpc-jsonrpsee`). The `da6d3252` set in the lock is now identical to upstream's
+      (31 crates, same source and commit). The measured crates are not touched.
+- [x] The lock has no `ethereum-optimism/*` source at `72207294`, no `ethereum-optimism/reth`
+      source and no unused patch.
 - [x] `world-chain-proof-kona-client` still pulls alloy-evm 0.38 and revm 42 from crates.io, as in
       upstream's own lock. It is the proof program, not the node, and is never traced.
 - [x] `Dockerfile.sf` base image to Rust 1.99 (the pinned nightly still compiles the node).
 - [x] `cargo build --locked --bin world-chain`: clean.
+- [x] `cargo check --locked --workspace --all-targets`: clean. (Building only the node binary did
+      not compile the proof client; the Battlefield devnet's `xtask` build found the break.)
 - [x] `cargo test --locked -p world-chain-evm -p world-chain-node -p world-chain-cli`: 59 passed.
       Needs `CARGO_PROFILE_DEV_DEBUG=0 CARGO_PROFILE_TEST_DEBUG=0` (as upstream's CI sets): with
       full debug info the `world-chain-node` integration test binary's `.debug_macro` section

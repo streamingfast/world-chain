@@ -1,4 +1,3 @@
-use clap::Parser;
 use eyre::config::HookBuilder;
 use reth_optimism_consensus::OpBeaconConsensus;
 use reth_tracing::tracing::info;
@@ -43,8 +42,9 @@ fn main() {
         ..Default::default()
     });
 
-    let result = Cli::<WorldChainSpecParser, WorldChainArgs, WorldChainRpcModuleValidator>::parse()
-        .run::<WorldChainNode<WorldChainDefaultContext>, _, _, _>(
+    let result =
+        Cli::<WorldChainSpecParser, WorldChainArgs, WorldChainRpcModuleValidator>::parse_args()
+            .run::<WorldChainNode<WorldChainDefaultContext>, _, _, _>(
             |mut builder, args| async move {
                 info!(target: "reth::cli", "Launching node");
                 let config: WorldChainNodeConfig = args.into_config(builder.config_mut())?;

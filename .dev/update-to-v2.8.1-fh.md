@@ -102,4 +102,13 @@ on `op-v2.6.0-2`) and optimism `op-reth-v2.8.1-fh3.1` (streamingfast/optimism#28
 
 ## Battlefield
 
-See the PR description for the run.
+- [x] `world-chain-devnet` (battlefield-ethereum `master` `879ea9a`, fireeth `v2.24.1`): 78 passing,
+      25 pending, 1 failing. No tracked snapshot changed. `FIRE INIT` 3.1 read, no panic, the node
+      kept up with the sequencer at 2 s blocks.
+  - The failure is `Compare blocks` (`fireeth tools compare-blocks-rpc` over #1–#441): every block
+      differs only in `blob_gas` / `receipt.blob_gas_used`, the same compare-tool false diff as
+      v2.6.0 (Jovian DA footprint in receipt `blobGasUsed`).
+  - Running the devnet on Linux needed local, uncommitted workarounds:
+      `with_host("host.docker.internal", Host::HostGateway)` on the devnet's OP containers, the
+      devnet process run as root (it rewrites files its containers create as root), a `stat`
+      shim for the script's macOS-first `stat -f %m`, and a longer wait for the first start.

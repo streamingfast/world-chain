@@ -3,6 +3,16 @@
 This changelog tracks changes that the StreamingFast fork applies on top of upstream
 `worldcoin/world-chain` to produce the Firehose-instrumented node.
 
+## v2.8.2-fh3.1
+
+### Changed
+
+* Merged upstream `worldcoin/world-chain` `v2.8.2`, a security patch release that updates Rustls to
+  0.23.46 and the Hickory DNS resolver to 0.26.3. Upstream changes no execution code, chain spec or
+  reth and optimism revs, so the Firehose forks stay on `world-chain-v2.8.1-fh3.1` and
+  `alloy-evm` on `streamingfast/evm` `v0.39.0-sf`.
+* `firehose-tracer` stays locked at 5.5.0. The Firehose block model does not change.
+
 ## v2.8.1-fh3.1
 
 ### Changed

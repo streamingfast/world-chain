@@ -467,6 +467,13 @@ dependencies = [
 [[package]]
 name = "alloy-evm"
 version = "0.39.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7b6bd5f7e5ce9858bac99275e3f548c3b63bb3e5806da0142dc0b2f518d3ec4a"
+replace = "alloy-evm 0.39.0 (git+https://github.com/streamingfast/evm.git?tag=v0.39.0-sf)"
+
+[[package]]
+name = "alloy-evm"
+version = "0.39.0"
 source = "git+https://github.com/streamingfast/evm.git?tag=v0.39.0-sf#52afebec62600e7c89c7a9f97a35731ce3183404"
 dependencies = [
  "alloy-consensus 2.5.0",
@@ -639,7 +646,7 @@ source = "git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-op-hardforks 0.5.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "alloy-primitives",
  "auto_impl",
@@ -649,6 +656,12 @@ dependencies = [
  "revm 43.0.3",
  "thiserror 2.0.19",
 ]
+
+[[package]]
+name = "alloy-op-evm"
+version = "0.32.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "alloy-op-evm 0.32.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "alloy-op-evm"
@@ -8523,6 +8536,12 @@ dependencies = [
 [[package]]
 name = "op-alloy-consensus"
 version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "op-alloy-consensus"
+version = "2.0.0"
 source = "git+https://github.com/ethereum-optimism/optimism?rev=da6d3252491754837a778061db0cc47236ec13c6#da6d3252491754837a778061db0cc47236ec13c6"
 dependencies = [
  "alloy-consensus 2.5.0",
@@ -8559,6 +8578,12 @@ dependencies = [
  "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
 ]
+
+[[package]]
+name = "op-alloy-network"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "op-alloy-network 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "op-alloy-network"
@@ -8634,6 +8659,12 @@ dependencies = [
 [[package]]
 name = "op-alloy-rpc-types"
 version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "op-alloy-rpc-types"
+version = "2.0.0"
 source = "git+https://github.com/ethereum-optimism/optimism?rev=da6d3252491754837a778061db0cc47236ec13c6#da6d3252491754837a778061db0cc47236ec13c6"
 dependencies = [
  "alloy-consensus 2.5.0",
@@ -8673,6 +8704,12 @@ dependencies = [
 [[package]]
 name = "op-alloy-rpc-types-engine"
 version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "op-alloy-rpc-types-engine"
+version = "2.0.0"
 source = "git+https://github.com/ethereum-optimism/optimism?rev=da6d3252491754837a778061db0cc47236ec13c6#da6d3252491754837a778061db0cc47236ec13c6"
 dependencies = [
  "alloy-consensus 2.5.0",
@@ -8700,6 +8737,12 @@ dependencies = [
  "revm 43.0.3",
  "serde",
 ]
+
+[[package]]
+name = "op-revm"
+version = "20.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "op-revm"
@@ -10493,6 +10536,12 @@ checksum = "1e061d1b48cb8d38042de4ae0a7a6401009d6143dc80d2e2d6f31f0bdd6470c7"
 [[package]]
 name = "reth-basic-payload-builder"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-basic-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-basic-payload-builder"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-consensus 2.5.0",
@@ -10501,21 +10550,27 @@ dependencies = [
  "futures-core",
  "futures-util",
  "metrics",
- "reth-chain-state",
- "reth-execution-cache",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-execution-cache 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-metrics",
- "reth-payload-builder",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-payload-builder-primitives",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-revm",
- "reth-storage-api",
- "reth-tasks",
- "reth-trie-parallel",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-parallel 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "tokio",
  "tracing",
 ]
+
+[[package]]
+name = "reth-chain-state"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-chain-state"
@@ -10532,14 +10587,14 @@ dependencies = [
  "parking_lot",
  "pin-project",
  "rand 0.9.5",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
  "reth-ethereum-primitives",
  "reth-execution-types",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-trie",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-sparse",
  "revm 43.0.3",
  "serde",
@@ -10551,22 +10606,34 @@ dependencies = [
 [[package]]
 name = "reth-chainspec"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-chainspec"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-chains",
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-trie",
  "auto_impl",
  "derive_more 2.1.1",
  "reth-ethereum-forks",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
  "serde_json",
 ]
+
+[[package]]
+name = "reth-cli"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-cli 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-cli"
@@ -10576,10 +10643,16 @@ dependencies = [
  "alloy-genesis",
  "clap",
  "eyre",
- "reth-cli-runner",
- "reth-db",
+ "reth-cli-runner 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde_json",
 ]
+
+[[package]]
+name = "reth-cli-commands"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-cli-commands 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-cli-commands"
@@ -10609,15 +10682,15 @@ dependencies = [
  "ratatui",
  "rayon",
  "reqwest 0.13.4",
- "reth-chainspec",
- "reth-cli",
- "reth-cli-runner",
- "reth-cli-util",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-cli 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-cli-runner 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-cli-util 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-codecs 0.7.1",
  "reth-config",
  "reth-consensus",
- "reth-db",
- "reth-db-api",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-db-common",
  "reth-discv4",
  "reth-discv5",
@@ -10626,32 +10699,32 @@ dependencies = [
  "reth-era",
  "reth-era-downloader",
  "reth-era-utils",
- "reth-eth-wire",
+ "reth-eth-wire 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-etl",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-exex",
  "reth-fs-util",
  "reth-net-nat",
- "reth-network",
+ "reth-network 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-p2p",
- "reth-network-peers",
- "reth-node-api",
- "reth-node-builder",
- "reth-node-core",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-core 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-node-events",
- "reth-node-metrics",
+ "reth-node-metrics 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-prune",
- "reth-prune-types",
- "reth-revm",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-stages",
- "reth-stages-types",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-static-file",
  "reth-static-file-types",
- "reth-storage-api",
- "reth-tasks",
- "reth-trie",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-db",
  "secp256k1 0.30.0",
  "serde",
@@ -10669,12 +10742,24 @@ dependencies = [
 [[package]]
 name = "reth-cli-runner"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-cli-runner 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-cli-runner"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
- "reth-tasks",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tokio",
  "tracing",
 ]
+
+[[package]]
+name = "reth-cli-util"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-cli-util 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-cli-util"
@@ -10762,10 +10847,10 @@ source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-f
 dependencies = [
  "eyre",
  "humantime-serde",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-types",
- "reth-prune-types",
- "reth-stages-types",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-static-file-types",
  "serde",
  "toml",
@@ -10794,7 +10879,7 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
  "alloy-primitives",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
  "reth-primitives-traits 0.7.1",
 ]
@@ -10816,13 +10901,19 @@ dependencies = [
  "eyre",
  "futures",
  "reqwest 0.13.4",
- "reth-node-api",
- "reth-tracing",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "ringbuffer",
  "serde",
  "serde_json",
  "tokio",
 ]
+
+[[package]]
+name = "reth-db"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-db"
@@ -10836,15 +10927,15 @@ dependencies = [
  "metrics",
  "page_size",
  "parking_lot",
- "reth-db-api",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-fs-util",
  "reth-libmdbx",
  "reth-metrics",
  "reth-nippy-jar",
  "reth-primitives-traits 0.7.1",
  "reth-static-file-types",
- "reth-storage-errors",
- "reth-tracing",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "rustc-hash",
  "strum 0.27.2",
  "sysinfo 0.38.4",
@@ -10852,6 +10943,12 @@ dependencies = [
  "thiserror 2.0.19",
  "tracing",
 ]
+
+[[package]]
+name = "reth-db-api"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-db-api"
@@ -10872,10 +10969,10 @@ dependencies = [
  "reth-db-models",
  "reth-ethereum-primitives",
  "reth-primitives-traits 0.7.1",
- "reth-prune-types",
- "reth-stages-types",
- "reth-storage-errors",
- "reth-trie-common",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "roaring",
  "serde",
 ]
@@ -10890,19 +10987,19 @@ dependencies = [
  "alloy-primitives",
  "boyer-moore-magiclen",
  "eyre",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-codecs 0.7.1",
  "reth-config",
- "reth-db-api",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-etl",
  "reth-execution-errors",
  "reth-fs-util",
  "reth-node-types",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-stages-types",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-static-file-types",
- "reth-trie",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-db",
  "serde",
  "serde_json",
@@ -10940,7 +11037,7 @@ dependencies = [
  "reth-ethereum-forks",
  "reth-net-banlist",
  "reth-net-nat",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "schnellru",
  "secp256k1 0.30.0",
  "serde",
@@ -10964,10 +11061,10 @@ dependencies = [
  "itertools 0.14.0",
  "metrics",
  "rand 0.9.5",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-forks",
  "reth-metrics",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "secp256k1 0.30.0",
  "thiserror 2.0.19",
  "tokio",
@@ -10986,7 +11083,7 @@ dependencies = [
  "hickory-resolver",
  "linked_hash_set",
  "reth-ethereum-forks",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
  "schnellru",
  "secp256k1 0.30.0",
@@ -11016,17 +11113,17 @@ dependencies = [
  "rayon",
  "reth-config",
  "reth-consensus",
- "reth-eth-wire-types",
+ "reth-eth-wire-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-primitives",
  "reth-metrics",
  "reth-network-p2p",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-storage-api",
- "reth-tasks",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-testing-utils",
- "reth-trie-common",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tempfile",
  "thiserror 2.0.19",
  "tokio",
@@ -11034,6 +11131,12 @@ dependencies = [
  "tokio-util",
  "tracing",
 ]
+
+[[package]]
+name = "reth-e2e-test-utils"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-e2e-test-utils 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-e2e-test-utils"
@@ -11054,36 +11157,36 @@ dependencies = [
  "eyre",
  "futures-util",
  "jsonrpsee",
- "reth-chainspec",
- "reth-cli-commands",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-cli-commands 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-config",
  "reth-consensus",
- "reth-db",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-db-common",
  "reth-engine-local",
  "reth-engine-primitives",
  "reth-ethereum-primitives",
- "reth-network-api",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-p2p",
- "reth-network-peers",
- "reth-node-api",
- "reth-node-builder",
- "reth-node-core",
- "reth-node-ethereum",
- "reth-payload-builder",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-core 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-ethereum 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-payload-builder-primitives",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-rpc-api",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc-builder",
- "reth-rpc-eth-api",
- "reth-rpc-server-types",
- "reth-stages-types",
- "reth-tasks",
+ "reth-rpc-eth-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
- "reth-tracing",
- "reth-trie",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-db",
  "revm 43.0.3",
  "serde_json",
@@ -11111,7 +11214,7 @@ dependencies = [
  "hmac 0.12.1",
  "pin-project",
  "rand 0.8.7",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "secp256k1 0.30.0",
  "sha2 0.10.9",
  "thiserror 2.0.19",
@@ -11131,14 +11234,14 @@ dependencies = [
  "alloy-rpc-types-engine",
  "eyre",
  "futures-util",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-primitives",
  "reth-ethereum-engine-primitives",
- "reth-payload-builder",
- "reth-payload-primitives",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-transaction-pool",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tokio",
  "tokio-stream",
  "tracing",
@@ -11155,21 +11258,27 @@ dependencies = [
  "alloy-rpc-types-engine",
  "auto_impl",
  "futures",
- "reth-chain-state",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-errors",
  "reth-execution-types",
  "reth-payload-builder-primitives",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-trie-common",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "thiserror 2.0.19",
  "tokio",
 ]
+
+[[package]]
+name = "reth-engine-tree"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-engine-tree 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-engine-tree"
@@ -11179,7 +11288,7 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-engine",
@@ -11191,35 +11300,35 @@ dependencies = [
  "moka",
  "parking_lot",
  "rayon",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
- "reth-db",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-primitives",
  "reth-errors",
  "reth-ethereum-primitives",
- "reth-evm",
- "reth-execution-cache",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-execution-cache 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-types",
  "reth-firehose",
  "reth-metrics",
  "reth-network-p2p",
- "reth-payload-builder",
- "reth-payload-primitives",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-prune",
- "reth-prune-types",
- "reth-revm",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-stages",
  "reth-stages-api",
  "reth-static-file",
  "reth-storage-overlay",
- "reth-tasks",
- "reth-tracing",
- "reth-trie",
- "reth-trie-common",
- "reth-trie-parallel",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-parallel 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-sparse",
  "revm 43.0.3",
  "schnellru",
@@ -11241,16 +11350,16 @@ dependencies = [
  "futures",
  "itertools 0.14.0",
  "pin-project",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-primitives",
- "reth-engine-tree",
+ "reth-engine-tree 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-fs-util",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-revm",
- "reth-storage-api",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "serde_json",
  "tokio",
@@ -11303,15 +11412,15 @@ dependencies = [
  "eyre",
  "futures-util",
  "reth-codecs 0.7.1",
- "reth-db-api",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-era",
  "reth-era-downloader",
  "reth-etl",
  "reth-fs-util",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-stages-types",
- "reth-storage-api",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tokio",
  "tracing",
 ]
@@ -11323,9 +11432,15 @@ source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-f
 dependencies = [
  "reth-consensus",
  "reth-execution-errors",
- "reth-storage-errors",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "thiserror 2.0.19",
 ]
+
+[[package]]
+name = "reth-eth-wire"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-eth-wire 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-eth-wire"
@@ -11341,10 +11456,10 @@ dependencies = [
  "pin-project",
  "reth-codecs 0.7.1",
  "reth-ecies",
- "reth-eth-wire-types",
+ "reth-eth-wire-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-forks",
  "reth-metrics",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
  "serde",
  "snap",
@@ -11354,6 +11469,12 @@ dependencies = [
  "tokio-util",
  "tracing",
 ]
+
+[[package]]
+name = "reth-eth-wire-types"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-eth-wire-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-eth-wire-types"
@@ -11370,7 +11491,7 @@ dependencies = [
  "alloy-trie",
  "bytes",
  "derive_more 2.1.1",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-codecs-derive 0.7.1",
  "reth-ethereum-primitives",
  "reth-primitives-traits 0.7.1",
@@ -11381,15 +11502,21 @@ dependencies = [
 [[package]]
 name = "reth-ethereum"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-ethereum 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-ethereum"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
- "reth-chainspec",
- "reth-eth-wire",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-eth-wire 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-primitives",
- "reth-network",
- "reth-network-api",
+ "reth-network 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-tasks",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
 ]
 
 [[package]]
@@ -11400,7 +11527,7 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
  "alloy-primitives",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
  "reth-consensus-common",
  "reth-execution-types",
@@ -11418,7 +11545,7 @@ dependencies = [
  "alloy-rpc-types-engine",
  "reth-engine-primitives",
  "reth-ethereum-primitives",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
  "serde",
  "thiserror 2.0.19",
@@ -11447,22 +11574,22 @@ dependencies = [
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-engine",
- "reth-basic-payload-builder",
- "reth-chainspec",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus-common",
  "reth-errors",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-evm-ethereum",
- "reth-execution-cache",
- "reth-payload-builder",
+ "reth-execution-cache 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-payload-builder-primitives",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-payload-validator",
  "reth-primitives-traits 0.7.1",
- "reth-revm",
- "reth-storage-api",
- "reth-transaction-pool",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "tracing",
 ]
@@ -11486,9 +11613,15 @@ version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "rayon",
- "reth-db-api",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tempfile",
 ]
+
+[[package]]
+name = "reth-evm"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-evm"
@@ -11498,7 +11631,7 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-primitives",
  "auto_impl",
  "derive_more 2.1.1",
@@ -11510,9 +11643,9 @@ dependencies = [
  "reth-execution-types",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-storage-errors",
- "reth-trie-common",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
 ]
 
@@ -11523,18 +11656,24 @@ source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-f
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-primitives",
  "alloy-rpc-types-engine",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-forks",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-types",
  "reth-primitives-traits 0.7.1",
- "reth-storage-errors",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
 ]
+
+[[package]]
+name = "reth-execution-cache"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-execution-cache 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-execution-cache"
@@ -11548,9 +11687,9 @@ dependencies = [
  "reth-errors",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
- "reth-trie",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tracing",
 ]
 
@@ -11559,11 +11698,11 @@ name = "reth-execution-errors"
 version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-primitives",
  "alloy-rlp",
  "nybbles",
- "reth-storage-errors",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "thiserror 2.0.19",
 ]
 
@@ -11574,13 +11713,13 @@ source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-f
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-primitives",
  "alloy-rlp",
  "derive_more 2.1.1",
  "reth-ethereum-primitives",
  "reth-primitives-traits 0.7.1",
- "reth-trie-common",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "serde",
  "serde_with",
@@ -11599,24 +11738,24 @@ dependencies = [
  "itertools 0.14.0",
  "metrics",
  "parking_lot",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-config",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-exex-types",
  "reth-fs-util",
  "reth-metrics",
- "reth-node-api",
- "reth-node-core",
- "reth-payload-builder",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-core 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-prune-types",
- "reth-revm",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-stages-api",
- "reth-tasks",
- "reth-tracing",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "rmp-serde",
  "thiserror 2.0.19",
  "tokio",
@@ -11631,7 +11770,7 @@ source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-f
 dependencies = [
  "alloy-eips 2.5.0",
  "alloy-primitives",
- "reth-chain-state",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-types",
  "reth-primitives-traits 0.7.1",
  "serde",
@@ -11646,21 +11785,21 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-genesis",
  "alloy-primitives",
  "alloy-rlp",
  "eyre",
  "firehose-tracer",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-types",
- "reth-node-api",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
- "reth-tracing",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
 ]
 
 [[package]]
@@ -11687,13 +11826,13 @@ dependencies = [
  "jsonrpsee",
  "pretty_assertions",
  "reth-engine-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
- "reth-rpc-api",
- "reth-tracing",
- "reth-trie",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "serde",
  "serde_json",
@@ -11785,6 +11924,12 @@ dependencies = [
 [[package]]
 name = "reth-network"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-network 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-network"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-consensus 2.5.0",
@@ -11804,30 +11949,30 @@ dependencies = [
  "rand 0.8.7",
  "rand 0.9.5",
  "rayon",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
  "reth-discv4",
  "reth-discv5",
  "reth-dns-discovery",
  "reth-ecies",
- "reth-eth-wire",
- "reth-eth-wire-types",
+ "reth-eth-wire 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-eth-wire-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-forks",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-evm-ethereum",
  "reth-fs-util",
  "reth-metrics",
  "reth-net-banlist",
- "reth-network-api",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-p2p",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-types",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-tasks",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
- "reth-transaction-pool",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "rustc-hash",
  "schnellru",
  "secp256k1 0.30.0",
@@ -11844,6 +11989,12 @@ dependencies = [
 [[package]]
 name = "reth-network-api"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-network-api"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-consensus 2.5.0",
@@ -11854,10 +12005,10 @@ dependencies = [
  "derive_more 2.1.1",
  "enr",
  "futures",
- "reth-eth-wire-types",
+ "reth-eth-wire-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-forks",
  "reth-network-p2p",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-types",
  "reth-tokio-util",
  "serde",
@@ -11880,15 +12031,21 @@ dependencies = [
  "futures",
  "parking_lot",
  "reth-consensus",
- "reth-eth-wire-types",
+ "reth-eth-wire-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-primitives",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-types",
  "reth-primitives-traits 0.7.1",
- "reth-storage-errors",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tokio",
  "tracing",
 ]
+
+[[package]]
+name = "reth-network-peers"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-network-peers"
@@ -11913,7 +12070,7 @@ dependencies = [
  "alloy-eip2124",
  "humantime-serde",
  "reth-net-banlist",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "serde_json",
  "tracing",
@@ -11940,26 +12097,38 @@ dependencies = [
 [[package]]
 name = "reth-node-api"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-node-api"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-rpc-types-engine",
  "eyre",
- "reth-basic-payload-builder",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
- "reth-db-api",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-primitives",
- "reth-evm",
- "reth-network-api",
- "reth-node-core",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-core 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-node-types",
- "reth-payload-builder",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-payload-builder-primitives",
- "reth-payload-primitives",
- "reth-provider",
- "reth-tasks",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
- "reth-transaction-pool",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
 ]
+
+[[package]]
+name = "reth-node-builder"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-node-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-node-builder"
@@ -11979,56 +12148,62 @@ dependencies = [
  "jsonrpsee",
  "parking_lot",
  "rayon",
- "reth-basic-payload-builder",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-config",
  "reth-consensus",
  "reth-consensus-debug-client",
- "reth-db",
- "reth-db-api",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-db-common",
  "reth-downloaders",
  "reth-engine-local",
  "reth-engine-primitives",
- "reth-engine-tree",
+ "reth-engine-tree 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-util",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-exex",
  "reth-firehose",
  "reth-fs-util",
  "reth-invalid-block-hooks",
- "reth-network",
- "reth-network-api",
+ "reth-network 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-p2p",
- "reth-node-api",
- "reth-node-core",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-core 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-node-ethstats",
  "reth-node-events",
- "reth-node-metrics",
- "reth-payload-builder",
+ "reth-node-metrics 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-prune",
  "reth-rpc",
- "reth-rpc-api",
+ "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc-builder",
- "reth-rpc-engine-api",
- "reth-rpc-eth-types",
- "reth-rpc-layer",
+ "reth-rpc-engine-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-layer 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-stages",
  "reth-static-file",
  "reth-storage-overlay",
- "reth-tasks",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
- "reth-tracing",
- "reth-transaction-pool",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "secp256k1 0.30.0",
  "serde_json",
  "tokio",
  "tokio-stream",
  "tracing",
 ]
+
+[[package]]
+name = "reth-node-core"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-node-core 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-node-core"
@@ -12047,11 +12222,11 @@ dependencies = [
  "humantime",
  "ipnet",
  "rand 0.9.5",
- "reth-chainspec",
- "reth-cli-util",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-cli-util 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-config",
  "reth-consensus",
- "reth-db",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-discv4",
  "reth-discv5",
  "reth-engine-local",
@@ -12059,21 +12234,21 @@ dependencies = [
  "reth-ethereum-forks",
  "reth-net-banlist",
  "reth-net-nat",
- "reth-network",
+ "reth-network 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-p2p",
- "reth-network-peers",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-prune-types",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc-convert",
- "reth-rpc-eth-types",
- "reth-rpc-server-types",
- "reth-stages-types",
- "reth-storage-api",
- "reth-storage-errors",
- "reth-tasks",
- "reth-tracing",
+ "reth-rpc-eth-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tracing-otlp",
- "reth-transaction-pool",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "secp256k1 0.30.0",
  "serde",
  "strum 0.27.2",
@@ -12084,6 +12259,12 @@ dependencies = [
  "vergen",
  "vergen-git2",
 ]
+
+[[package]]
+name = "reth-node-ethereum"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-node-ethereum 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-node-ethereum"
@@ -12103,34 +12284,34 @@ dependencies = [
  "futures",
  "http-body-util",
  "jsonrpsee",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-local",
  "reth-engine-primitives",
  "reth-ethereum-consensus",
  "reth-ethereum-engine-primitives",
  "reth-ethereum-payload-builder",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-evm-ethereum",
- "reth-network",
- "reth-node-api",
- "reth-node-builder",
- "reth-node-core",
- "reth-payload-primitives",
+ "reth-network 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-core 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc",
- "reth-rpc-api",
+ "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc-builder",
- "reth-rpc-engine-api",
- "reth-rpc-eth-api",
- "reth-rpc-eth-types",
- "reth-rpc-server-types",
- "reth-tasks",
- "reth-tracing",
- "reth-transaction-pool",
- "reth-trie-common",
+ "reth-rpc-engine-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "serde",
  "serde_json",
@@ -12147,11 +12328,11 @@ dependencies = [
  "alloy-primitives",
  "chrono",
  "futures-util",
- "reth-chain-state",
- "reth-network-api",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-transaction-pool",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "serde_json",
  "thiserror 2.0.19",
@@ -12176,15 +12357,21 @@ dependencies = [
  "humantime",
  "pin-project",
  "reth-engine-primitives",
- "reth-network-api",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-prune-types",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-stages",
  "reth-static-file-types",
- "reth-storage-api",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tokio",
  "tracing",
 ]
+
+[[package]]
+name = "reth-node-metrics"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-node-metrics 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-node-metrics"
@@ -12204,7 +12391,7 @@ dependencies = [
  "procfs",
  "reqwest 0.13.4",
  "reth-metrics",
- "reth-tasks",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tokio",
  "tower",
  "tracing",
@@ -12215,10 +12402,10 @@ name = "reth-node-types"
 version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
- "reth-chainspec",
- "reth-db-api",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-primitives",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
 ]
 
@@ -12238,11 +12425,11 @@ dependencies = [
  "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "paste",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-forks",
- "reth-network-peers",
- "reth-optimism-forks",
- "reth-optimism-primitives",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
  "serde",
  "serde_json",
@@ -12255,6 +12442,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "reth-optimism-chainspec"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-chainspec 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
 name = "reth-optimism-consensus"
 version = "2.0.0"
 source = "git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1#889f75b68b71bc8c5d06be73eb92aab6019298f6"
@@ -12264,23 +12457,29 @@ dependencies = [
  "alloy-primitives",
  "alloy-trie",
  "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
  "reth-consensus-common",
  "reth-ethereum-consensus",
  "reth-execution-types",
  "reth-metrics",
- "reth-optimism-chainspec",
- "reth-optimism-forks",
- "reth-optimism-primitives",
+ "reth-optimism-chainspec 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-storage-errors",
- "reth-trie-common",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "thiserror 2.0.19",
  "tracing",
 ]
+
+[[package]]
+name = "reth-optimism-consensus"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-optimism-evm"
@@ -12289,7 +12488,7 @@ source = "git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-op-evm 0.32.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "alloy-primitives",
  "alloy-rpc-types-eth 2.5.0",
@@ -12297,22 +12496,28 @@ dependencies = [
  "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-chainspec",
- "reth-evm",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-errors",
  "reth-execution-types",
  "reth-metrics",
- "reth-optimism-chainspec",
- "reth-optimism-consensus",
- "reth-optimism-forks",
- "reth-optimism-primitives",
+ "reth-optimism-chainspec 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-rpc-eth-api",
- "reth-storage-errors",
+ "reth-rpc-eth-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "thiserror 2.0.19",
  "tracing",
 ]
+
+[[package]]
+name = "reth-optimism-evm"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-evm 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-optimism-exex"
@@ -12325,12 +12530,18 @@ dependencies = [
  "futures-util",
  "reth-execution-types",
  "reth-exex",
- "reth-node-api",
- "reth-optimism-trie",
- "reth-provider",
- "reth-trie",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-trie 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tracing",
 ]
+
+[[package]]
+name = "reth-optimism-exex"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-exex 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-optimism-firehose"
@@ -12340,7 +12551,7 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-op-evm 0.32.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "alloy-primitives",
  "crossbeam-channel",
@@ -12349,27 +12560,27 @@ dependencies = [
  "firehose-tracer",
  "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
  "reth-engine-primitives",
- "reth-engine-tree",
+ "reth-engine-tree 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
- "reth-evm",
- "reth-execution-cache",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-execution-cache 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-firehose",
- "reth-node-api",
- "reth-node-builder",
- "reth-optimism-evm",
- "reth-optimism-primitives",
- "reth-payload-builder",
- "reth-payload-primitives",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-storage-overlay",
- "reth-tasks",
- "reth-trie",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tokio",
  "tracing",
 ]
@@ -12391,22 +12602,22 @@ dependencies = [
  "metrics",
  "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-chain-state",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-primitives",
  "reth-errors",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-types",
  "reth-metrics",
- "reth-optimism-evm",
- "reth-optimism-payload-builder",
- "reth-optimism-primitives",
- "reth-payload-primitives",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-revm",
- "reth-rpc-eth-types",
- "reth-storage-api",
- "reth-tasks",
- "reth-trie-common",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "ringbuffer",
  "rustls",
  "serde_json",
@@ -12428,6 +12639,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "reth-optimism-forks"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-forks 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
 name = "reth-optimism-node"
 version = "2.0.0"
 source = "git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1#889f75b68b71bc8c5d06be73eb92aab6019298f6"
@@ -12444,42 +12661,42 @@ dependencies = [
  "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-basic-payload-builder",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
- "reth-db",
- "reth-db-api",
- "reth-e2e-test-utils",
- "reth-evm",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-e2e-test-utils 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-metrics",
- "reth-network",
- "reth-node-api",
- "reth-node-builder",
- "reth-node-core",
- "reth-optimism-chainspec",
- "reth-optimism-consensus",
- "reth-optimism-evm",
- "reth-optimism-exex",
+ "reth-network 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-core 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-chainspec 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-exex 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-optimism-firehose",
- "reth-optimism-forks",
- "reth-optimism-payload-builder",
- "reth-optimism-primitives",
- "reth-optimism-rpc",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-rpc 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-optimism-storage",
- "reth-optimism-trie",
+ "reth-optimism-trie 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-optimism-txpool",
- "reth-payload-builder",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-rpc-api",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc-builder",
- "reth-rpc-engine-api",
- "reth-rpc-server-types",
- "reth-tasks",
- "reth-tracing",
- "reth-transaction-pool",
- "reth-trie-common",
+ "reth-rpc-engine-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "serde",
  "serde_json",
@@ -12488,13 +12705,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "reth-optimism-node"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-node 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
 name = "reth-optimism-payload-builder"
 version = "2.0.0"
 source = "git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1#889f75b68b71bc8c5d06be73eb92aab6019298f6"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-op-evm 0.32.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "alloy-primitives",
  "alloy-rlp",
@@ -12504,30 +12727,36 @@ dependencies = [
  "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-basic-payload-builder",
- "reth-chainspec",
- "reth-evm",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-types",
  "reth-firehose",
  "reth-metrics",
- "reth-optimism-evm",
- "reth-optimism-forks",
- "reth-optimism-primitives",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-optimism-txpool",
  "reth-payload-builder-primitives",
- "reth-payload-primitives",
- "reth-payload-util",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-util 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-payload-validator",
  "reth-primitives-traits 0.7.1",
- "reth-revm",
- "reth-storage-api",
- "reth-transaction-pool",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "serde",
  "sha2 0.10.9",
  "thiserror 2.0.19",
  "tracing",
 ]
+
+[[package]]
+name = "reth-optimism-payload-builder"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-payload-builder 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-optimism-post-exec-replay"
@@ -12538,11 +12767,11 @@ dependencies = [
  "alloy-eips 2.5.0",
  "alloy-primitives",
  "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-errors",
- "reth-node-api",
- "reth-optimism-evm",
- "reth-optimism-primitives",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
  "revm 43.0.3",
  "serde",
@@ -12563,6 +12792,12 @@ dependencies = [
  "serde",
  "serde_with",
 ]
+
+[[package]]
+name = "reth-optimism-primitives"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-optimism-rpc"
@@ -12597,35 +12832,35 @@ dependencies = [
  "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reqwest 0.13.4",
- "reth-basic-payload-builder",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-metrics",
- "reth-node-api",
- "reth-node-builder",
- "reth-optimism-evm",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-optimism-flashblocks",
- "reth-optimism-forks",
- "reth-optimism-payload-builder",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-optimism-post-exec-replay",
- "reth-optimism-primitives",
- "reth-optimism-trie",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-trie 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-optimism-txpool",
- "reth-payload-util",
+ "reth-payload-util 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc",
- "reth-rpc-api",
- "reth-rpc-engine-api",
- "reth-rpc-eth-api",
- "reth-rpc-eth-types",
- "reth-rpc-server-types",
- "reth-storage-api",
- "reth-tasks",
- "reth-transaction-pool",
+ "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-engine-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "serde",
  "serde_json",
@@ -12638,13 +12873,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "reth-optimism-rpc"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-rpc 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
 name = "reth-optimism-storage"
 version = "2.0.0"
 source = "git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1#889f75b68b71bc8c5d06be73eb92aab6019298f6"
 dependencies = [
  "alloy-consensus 2.5.0",
- "reth-optimism-primitives",
- "reth-storage-api",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
 ]
 
 [[package]]
@@ -12661,20 +12902,20 @@ dependencies = [
  "eyre",
  "metrics",
  "parking_lot",
- "reth-chain-state",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-codecs 0.7.1",
- "reth-db",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-errors",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
- "reth-stages-types",
- "reth-tasks",
- "reth-trie",
- "reth-trie-common",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-db",
  "serde",
  "strum 0.27.2",
@@ -12682,6 +12923,12 @@ dependencies = [
  "tokio",
  "tracing",
 ]
+
+[[package]]
+name = "reth-optimism-trie"
+version = "2.0.0"
+source = "git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71#722072949ce583f361424a160082186ee14cac71"
+replace = "reth-optimism-trie 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-optimism-txpool"
@@ -12705,23 +12952,29 @@ dependencies = [
  "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "parking_lot",
- "reth-chain-state",
- "reth-chainspec",
- "reth-eth-wire-types",
- "reth-evm",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-eth-wire-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-types",
  "reth-metrics",
- "reth-optimism-evm",
- "reth-optimism-forks",
- "reth-optimism-primitives",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-transaction-pool",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "thiserror 2.0.19",
  "tokio",
  "tracing",
 ]
+
+[[package]]
+name = "reth-payload-builder"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-payload-builder"
@@ -12734,14 +12987,14 @@ dependencies = [
  "derive_more 2.1.1",
  "futures-util",
  "metrics",
- "reth-chain-state",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-engine-primitives",
- "reth-execution-cache",
+ "reth-execution-cache 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-metrics",
  "reth-payload-builder-primitives",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-trie-parallel",
+ "reth-trie-parallel 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tokio",
  "tokio-stream",
  "tracing",
@@ -12753,11 +13006,17 @@ version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "pin-project",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tokio",
  "tokio-stream",
  "tracing",
 ]
+
+[[package]]
+name = "reth-payload-primitives"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-payload-primitives"
@@ -12771,11 +13030,11 @@ dependencies = [
  "alloy-rpc-types-engine",
  "auto_impl",
  "either",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
  "reth-execution-types",
  "reth-primitives-traits 0.7.1",
- "reth-trie-common",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "sha2 0.10.9",
  "thiserror 2.0.19",
@@ -12785,11 +13044,17 @@ dependencies = [
 [[package]]
 name = "reth-payload-util"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-payload-util 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-payload-util"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-primitives",
- "reth-transaction-pool",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
 ]
 
 [[package]]
@@ -12863,6 +13128,12 @@ dependencies = [
 [[package]]
 name = "reth-provider"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-provider"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-consensus 2.5.0",
@@ -12878,11 +13149,11 @@ dependencies = [
  "notify",
  "parking_lot",
  "rayon",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-codecs 0.7.1",
- "reth-db",
- "reth-db-api",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
  "reth-ethereum-engine-primitives",
  "reth-ethereum-primitives",
@@ -12892,15 +13163,15 @@ dependencies = [
  "reth-nippy-jar",
  "reth-node-types",
  "reth-primitives-traits 0.7.1",
- "reth-prune-types",
- "reth-stages-types",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-static-file-types",
- "reth-storage-api",
- "reth-storage-errors",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-storage-overlay",
- "reth-tasks",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
- "reth-trie",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-db",
  "revm 43.0.3",
  "rocksdb",
@@ -12920,22 +13191,28 @@ dependencies = [
  "itertools 0.14.0",
  "metrics",
  "reth-config",
- "reth-db-api",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
  "reth-exex-types",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-prune-types",
- "reth-stages-types",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-static-file-types",
- "reth-storage-api",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
  "rustc-hash",
  "thiserror 2.0.19",
  "tokio",
  "tracing",
 ]
+
+[[package]]
+name = "reth-prune-types"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-prune-types"
@@ -12956,15 +13233,21 @@ dependencies = [
 [[package]]
 name = "reth-revm"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-revm"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-debug",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-storage-errors",
- "reth-trie",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
 ]
 
@@ -12977,7 +13260,7 @@ dependencies = [
  "alloy-dyn-abi",
  "alloy-eip7928 0.4.11",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-genesis",
  "alloy-network 2.5.0",
  "alloy-primitives",
@@ -13004,35 +13287,35 @@ dependencies = [
  "jsonrpsee-types",
  "parking_lot",
  "pin-project",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
  "reth-consensus-common",
  "reth-engine-primitives",
  "reth-errors",
  "reth-ethereum-engine-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-evm-ethereum",
  "reth-execution-types",
  "reth-firehose",
  "reth-metrics",
- "reth-network-api",
- "reth-network-peers",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-network-types",
- "reth-node-api",
- "reth-payload-primitives",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-revm",
- "reth-rpc-api",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc-convert",
- "reth-rpc-engine-api",
- "reth-rpc-eth-api",
- "reth-rpc-eth-types",
- "reth-rpc-server-types",
- "reth-storage-api",
- "reth-tasks",
- "reth-transaction-pool",
- "reth-trie-common",
+ "reth-rpc-engine-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "revm-inspectors",
  "serde",
@@ -13044,6 +13327,12 @@ dependencies = [
  "tracing",
  "tracing-futures",
 ]
+
+[[package]]
+name = "reth-rpc-api"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-rpc-api"
@@ -13066,11 +13355,11 @@ dependencies = [
  "alloy-rpc-types-txpool",
  "alloy-serde 2.5.0",
  "jsonrpsee",
- "reth-chain-state",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-primitives",
- "reth-network-peers",
- "reth-rpc-eth-api",
- "reth-trie-common",
+ "reth-network-peers 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "serde_json",
 ]
@@ -13087,28 +13376,28 @@ dependencies = [
  "jsonrpsee",
  "metrics",
  "pin-project",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-consensus",
  "reth-engine-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ipc",
  "reth-metrics",
- "reth-network-api",
- "reth-node-core",
- "reth-payload-primitives",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-core 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
  "reth-rpc",
- "reth-rpc-api",
- "reth-rpc-engine-api",
- "reth-rpc-eth-api",
- "reth-rpc-eth-types",
- "reth-rpc-layer",
- "reth-rpc-server-types",
- "reth-storage-api",
- "reth-tasks",
+ "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-engine-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-eth-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-layer 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
- "reth-transaction-pool",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "thiserror 2.0.19",
  "tokio",
@@ -13124,7 +13413,7 @@ version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-consensus 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-json-rpc 2.5.0",
  "alloy-network 2.5.0",
  "alloy-primitives",
@@ -13132,11 +13421,17 @@ dependencies = [
  "auto_impl",
  "dyn-clone",
  "jsonrpsee-types",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
  "reth-rpc-traits 0.7.1",
  "thiserror 2.0.19",
 ]
+
+[[package]]
+name = "reth-rpc-engine-api"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-rpc-engine-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-rpc-engine-api"
@@ -13151,23 +13446,29 @@ dependencies = [
  "jsonrpsee-core",
  "jsonrpsee-types",
  "metrics",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-engine-primitives",
  "reth-metrics",
- "reth-network-api",
- "reth-payload-builder",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-payload-builder 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-payload-builder-primitives",
- "reth-payload-primitives",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-rpc-api",
- "reth-storage-api",
- "reth-tasks",
- "reth-transaction-pool",
+ "reth-rpc-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "thiserror 2.0.19",
  "tokio",
  "tracing",
 ]
+
+[[package]]
+name = "reth-rpc-eth-api"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-rpc-eth-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-rpc-eth-api"
@@ -13178,7 +13479,7 @@ dependencies = [
  "alloy-dyn-abi",
  "alloy-eip7928 0.4.11",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-json-rpc 2.5.0",
  "alloy-network 2.5.0",
  "alloy-primitives",
@@ -13193,22 +13494,22 @@ dependencies = [
  "jsonrpsee",
  "jsonrpsee-types",
  "parking_lot",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
- "reth-evm",
- "reth-network-api",
- "reth-node-api",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-node-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-prune-types",
- "reth-revm",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc-convert",
- "reth-rpc-eth-types",
- "reth-rpc-server-types",
- "reth-storage-api",
- "reth-tasks",
- "reth-transaction-pool",
- "reth-trie-common",
+ "reth-rpc-eth-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "revm-inspectors",
  "serde_json",
@@ -13219,13 +13520,19 @@ dependencies = [
 [[package]]
 name = "reth-rpc-eth-types"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-rpc-eth-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-rpc-eth-types"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-chains",
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-network 2.5.0",
  "alloy-primitives",
  "alloy-rpc-client",
@@ -13241,20 +13548,20 @@ dependencies = [
  "metrics",
  "rand 0.9.5",
  "reqwest 0.13.4",
- "reth-chain-state",
- "reth-chainspec",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-types",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-revm",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-rpc-convert",
- "reth-rpc-server-types",
- "reth-storage-api",
- "reth-tasks",
- "reth-transaction-pool",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "revm-inspectors",
  "schnellru",
@@ -13265,6 +13572,12 @@ dependencies = [
  "tracing",
  "url",
 ]
+
+[[package]]
+name = "reth-rpc-layer"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-rpc-layer 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-rpc-layer"
@@ -13285,6 +13598,12 @@ dependencies = [
 [[package]]
 name = "reth-rpc-server-types"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-rpc-server-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-rpc-server-types"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-primitives",
@@ -13292,7 +13611,7 @@ dependencies = [
  "jsonrpsee-core",
  "jsonrpsee-types",
  "reth-errors",
- "reth-network-api",
+ "reth-network-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "strum 0.27.2",
 ]
@@ -13343,35 +13662,35 @@ dependencies = [
  "page_size",
  "rayon",
  "reqwest 0.13.4",
- "reth-chainspec",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-codecs 0.7.1",
  "reth-config",
  "reth-consensus",
- "reth-db",
- "reth-db-api",
+ "reth-db 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-era",
  "reth-era-downloader",
  "reth-era-utils",
  "reth-ethereum-primitives",
  "reth-etl",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-types",
  "reth-exex",
  "reth-fs-util",
  "reth-libmdbx",
  "reth-network-p2p",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-prune",
- "reth-prune-types",
- "reth-revm",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-revm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-stages-api",
  "reth-static-file-types",
- "reth-storage-api",
- "reth-storage-errors",
- "reth-tasks",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-testing-utils",
- "reth-trie",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-db",
  "tempfile",
  "thiserror 2.0.19",
@@ -13396,9 +13715,9 @@ dependencies = [
  "reth-metrics",
  "reth-network-p2p",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-prune",
- "reth-stages-types",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-static-file",
  "reth-static-file-types",
  "reth-tokio-util",
@@ -13410,6 +13729,12 @@ dependencies = [
 [[package]]
 name = "reth-stages-types"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-stages-types"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-primitives",
@@ -13417,7 +13742,7 @@ dependencies = [
  "bytes",
  "modular-bitfield",
  "reth-codecs 0.7.1",
- "reth-trie-common",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
 ]
 
@@ -13430,13 +13755,13 @@ dependencies = [
  "parking_lot",
  "rayon",
  "reth-codecs 0.7.1",
- "reth-db-api",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-prune-types",
- "reth-stages-types",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-static-file-types",
- "reth-storage-errors",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
  "tracing",
 ]
@@ -13450,11 +13775,17 @@ dependencies = [
  "clap",
  "derive_more 2.1.1",
  "fixed-map",
- "reth-stages-types",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "serde",
  "strum 0.27.2",
  "tracing",
 ]
+
+[[package]]
+name = "reth-storage-api"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-storage-api"
@@ -13467,20 +13798,26 @@ dependencies = [
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "auto_impl",
- "reth-chainspec",
- "reth-db-api",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-db-models",
  "reth-ethereum-primitives",
  "reth-execution-types",
  "reth-primitives-traits 0.7.1",
- "reth-prune-types",
- "reth-stages-types",
- "reth-storage-errors",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-tokio-util",
- "reth-trie-common",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "serde_json",
 ]
+
+[[package]]
+name = "reth-storage-errors"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-storage-errors"
@@ -13493,7 +13830,7 @@ dependencies = [
  "derive_more 2.1.1",
  "reth-codecs 0.7.1",
  "reth-primitives-traits 0.7.1",
- "reth-prune-types",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-static-file-types",
  "revm 43.0.3",
  "thiserror 2.0.19",
@@ -13509,23 +13846,29 @@ dependencies = [
  "metrics",
  "parking_lot",
  "rayon",
- "reth-chain-state",
- "reth-db-api",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-errors",
  "reth-ethereum-primitives",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-prune-types",
- "reth-stages-types",
- "reth-storage-api",
- "reth-storage-errors",
- "reth-tasks",
- "reth-trie",
- "reth-trie-common",
+ "reth-prune-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-db",
  "revm 43.0.3",
  "tracing",
 ]
+
+[[package]]
+name = "reth-tasks"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-tasks"
@@ -13577,6 +13920,12 @@ dependencies = [
 [[package]]
 name = "reth-tracing"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-tracing 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-tracing"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "clap",
@@ -13613,6 +13962,12 @@ dependencies = [
 [[package]]
 name = "reth-transaction-pool"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-transaction-pool 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-transaction-pool"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-consensus 2.5.0",
@@ -13629,18 +13984,18 @@ dependencies = [
  "paste",
  "pin-project",
  "rand 0.9.5",
- "reth-chain-state",
- "reth-chainspec",
- "reth-eth-wire-types",
+ "reth-chain-state 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-chainspec 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-eth-wire-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-ethereum-primitives",
- "reth-evm",
+ "reth-evm 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-evm-ethereum",
  "reth-execution-types",
  "reth-fs-util",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-tasks",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "rustc-hash",
  "schnellru",
@@ -13652,6 +14007,12 @@ dependencies = [
  "tokio-stream",
  "tracing",
 ]
+
+[[package]]
+name = "reth-trie"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-trie"
@@ -13670,14 +14031,20 @@ dependencies = [
  "reth-execution-errors",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-stages-types",
- "reth-storage-errors",
- "reth-trie-common",
+ "reth-stages-types 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-trie-sparse",
  "revm 43.0.3",
  "tracing",
  "triehash",
 ]
+
+[[package]]
+name = "reth-trie-common"
+version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
 
 [[package]]
 name = "reth-trie-common"
@@ -13713,22 +14080,28 @@ version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
  "alloy-primitives",
- "reth-db-api",
+ "reth-db-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "reth-execution-errors",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-storage-errors",
- "reth-trie",
- "reth-trie-common",
+ "reth-storage-api 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "tracing",
 ]
 
 [[package]]
 name = "reth-trie-parallel"
 version = "2.6.0"
+source = "git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2#3c5f2f11c4e5a5647e6e911cd131ccf1bada4f25"
+replace = "reth-trie-parallel 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)"
+
+[[package]]
+name = "reth-trie-parallel"
+version = "2.6.0"
 source = "git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1#0d253a1b1f636480a67d91e9bb87f2b66ed437a3"
 dependencies = [
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-primitives",
  "alloy-rlp",
  "crossbeam-channel",
@@ -13737,10 +14110,10 @@ dependencies = [
  "reth-execution-errors",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-storage-errors",
- "reth-tasks",
- "reth-trie",
+ "reth-provider 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-tasks 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
+ "reth-trie 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "revm 43.0.3",
  "thiserror 2.0.19",
  "tracing",
@@ -13759,7 +14132,7 @@ dependencies = [
  "reth-execution-errors",
  "reth-metrics",
  "reth-primitives-traits 0.7.1",
- "reth-trie-common",
+ "reth-trie-common 2.6.0 (git+https://github.com/streamingfast/reth.git?tag=world-chain-v2.8.1-fh3.1)",
  "slotmap",
  "smallvec",
  "strum 0.27.2",
@@ -19047,13 +19420,13 @@ dependencies = [
  "color-eyre",
  "dotenvy",
  "firehose-tracer",
- "reth-cli-util",
+ "reth-cli-util 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "reth-firehose",
- "reth-node-builder",
- "reth-optimism-consensus",
+ "reth-node-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-optimism-firehose",
- "reth-provider",
- "reth-tracing",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tracing 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "tikv-jemallocator",
  "world-chain-chainspec",
  "world-chain-cli",
@@ -19069,7 +19442,7 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
  "alloy-network 2.5.0",
- "alloy-op-evm 0.32.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "alloy-op-evm 0.32.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "alloy-primitives",
  "alloy-rpc-types-engine",
  "alloy-signer-local 2.5.0",
@@ -19078,25 +19451,25 @@ dependencies = [
  "crossbeam-channel",
  "metrics",
  "metrics-derive",
- "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-basic-payload-builder",
- "reth-chainspec",
- "reth-evm",
- "reth-node-api",
- "reth-optimism-forks",
- "reth-optimism-node",
- "reth-optimism-payload-builder",
- "reth-optimism-primitives",
- "reth-payload-primitives",
- "reth-payload-util",
+ "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-rpc-types 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-revm 20.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-evm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-payload-util 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
- "reth-tasks",
- "reth-tracing",
- "reth-transaction-pool",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-revm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tracing 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "revm 43.0.3",
  "revm-database 43.0.1",
  "semaphore-rs",
@@ -19125,11 +19498,11 @@ dependencies = [
  "alloy-primitives",
  "auto_impl",
  "derive_more 2.1.1",
- "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-chainspec",
- "reth-network-peers",
- "reth-optimism-chainspec",
- "reth-optimism-forks",
+ "op-alloy-rpc-types 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-peers 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-chainspec 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-primitives-traits 0.7.1",
  "serde",
  "tracing",
@@ -19179,22 +19552,22 @@ dependencies = [
  "ed25519-dalek",
  "futures-util",
  "hex",
- "reth-chainspec",
- "reth-cli",
- "reth-cli-commands",
- "reth-cli-runner",
- "reth-db",
- "reth-network-peers",
- "reth-node-builder",
- "reth-node-core",
- "reth-node-metrics",
- "reth-optimism-chainspec",
- "reth-optimism-consensus",
- "reth-optimism-evm",
- "reth-optimism-node",
- "reth-optimism-payload-builder",
- "reth-rpc-server-types",
- "reth-tracing",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-cli 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-cli-commands 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-cli-runner 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-db 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-peers 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-core 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-metrics 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-chainspec 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tracing 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "tracing",
  "world-chain-chainspec",
  "world-chain-commands",
@@ -19207,14 +19580,14 @@ version = "2.8.2"
 dependencies = [
  "clap",
  "color-eyre",
- "reth-chainspec",
- "reth-cli",
- "reth-cli-commands",
- "reth-node-core",
- "reth-optimism-node",
- "reth-optimism-trie",
- "reth-provider",
- "reth-tasks",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-cli 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-cli-commands 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-core 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-trie 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "tracing",
  "world-chain-chainspec",
 ]
@@ -19270,17 +19643,17 @@ dependencies = [
  "futures",
  "jsonrpsee",
  "kona-genesis",
- "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "rand 0.9.5",
  "reqwest 0.12.28",
- "reth-chainspec",
- "reth-e2e-test-utils",
- "reth-network-peers",
- "reth-node-api",
- "reth-optimism-node",
- "reth-optimism-payload-builder",
- "reth-provider",
- "reth-tasks",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-e2e-test-utils 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-peers 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "secp256k1 0.30.0",
  "serde",
  "serde_json",
@@ -19313,7 +19686,7 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
  "alloy-eips 2.5.0",
- "alloy-op-evm 0.32.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "alloy-op-evm 0.32.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "alloy-primitives",
  "alloy-rpc-types-debug",
  "auto_impl",
@@ -19321,22 +19694,22 @@ dependencies = [
  "color-eyre",
  "crossbeam-channel",
  "futures",
- "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-revm 20.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "parking_lot",
- "reth-evm",
- "reth-node-api",
- "reth-node-builder",
- "reth-optimism-evm",
+ "reth-evm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-optimism-firehose",
- "reth-optimism-payload-builder",
- "reth-optimism-primitives",
- "reth-payload-primitives",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
- "reth-tasks",
- "reth-trie-common",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-revm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-trie-common 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "revm 43.0.3",
  "revm-database 43.0.1",
  "serde",
@@ -19362,40 +19735,40 @@ dependencies = [
  "ed25519-dalek",
  "futures-util",
  "hex",
- "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-basic-payload-builder",
- "reth-chainspec",
+ "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "reth-codecs 0.7.1",
- "reth-db",
- "reth-db-api",
- "reth-eth-wire",
- "reth-eth-wire-types",
- "reth-evm",
- "reth-network",
- "reth-network-peers",
- "reth-node-api",
- "reth-node-builder",
- "reth-node-core",
- "reth-optimism-chainspec",
- "reth-optimism-evm",
- "reth-optimism-exex",
+ "reth-db 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-db-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-eth-wire 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-eth-wire-types 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-evm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-peers 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-core 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-chainspec 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-exex 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-optimism-firehose",
- "reth-optimism-forks",
- "reth-optimism-node",
- "reth-optimism-payload-builder",
- "reth-optimism-primitives",
- "reth-optimism-rpc",
- "reth-optimism-trie",
- "reth-payload-builder",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-rpc 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-trie 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-payload-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-rpc-api",
- "reth-rpc-engine-api",
- "reth-rpc-eth-api",
- "reth-rpc-server-types",
- "reth-tasks",
- "reth-transaction-pool",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-engine-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-eth-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "tokio",
  "tracing",
  "vergen",
@@ -19431,15 +19804,15 @@ dependencies = [
  "pin-project",
  "rand 0.9.5",
  "reth-codecs 0.7.1",
- "reth-db",
- "reth-db-api",
- "reth-eth-wire",
- "reth-ethereum",
- "reth-network",
- "reth-network-api",
- "reth-network-peers",
- "reth-provider",
- "reth-tasks",
+ "reth-db 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-db-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-eth-wire 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-ethereum 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-peers 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "serde",
  "tempfile",
  "thiserror 2.0.19",
@@ -19459,18 +19832,18 @@ dependencies = [
  "alloy-primitives",
  "color-eyre",
  "futures",
- "reth-basic-payload-builder",
- "reth-execution-cache",
- "reth-optimism-node",
- "reth-optimism-payload-builder",
- "reth-optimism-primitives",
- "reth-payload-builder",
- "reth-payload-primitives",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-execution-cache 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-payload-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-payload-primitives 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
- "reth-tasks",
- "reth-trie-parallel",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-revm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-trie-parallel 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "tokio",
  "tracing",
  "world-chain-builder",
@@ -19509,19 +19882,19 @@ dependencies = [
  "alloy-sol-types",
  "chrono",
  "color-eyre",
- "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "parking_lot",
  "rayon",
- "reth-db",
- "reth-eth-wire-types",
- "reth-evm",
- "reth-node-api",
- "reth-optimism-forks",
- "reth-optimism-node",
- "reth-optimism-primitives",
+ "reth-db 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-eth-wire-types 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-evm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-transaction-pool",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "revm-primitives 43.0.0",
  "semaphore-rs",
  "serde",
@@ -19552,16 +19925,16 @@ dependencies = [
  "chrono",
  "color-eyre",
  "ed25519-dalek",
- "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-network 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "reth-basic-payload-builder",
- "reth-chainspec",
- "reth-optimism-chainspec",
- "reth-optimism-node",
- "reth-optimism-primitives",
+ "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-network 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-basic-payload-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-chainspec 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-primitives-traits 0.7.1",
- "reth-storage-api",
- "reth-trie-common",
+ "reth-storage-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-trie-common 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "serde",
  "serde_json",
  "thiserror 2.0.19",
@@ -20029,7 +20402,7 @@ dependencies = [
  "alloy",
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
- "alloy-op-evm 0.32.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "alloy-op-evm 0.32.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "alloy-primitives",
  "alloy-provider",
  "alloy-rpc-types",
@@ -20042,30 +20415,30 @@ dependencies = [
  "jsonrpsee-core",
  "jsonrpsee-types",
  "lru 0.18.5",
- "op-alloy-network 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "op-alloy-network 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-rpc-types 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-revm 20.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reqwest 0.12.28",
- "reth-chain-state",
- "reth-chainspec",
- "reth-evm",
- "reth-node-api",
- "reth-node-builder",
- "reth-optimism-forks",
- "reth-optimism-node",
- "reth-optimism-primitives",
- "reth-optimism-rpc",
+ "reth-chain-state 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-evm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-rpc 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
- "reth-rpc-api",
- "reth-rpc-eth-api",
- "reth-rpc-eth-types",
- "reth-storage-api",
- "reth-tasks",
- "reth-tracing",
- "reth-transaction-pool",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-revm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-eth-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-eth-types 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-storage-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tracing 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "revm 43.0.3",
  "revm-database 43.0.1",
  "revm-database-interface 43.0.1",
@@ -20087,10 +20460,10 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-contract",
  "alloy-eips 2.5.0",
- "alloy-evm 0.39.0",
+ "alloy-evm 0.39.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "alloy-genesis",
  "alloy-network 2.5.0",
- "alloy-op-evm 0.32.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "alloy-op-evm 0.32.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "alloy-primitives",
  "alloy-provider",
  "alloy-rpc-types",
@@ -20107,44 +20480,44 @@ dependencies = [
  "ed25519-dalek",
  "futures",
  "lazy_static",
- "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-network 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-network 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-rpc-types 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-revm 20.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "parking_lot",
  "rand 0.9.5",
  "reqwest 0.12.28",
- "reth-chain-state",
- "reth-chainspec",
- "reth-db",
- "reth-e2e-test-utils",
- "reth-engine-tree",
- "reth-evm",
- "reth-network-api",
- "reth-network-peers",
- "reth-node-api",
- "reth-node-builder",
- "reth-node-core",
- "reth-node-ethereum",
- "reth-optimism-evm",
- "reth-optimism-forks",
- "reth-optimism-node",
- "reth-optimism-payload-builder",
- "reth-optimism-primitives",
+ "reth-chain-state 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-db 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-e2e-test-utils 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-engine-tree 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-evm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-peers 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-core 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-ethereum 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-forks 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-prune-types",
- "reth-revm",
- "reth-rpc-api",
- "reth-rpc-server-types",
- "reth-stages-types",
- "reth-storage-errors",
- "reth-tasks",
- "reth-tracing",
- "reth-transaction-pool",
- "reth-trie",
- "reth-trie-common",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-prune-types 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-revm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-server-types 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-stages-types 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-storage-errors 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tracing 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-trie 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-trie-common 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "revm 43.0.3",
  "revm-primitives 43.0.0",
  "semaphore-rs",
@@ -20188,28 +20561,28 @@ dependencies = [
  "ed25519-dalek",
  "futures",
  "jsonrpsee",
- "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-network 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-alloy-rpc-types 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-network 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-alloy-rpc-types 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "proptest",
- "reth-chainspec",
- "reth-e2e-test-utils",
- "reth-eth-wire",
- "reth-network",
- "reth-network-api",
- "reth-network-peers",
- "reth-node-api",
- "reth-node-builder",
- "reth-node-core",
- "reth-optimism-evm",
- "reth-optimism-node",
- "reth-optimism-payload-builder",
- "reth-optimism-primitives",
- "reth-provider",
- "reth-rpc-api",
- "reth-tasks",
- "reth-tracing",
- "reth-transaction-pool",
+ "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-e2e-test-utils 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-eth-wire 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-network-peers 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-core 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-rpc-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tracing 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-transaction-pool 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "revm 43.0.3",
  "revm-primitives 43.0.0",
  "serde",
@@ -20238,7 +20611,7 @@ dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
  "alloy-eips 2.5.0",
- "alloy-op-evm 0.32.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "alloy-op-evm 0.32.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "alloy-primitives",
  "alloy-rlp",
  "alloy-rpc-types-engine",
@@ -20248,25 +20621,25 @@ dependencies = [
  "futures",
  "metrics",
  "metrics-derive",
- "op-alloy-consensus 2.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
- "op-revm 20.0.0 (git+https://github.com/streamingfast/optimism.git?tag=world-chain-v2.8.1-fh3.1)",
+ "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "op-revm 20.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "parking_lot",
  "rayon",
- "reth-chain-state",
- "reth-db",
- "reth-db-api",
- "reth-evm",
- "reth-node-api",
- "reth-node-builder",
- "reth-node-core",
- "reth-optimism-evm",
- "reth-optimism-node",
- "reth-optimism-primitives",
+ "reth-chain-state 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-db 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-db-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-evm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-node-core 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-evm 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-primitives 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-primitives-traits 0.7.1",
- "reth-provider",
- "reth-revm",
- "reth-tasks",
- "reth-trie-common",
+ "reth-provider 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-revm 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-trie-common 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "revm 43.0.3",
  "revm-database 43.0.1",
  "tokio",
@@ -20376,10 +20749,10 @@ dependencies = [
  "once_cell",
  "rand 0.9.5",
  "reqwest 0.12.28",
- "reth-node-api",
- "reth-optimism-node",
- "reth-optimism-payload-builder",
- "reth-rpc-layer",
+ "reth-node-api 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "reth-optimism-node 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-optimism-payload-builder 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "reth-rpc-layer 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "semaphore-rs",
  "serde",
  "serde_json",

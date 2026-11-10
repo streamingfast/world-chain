@@ -31,7 +31,7 @@ use serde_json::{Value, json};
 use tempfile::TempDir;
 use testcontainers::{
     ContainerAsync, GenericImage, ImageExt,
-    core::{IntoContainerPort, Mount, WaitFor},
+    core::{Host as ContainerHost, IntoContainerPort, Mount, WaitFor},
     runners::AsyncRunner,
 };
 use tokio::{
@@ -2420,6 +2420,7 @@ async fn start_conductor(
         .with_exposed_port(CONDUCTOR_WS_PORT.tcp())
         .with_exposed_port(CONDUCTOR_CONSENSUS_PORT.tcp())
         .with_exposed_port(CONDUCTOR_METRICS_PORT.tcp())
+        .with_host("host.docker.internal", ContainerHost::HostGateway)
         .with_log_consumer(container_log_consumer(
             format!("op-conductor-{index}"),
             ProcessLogTarget::OpConductor,
@@ -2557,6 +2558,7 @@ async fn start_op_node(
         .with_exposed_port(OP_NODE_METRICS_PORT.tcp())
         .with_exposed_port(OP_NODE_P2P_PORT.tcp())
         .with_exposed_port(OP_NODE_P2P_PORT.udp())
+        .with_host("host.docker.internal", ContainerHost::HostGateway)
         .with_log_consumer(container_log_consumer(
             format!("op-node-{index}"),
             ProcessLogTarget::OpNode,
@@ -3490,6 +3492,7 @@ async fn start_aux_service(
         .with_wait_for(WaitFor::seconds(3))
         .with_exposed_port(SERVICE_RPC_PORT.tcp())
         .with_exposed_port(SERVICE_METRICS_PORT.tcp())
+        .with_host("host.docker.internal", ContainerHost::HostGateway)
         .with_log_consumer(container_log_consumer(
             id.to_string(),
             service_log_target(id),

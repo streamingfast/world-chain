@@ -4,7 +4,7 @@ use eyre::eyre::{Context, Result, bail};
 use serde_json::Value;
 use testcontainers::{
     ContainerAsync, GenericImage, ImageExt,
-    core::{IntoContainerPort, WaitFor},
+    core::{Host, IntoContainerPort, WaitFor},
     runners::AsyncRunner,
 };
 use tracing::{info, warn};
@@ -148,6 +148,7 @@ impl ObservabilityStack {
         )
         .with_wait_for(WaitFor::seconds(1))
         .with_exposed_port(PROMETHEUS_PORT.tcp())
+        .with_host("host.docker.internal", Host::HostGateway)
         .with_log_consumer(container_log_consumer(
             "prometheus",
             ProcessLogTarget::Prometheus,
@@ -192,6 +193,7 @@ impl ObservabilityStack {
         )
         .with_wait_for(WaitFor::seconds(1))
         .with_exposed_port(GRAFANA_PORT.tcp())
+        .with_host("host.docker.internal", Host::HostGateway)
         .with_log_consumer(container_log_consumer("grafana", ProcessLogTarget::Grafana))
         .with_env_var("GF_AUTH_ANONYMOUS_ENABLED", "true")
         .with_env_var("GF_AUTH_ANONYMOUS_ORG_ROLE", "Admin")

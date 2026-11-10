@@ -8,8 +8,10 @@ Sources: `crates/chainspec/src/{hardfork.rs,spec.rs}` and the superchain-registr
 `reth-optimism-chainspec` (`superchain/configs/{mainnet,sepolia}/worldchain.toml` at the
 `superchain-registry` gitlink `13907b9b` of `streamingfast/optimism` `world-chain-v2.8.1-fh3.1`).
 
-Checked 2026-11-07 against world-chain `v2.8.1`. The World Chain mainnet and Sepolia registry files
-are the same as at `v2.6.0`, and `WorldChainHardfork` did not change.
+Checked 2026-11-10 against world-chain `v2.8.2`. Upstream `v2.8.2` changes only TLS and DNS
+dependencies: `WorldChainHardfork`, the chain spec and the reth and optimism revs are the same as
+at `v2.8.1`. The World Chain mainnet and Sepolia files on superchain-registry `main` schedule no fork
+past Karst.
 
 | Fork | World Chain mainnet | World Chain Sepolia | Effect on the Firehose block |
 | --- | --- | --- | --- |
@@ -17,6 +19,7 @@ are the same as at `v2.6.0`, and `WorldChainHardfork` did not change.
 | Fjord | 2024-07-24 13:00 UTC | 2024-07-23 13:00 UTC | none (covered by every earlier release) |
 | Granite | 2024-10-01 11:00 UTC | 2024-09-17 11:00 UTC | none (covered by every earlier release) |
 | Holocene | 2025-01-30 12:00 UTC | 2025-01-23 12:00 UTC | none (covered by every earlier release) |
+| Pectra blob schedule | not set | 2025-03-20 16:00 UTC | none: Sepolia only, before Isthmus. It changes how the L1 blob base fee is derived for the L1 data fee, a value and not a field, so the shape of the Firehose block is the same |
 | Isthmus (Prague) | 2025-11-25 12:00 UTC | 2025-10-30 12:00 UTC | operator fee vault credits, emitted by `reth-optimism-firehose` `extras.rs` behind the Isthmus gate |
 | Jovian | 2026-05-01 00:00 UTC | 2026-04-26 00:00 UTC | none: the op-reth `v2.6.1` and `v2.8.1` bump reviews found op-revm `reward_beneficiary` and the fee vault formulas unchanged, so `extras.rs` still matches |
 | Karst (Osaka) | 2026-09-21 12:00 UTC | 2026-09-08 12:00 UTC | none found; Battlefield `world-chain-devnet` runs with Karst at genesis since `v2.4.3-fh3.1` |

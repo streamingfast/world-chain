@@ -4707,7 +4707,7 @@ dependencies = [
 
 [[package]]
 name = "e2e-withdrawal"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-contract",
@@ -19414,7 +19414,7 @@ checksum = "1ebf944e87a7c253233ad6766e082e3cd714b5d03812acc24c318f549614536e"
 
 [[package]]
 name = "world-chain"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "clap",
  "color-eyre",
@@ -19437,7 +19437,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-builder"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
@@ -19488,7 +19488,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-chainspec"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-chains",
  "alloy-consensus 2.5.0",
@@ -19541,7 +19541,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-cli"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-chains",
  "alloy-genesis",
@@ -19576,7 +19576,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-commands"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "clap",
  "color-eyre",
@@ -19623,7 +19623,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-devnet"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-contract",
  "alloy-eips 2.5.0",
@@ -19681,7 +19681,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-evm"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
@@ -19722,7 +19722,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-node"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
@@ -19735,6 +19735,7 @@ dependencies = [
  "ed25519-dalek",
  "futures-util",
  "hex",
+ "jsonrpsee",
  "op-alloy-consensus 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "reth-basic-payload-builder 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
@@ -19769,6 +19770,7 @@ dependencies = [
  "reth-rpc-server-types 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "reth-tasks 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "reth-transaction-pool 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
+ "serde_json",
  "tokio",
  "tracing",
  "vergen",
@@ -19788,7 +19790,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-p2p"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-eips 2.5.0",
  "alloy-primitives",
@@ -19826,7 +19828,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-payload"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-eips 2.5.0",
  "alloy-primitives",
@@ -19855,7 +19857,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-pbh"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-primitives",
  "alloy-rlp",
@@ -19872,7 +19874,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-pool"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eips 2.5.0",
@@ -19909,7 +19911,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-primitives"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
@@ -20397,7 +20399,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-rpc"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy",
  "alloy-consensus 2.5.0",
@@ -20408,6 +20410,7 @@ dependencies = [
  "alloy-rpc-types",
  "alloy-rpc-types-debug",
  "alloy-rpc-types-engine",
+ "alloy-rpc-types-trace",
  "alloy-sol-types",
  "color-eyre",
  "hex",
@@ -20415,10 +20418,13 @@ dependencies = [
  "jsonrpsee-core",
  "jsonrpsee-types",
  "lru 0.18.5",
+ "metrics",
  "op-alloy-network 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "op-alloy-rpc-types 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "op-alloy-rpc-types-engine 2.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
  "op-revm 20.0.0 (git+https://github.com/ethereum-optimism/optimism?rev=722072949ce583f361424a160082186ee14cac71)",
+ "parking_lot",
+ "rand 0.9.5",
  "reqwest 0.12.28",
  "reth-chain-state 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
  "reth-chainspec 2.6.0 (git+https://github.com/ethereum-optimism/reth?tag=op-v2.6.0-2)",
@@ -20442,12 +20448,14 @@ dependencies = [
  "revm 43.0.3",
  "revm-database 43.0.1",
  "revm-database-interface 43.0.1",
+ "revm-inspectors",
  "revm-primitives 43.0.0",
  "serde",
  "serde_json",
  "thiserror 2.0.19",
  "tokio",
  "tracing",
+ "world-chain-chainspec",
  "world-chain-evm",
  "world-chain-primitives",
  "world-chain-validator",
@@ -20455,7 +20463,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-test-utils"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-contract",
@@ -20540,7 +20548,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-tests"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-contract",
@@ -20606,7 +20614,7 @@ dependencies = [
 
 [[package]]
 name = "world-chain-validator"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-eip7928 0.4.11",
@@ -20724,7 +20732,7 @@ checksum = "66fee0b777b0f5ac1c69bb06d361268faafa61cd4682ae064a171c16c433e9e4"
 
 [[package]]
 name = "xtask"
-version = "2.8.2"
+version = "2.8.3"
 dependencies = [
  "alloy-consensus 2.5.0",
  "alloy-contract",

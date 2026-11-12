@@ -1,5 +1,5 @@
 [workspace.package]
-version = "2.8.2"
+version = "2.8.3"
 edition = "2024"
 rust-version = "1.99.0"
 license = "MIT"
@@ -223,6 +223,7 @@ alloy-rpc-types-eth = { version = "2.3.0", default-features = false }
 alloy-rpc-types = { version = "2.3.0", features = [
     "eth",
 ], default-features = false }
+alloy-rpc-types-trace = { version = "2.3.0", default-features = false }
 alloy-rpc-types-engine = { version = "2.3.0", default-features = false }
 alloy-rlp = { version = "0.3.16", default-features = false, features = [
     "derive",

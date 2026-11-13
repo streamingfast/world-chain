@@ -8,10 +8,11 @@ Sources: `crates/chainspec/src/{hardfork.rs,spec.rs}` and the superchain-registr
 `reth-optimism-chainspec` (`superchain/configs/{mainnet,sepolia}/worldchain.toml` at the
 `superchain-registry` gitlink `13907b9b` of `streamingfast/optimism` `world-chain-v2.8.1-fh3.1`).
 
-Checked 2026-11-10 against world-chain `v2.8.2`. Upstream `v2.8.2` changes only TLS and DNS
-dependencies: `WorldChainHardfork`, the chain spec and the reth and optimism revs are the same as
-at `v2.8.1`. The World Chain mainnet and Sepolia files on superchain-registry `main` schedule no fork
-past Karst.
+Checked 2026-11-12 against world-chain `v2.8.3`. Upstream `v2.8.3` adds RPC-only code (preconfirmed
+logs, trace projection helpers) and bookkeeping in the flashblocks coordinator, which executes with the
+untraced `WorldChainEvmConfig`. `WorldChainHardfork`, the chain spec and the reth and optimism revs are
+the same as at `v2.8.1`. The World Chain mainnet and Sepolia files on superchain-registry `main`
+schedule no fork past Karst.
 
 | Fork | World Chain mainnet | World Chain Sepolia | Effect on the Firehose block |
 | --- | --- | --- | --- |
@@ -23,7 +24,7 @@ past Karst.
 | Isthmus (Prague) | 2025-11-25 12:00 UTC | 2025-10-30 12:00 UTC | operator fee vault credits, emitted by `reth-optimism-firehose` `extras.rs` behind the Isthmus gate |
 | Jovian | 2026-05-01 00:00 UTC | 2026-04-26 00:00 UTC | none: the op-reth `v2.6.1` and `v2.8.1` bump reviews found op-revm `reward_beneficiary` and the fee vault formulas unchanged, so `extras.rs` still matches |
 | Karst (Osaka) | 2026-09-21 12:00 UTC | 2026-09-08 12:00 UTC | none found; Battlefield `world-chain-devnet` runs with Karst at genesis since `v2.4.3-fh3.1` |
-| Tropo | not scheduled | not scheduled | none: only read from a genesis `tropoTime` field, and no execution code checks it at `v2.8.1` |
-| Strato | not scheduled | not scheduled | none: only read from a genesis `stratoTime` field, and no execution code checks it at `v2.8.1` |
+| Tropo | not scheduled | not scheduled | none: only read from a genesis `tropoTime` field, and no execution code checks it at `v2.8.3` |
+| Strato | not scheduled | not scheduled | none: only read from a genesis `stratoTime` field, and no execution code checks it at `v2.8.3` |
 | OP Lagoon | never | never | `WorldChainSpec::op_fork_activation` maps it to `ForkCondition::Never`. If World Chain ever maps it, Lagoon enables the PostExec transaction type `0x7D`, which `firehose-tracer` 5.5.0 `TxType` does not know: `reth_firehose::mapper` would panic on the first one (`expect("All transaction types handled for now")`) |
 | Ethereum Amsterdam (EIP-7928 block access lists) | never | never | none: World Chain configures no Amsterdam timestamp, so blocks carry no access list and the traced engine path executes sequentially. World Chain's own flashblock access lists only feed flashblock validation, which is not traced |
